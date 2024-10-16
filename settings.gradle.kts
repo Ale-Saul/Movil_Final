@@ -23,6 +23,9 @@ dependencyResolutionManagement {
 rootProject.name = "Proyecto FInal"
 include(":app")
 include("data")
-include("framework")
+include(":framework")
+include(":core")
+include(":core:network")
+include(":core:ui")
 
  

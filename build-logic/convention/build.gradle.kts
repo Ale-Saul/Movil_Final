@@ -3,7 +3,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 plugins {
     `kotlin-dsl`
 }
-group = "com.example/buildlogic"
+group = "com.example.buildlogic"
 
 java{
     sourceCompatibility = JavaVersion.VERSION_17
@@ -32,7 +32,7 @@ dependencies {
 gradlePlugin {
     plugins {
         register("androidLibrary") {
-            id = "ucb.android.Library"
+            id = "ucb.android.library"
             implementationClass="AndroidLibraryConventionPlugin"
         }
     }
