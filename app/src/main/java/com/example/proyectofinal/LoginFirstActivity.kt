@@ -21,6 +21,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -31,12 +32,18 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.proyectofinal.ui.theme.AppTheme
+import com.example.proyectofinal.ui.theme.onPrimaryContainerLight
+import com.example.proyectofinal.ui.theme.onPrimaryLight
+import com.example.proyectofinal.ui.theme.onWhiteContainerDarkMediumContrast
+import com.example.proyectofinal.ui.theme.onWhiteLightHighContrast
+import com.example.proyectofinal.ui.theme.whiteDark
 
 class LoginFirstActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -55,9 +62,14 @@ fun FirstScreen() {
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(brush = Brush.verticalGradient(
-                colors = listOf(Color.Black, Color(0xFF0D1E43)) // Gradiente similar al fondo oscuro del mockup
-            ))
+            .background(
+                brush = Brush.verticalGradient(
+                    colors = listOf(
+                        onWhiteContainerDarkMediumContrast,
+                        onPrimaryContainerLight
+                    )
+                )
+            )
             .padding(16.dp)
     ) {
         Column(
@@ -67,51 +79,50 @@ fun FirstScreen() {
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            // Nombre de la App (RateFilm)
             Text(
-                text = "RateFilm",
-                style = TextStyle(
-                    fontFamily = FontFamily.Serif,
-                    color = Color.White
-                )
+                text = stringResource(id = R.string.app_name_1),
+                style = MaterialTheme.typography.headlineMedium,
+                color = onPrimaryLight,
+                fontSize = 52.sp
             )
 
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(70.dp))
 
-            // Texto descriptivo
             Text(
-                text = "Califica películas que viste, comparte tu opinión, entérate de promociones y más.",
+                text = stringResource(id = R.string.description),
                 textAlign = TextAlign.Center,
-                style = TextStyle(
-                    fontSize = 16.sp,
-                    color = Color.White
-                )
+                style = MaterialTheme.typography.bodyMedium,
+                fontSize = 20.sp,
+                color = onPrimaryLight,
+                lineHeight = 25.sp
             )
 
-            Spacer(modifier = Modifier.height(32.dp))
+            Spacer(modifier = Modifier.height(70.dp))
 
-            // Botón "Crear cuenta"
             OutlinedButton(
                 onClick = { /* Acción del botón */ },
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(48.dp),
-                border = BorderStroke(1.dp, Color.White),
-                shape = RoundedCornerShape(24.dp) // Borde redondeado como en el mockup
+                border = BorderStroke(1.dp, onPrimaryLight),
+                shape = RoundedCornerShape(20.dp)
             ) {
-                Text(text = "Crear cuenta", color = Color.White)
+                Text(
+                    text = stringResource(id = R.string.btn_crear_cuenta),
+                    color = onPrimaryLight,
+                    fontSize = 18.sp
+                )
             }
 
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(36.dp))
 
-            // Botón "Continuar con Google"
             Button(
                 onClick = { /* Acción de Google Sign-In */ },
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(48.dp),
-                //colors = ButtonDefaults.buttonColors(backgroundColor = Color.White),
-                shape = RoundedCornerShape(24.dp) // Botón con bordes redondeados
+                colors = ButtonDefaults.buttonColors(onPrimaryLight),
+                shape = RoundedCornerShape(20.dp)
             ) {
                 Row(
                     verticalAlignment = Alignment.CenterVertically
@@ -122,9 +133,15 @@ fun FirstScreen() {
                         modifier = Modifier.size(24.dp)
                     )
                     Spacer(modifier = Modifier.width(8.dp))
-                    Text(text = "Continuar con Google", color = Color.Black)
+                    Text(
+                        text = stringResource(id = R.string.btn_google),
+                        color = Color.Black,
+                        fontSize = 18.sp
+                    )
                 }
             }
         }
     }
+
+
 }
