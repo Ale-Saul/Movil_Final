@@ -39,3 +39,4 @@ jetbrains-kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = 
 android-library = { id="com.android.library", version.ref="agp"}
 jetbrains-kotlin-jvm = { id="org.jetbrains.kotlin.jvm", version.ref="kotlin"}
 ucb-android-library = {id="ucb.android.library", version="unspecified"}
+ucb-jvm-library = {id="ucb.jvm.library", version="unspecified"}
