@@ -1,0 +1,5 @@
+com.example.ui.test.ui-androidTest-0 D:\Documents\Semestre 8\Programacion de dispositivos moviles\ProyectoFinal\Movil_Final\core\ui\build\generated\res\resValues\androidTest\debug
+com.example.ui.test.ui-mergeDebugAndroidTestResources-1 D:\Documents\Semestre 8\Programacion de dispositivos moviles\ProyectoFinal\Movil_Final\core\ui\build\intermediates\incremental\debugAndroidTest\mergeDebugAndroidTestResources\merged.dir
+com.example.ui.test.ui-mergeDebugAndroidTestResources-2 D:\Documents\Semestre 8\Programacion de dispositivos moviles\ProyectoFinal\Movil_Final\core\ui\build\intermediates\incremental\debugAndroidTest\mergeDebugAndroidTestResources\stripped.dir
+com.example.ui.test.ui-debugAndroidTest-3 D:\Documents\Semestre 8\Programacion de dispositivos moviles\ProyectoFinal\Movil_Final\core\ui\build\intermediates\merged_res\debugAndroidTest\mergeDebugAndroidTestResources
+com.example.ui.test.ui-debug-4 D:\Documents\Semestre 8\Programacion de dispositivos moviles\ProyectoFinal\Movil_Final\core\ui\build\intermediates\packaged_res\debug\packageDebugResources

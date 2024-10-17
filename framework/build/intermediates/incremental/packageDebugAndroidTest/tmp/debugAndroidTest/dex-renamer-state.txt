@@ -1,0 +1,7 @@
+#Wed Oct 16 02:59:14 BOT 2024
+base.0=D\:\\Documents\\Semestre 8\\Programacion de dispositivos moviles\\ProyectoFinal\\Movil_Final\\framework\\build\\intermediates\\dex\\debugAndroidTest\\mergeExtDexDebugAndroidTest\\classes.dex
+base.1=D\:\\Documents\\Semestre 8\\Programacion de dispositivos moviles\\ProyectoFinal\\Movil_Final\\framework\\build\\intermediates\\dex\\debugAndroidTest\\mergeProjectDexDebugAndroidTest\\0\\classes.dex
+path.0=classes.dex
+path.1=0/classes.dex
+renamed.0=classes.dex
+renamed.1=classes2.dex
