@@ -49,6 +49,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.Observer
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import coil.compose.AsyncImage
 import com.example.proyectofinal.ui.theme.AppTheme
 import com.example.proyectofinal.ui.theme.onPrimaryContainerLight
@@ -84,7 +86,23 @@ fun MovieScreen(name: String, image: String, subtitle: String, points:String, de
     val movieImage = image
     var iconSelect by remember { mutableStateOf(false) }
     var rating by remember { mutableStateOf(0) }
+    val movieViewModel = MovieViewModel()
+    val lifecycle = LocalLifecycleOwner.current
 
+    fun updateUI(i: Int) {
+        rating = i
+    }
+    movieViewModel.star.observe(
+        lifecycle,
+        Observer (::updateUI)
+    )
+    fun updateUIFav(b: Boolean) {
+        iconSelect = b
+    }
+    movieViewModel.icon_favorite.observe(
+        lifecycle,
+        Observer(::updateUIFav)
+    )
     Scaffold(modifier = Modifier.fillMaxSize(),
         topBar = {
             CenterAlignedTopAppBar(
@@ -117,9 +135,12 @@ fun MovieScreen(name: String, image: String, subtitle: String, points:String, de
                     .verticalScroll(rememberScrollState()),
                 verticalArrangement = Arrangement.spacedBy(15.dp)
             ) {
-                AsyncImage(model = image, contentDescription = null, modifier= Modifier
-                    .height(340.dp)
-                    .clip(RoundedCornerShape(16.dp)),
+                AsyncImage(
+                    model = image,
+                    contentDescription = null,
+                    modifier= Modifier
+                        .height(340.dp)
+                        .clip(RoundedCornerShape(16.dp)),
                     contentScale = ContentScale.Crop
                 )
 
@@ -136,7 +157,9 @@ fun MovieScreen(name: String, image: String, subtitle: String, points:String, de
                         color = onPrimaryLight
                     )
                     IconButton(
-                        onClick = { iconSelect = !iconSelect},
+                        onClick = {
+                            movieViewModel.add_favorite(iconSelect)
+                        },
                         colors = IconButtonDefaults.iconButtonColors(
                             containerColor = Color.Transparent
                         )
@@ -178,7 +201,7 @@ fun MovieScreen(name: String, image: String, subtitle: String, points:String, de
                     RatingBar(
                         rating = rating,
                         onRatingChanged = { newRating ->
-                            rating = newRating
+                            movieViewModel.update(newRating)
                         }
                     )
                     OutlinedButton(
@@ -224,10 +247,12 @@ fun RatingBar(
     ) {
         for (i in 1..5) {
             Icon(
-                imageVector = if (i <= currentRating) {
+                imageVector =
+                if (i <= currentRating) {
                     Icons.Filled.Star
                 } else {
-                    Icons.Outlined.Star },
+                    Icons.Outlined.Star
+                       },
                 contentDescription = "Rating",
                 modifier = Modifier
                     .size(30.dp)
