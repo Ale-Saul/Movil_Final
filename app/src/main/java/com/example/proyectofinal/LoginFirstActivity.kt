@@ -16,6 +16,7 @@ import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -28,6 +29,8 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
+import androidx.compose.material.icons.filled.Email
+import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
@@ -75,7 +78,7 @@ class LoginFirstActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             AppTheme {
-                SignUpScreen()
+                LoginScreen()
             }
         }
     }
@@ -214,7 +217,8 @@ fun SignUpScreen() {
             onValueChange = { username = it },
             label = { Text(text = stringResource(id = R.string.label_name), color = onPrimaryLight) },
             placeholder = { Text(stringResource(id = R.string.placeholder_name), color = Color.LightGray) },
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier
+                .fillMaxWidth()
                 .padding(top = 10.dp),
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
             colors = TextFieldDefaults.colors(
@@ -235,7 +239,8 @@ fun SignUpScreen() {
             onValueChange = { birthDate = it },
             label = { Text(stringResource(id = R.string.label_date), color = onPrimaryLight) },
             placeholder = { Text(stringResource(id = R.string.placeholder_date), color = Color.LightGray) },
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier
+                .fillMaxWidth()
                 .padding(top = 10.dp),
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
             colors = TextFieldDefaults.colors(
@@ -256,7 +261,8 @@ fun SignUpScreen() {
             onValueChange = { email = it },
             label = { Text(stringResource(id = R.string.label_email), color = onPrimaryLight) },
             placeholder = { Text(stringResource(id = R.string.placeholder_email), color = Color.LightGray) },
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier
+                .fillMaxWidth()
                 .padding(top = 10.dp),
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
             colors = TextFieldDefaults.colors(
@@ -394,5 +400,109 @@ fun GenreChip(genre: String, isSelected: Boolean, onGenreSelected: (String) -> U
             )
         }
         
+    }
+}
+
+@Composable
+fun LoginScreen(){
+    var username by remember { mutableStateOf("") }
+    var password by remember { mutableStateOf("") }
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(
+                Brush.verticalGradient(
+                    listOf(
+                        onWhiteContainerDarkMediumContrast,
+                        onPrimaryContainerLight
+                    )
+                )
+            )
+            .padding(top = 40.dp, start = 30.dp, end = 30.dp)
+            .verticalScroll(rememberScrollState()),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
+    ) {
+        Text(
+            text = stringResource(id = R.string.app_name_1),
+            style = MaterialTheme.typography.headlineMedium,
+            fontSize = 36.sp,
+            color = onPrimaryLight,
+            textAlign = TextAlign.Center,
+            modifier = Modifier.padding(bottom = 32.dp, top = 20.dp)
+        )
+
+        Spacer(modifier = Modifier.height(100.dp))
+
+        TextField(
+            value = username,
+            onValueChange = { username = it },
+            label = { Text(text = stringResource(id = R.string.label_name), color = onPrimaryLight) },
+            placeholder = { Text(stringResource(id = R.string.placeholder_name), color = Color.LightGray) },
+            leadingIcon = {
+                Icon(
+                    imageVector = Icons.Default.Email,
+                    contentDescription = ""
+                )
+            },
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = 10.dp),
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
+            colors = TextFieldDefaults.colors(
+                focusedTextColor = onPrimaryLight,
+                unfocusedTextColor = onPrimaryLight,
+                focusedContainerColor = Color.Transparent,
+                unfocusedContainerColor = Color.Transparent,
+                cursorColor = onPrimaryLight,
+                focusedIndicatorColor = onPrimaryLight,
+                unfocusedIndicatorColor = outlineLight
+            )
+        )
+
+        Spacer(modifier = Modifier.height(8.dp))
+
+        TextField(
+            value = password,
+            onValueChange = { password = it },
+            label = { Text(stringResource(id = R.string.label_password), color = onPrimaryLight) },
+            placeholder = { Text(stringResource(id = R.string.placeholder_password), color = Color.LightGray) },
+            visualTransformation = PasswordVisualTransformation(),
+            leadingIcon = {
+                Icon(
+                    imageVector = Icons.Default.Lock,
+                    contentDescription = ""
+                )
+            },
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = 10.dp),
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
+            colors = TextFieldDefaults.colors(
+                focusedTextColor = onPrimaryLight,
+                unfocusedTextColor = onPrimaryLight,
+                focusedContainerColor = Color.Transparent,
+                unfocusedContainerColor = Color.Transparent,
+                cursorColor = onPrimaryLight,
+                focusedIndicatorColor = onPrimaryLight,
+                unfocusedIndicatorColor = outlineLight
+            )
+        )
+
+        Spacer(modifier = Modifier.height(140.dp))
+
+        Button(onClick = { /*TODO*/ },
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(vertical = 20.dp)
+                .height(48.dp),
+            colors = ButtonDefaults.buttonColors(tertiaryCommon),
+            border = BorderStroke(1.dp, onPrimaryLight),
+            shape = RoundedCornerShape(20.dp)) {
+            Text(
+                text = stringResource(id = R.string.btn_create_account),
+                fontSize = 18.sp
+            )
+        }
     }
 }
