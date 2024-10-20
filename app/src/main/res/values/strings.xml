@@ -5,4 +5,15 @@
     <string name="app_name_1">RateFilm</string>
     <string name="btn_crear_cuenta">Crear cuenta</string>
     <string name="btn_google">Continuar con Google</string>
+    <string name="label_name">Nombre de usuario:*</string>
+    <string name="placeholder_name">Ingresa tu nombre completo</string>
+    <string name="label_date">Fecha de nacimiento:*</string>
+    <string name="placeholder_date">dd / mm / aa</string>
+    <string name="label_email">Correo electrónico:*</string>
+    <string name="placeholder_email">tuCorreoAqui@gmail.com</string>
+    <string name="label_password">Contraseña:*</string>
+    <string name="placeholder_password">*********</string>
+    <string name="label_password2">Repetir contraseña:*</string>
+    <string name="subtitle">Gustos</string>
+    <string name="btn_create_account">Crear cuenta</string>
 </resources>
