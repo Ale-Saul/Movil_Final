@@ -16,4 +16,6 @@
     <string name="label_password2">Repetir contraseña:*</string>
     <string name="subtitle">Gustos</string>
     <string name="btn_create_account">Crear cuenta</string>
+    <string name="title_activity_movie">MovieActivity</string>
+    <string name="btn_ver_comentarios">Ver comentarios</string>
 </resources>
