@@ -22,10 +22,10 @@ dependencyResolutionManagement {
 
 rootProject.name = "Proyecto FInal"
 include(":app")
-include("data")
+include(":data")
 include(":framework")
 include(":core")
-include(":core:network")
 include(":core:ui")
+include(":core:network")
 
  
