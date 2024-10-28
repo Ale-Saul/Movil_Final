@@ -5,6 +5,7 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.horizontalScroll
@@ -18,29 +19,49 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.Observer
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import coil.compose.AsyncImage
+import com.example.network.MovieRemoteDataSource
+import com.example.network.MovieResponseDto
+import com.example.network.MoviesResponseDto
+import com.example.network.RetrofitBuilder
 import com.example.proyectofinal.ui.theme.AppTheme
+import com.example.proyectofinal.ui.theme.onPrimaryDark
+import com.example.proyectofinal.ui.theme.onPrimaryLight
+import com.example.proyectofinal.ui.theme.onSecondaryContainerLight
 import com.example.proyectofinal.ui.theme.primaryContainerLightMediumContrast
+import com.example.proyectofinal.ui.theme.secondaryLightMediumContrast
+import com.example.proyectofinal.ui.theme.tertiaryCommon
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -64,7 +85,7 @@ fun MovieCard(title: String, rating: Double, imageModel: String) {
     ) {
         Column(
             modifier = Modifier
-                .background(Color(0xFF2E4564))
+                .background(onPrimaryDark)
         ) {
             AsyncImage(
                 model = imageModel,
@@ -78,21 +99,24 @@ fun MovieCard(title: String, rating: Double, imageModel: String) {
                     .clip(shape = RoundedCornerShape(12.dp))
             )
             Row (
+                modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween
             ){
                 Text(
                     text = title,
-                    fontWeight = FontWeight.Bold,
+                    fontWeight = FontWeight.SemiBold,
                     fontSize = 16.sp,
-                    color = Color.White,
+                    color = onPrimaryLight,
                     modifier = Modifier
+                        .widthIn(max = 130.dp)
                         .padding(8.dp)
                         .horizontalScroll(rememberScrollState())
                 )
                 Text(
                     text = "$rating",
                     fontWeight = FontWeight.SemiBold,
-                    color = Color(0xFFFFA726),
+                    fontSize = 16.sp,
+                    color = tertiaryCommon,
                     modifier = Modifier
                         .padding(8.dp)
                 )
@@ -103,18 +127,23 @@ fun MovieCard(title: String, rating: Double, imageModel: String) {
 }
 
 @Composable
-fun MovieSection(title: String, movies: List<Pair<String, Double>>) {
+fun MovieSection(title: String, movies: List<MovieResponseDto>) {
     Column {
         Text(
             text = title,
+            style = MaterialTheme.typography.bodyLarge,
             fontWeight = FontWeight.Bold,
-            fontSize = 20.sp,
-            color = Color.White,
+            fontSize = 24.sp,
+            color = onPrimaryLight,
             modifier = Modifier.padding(8.dp)
         )
         LazyRow {
-            items(movies.size) { index ->
-                MovieCard(title = movies[index].first, rating = movies[index].second, imageModel = "https://m.media-amazon.com/images/S/pv-target-images/79194981293eabf6620ece96eb5a9c1fffa04d3374ae12986e0748800b37b9cf.jpg" ) // Usa una imagen de recurso
+            items(movies.size) {
+                MovieCard(
+                    title = movies[it].title,
+                    rating = movies[it].vote_average,
+                    imageModel = "https://image.tmdb.org/t/p/w185/${movies[it].poster_path}"
+                )
             }
         }
     }
@@ -122,21 +151,40 @@ fun MovieSection(title: String, movies: List<Pair<String, Double>>) {
 
 @Composable
 fun PromocionesButton() {
-    Button(
+    OutlinedButton(
         onClick = { /* Acción */ },
-        shape = RoundedCornerShape(16.dp),
-        colors = ButtonDefaults.buttonColors(contentColor = Color.White),
+        border = BorderStroke(1.dp, onPrimaryLight),
+        shape = RoundedCornerShape(20.dp),
         modifier = Modifier
             .fillMaxWidth()
             .padding(16.dp)
             .height(48.dp)
     ) {
-        Text("PROMOCIONES", color = Color(0xFF2E4564), fontWeight = FontWeight.Bold)
+        Text(text = stringResource(id = R.string.promocion_label),
+            color = onPrimaryLight,
+            fontSize = 18.sp
+        )
     }
 }
 
 @Composable
 fun MovieScreen() {
+    val dataSource: MovieRemoteDataSource = MovieRemoteDataSource(RetrofitBuilder)
+    val context = LocalContext.current
+    var listAllMovies : MovieRemoteDataSource = MovieRemoteDataSource(RetrofitBuilder)
+    val lifecycle = LocalLifecycleOwner.current
+    var listMovies by remember { mutableStateOf<List<MovieResponseDto>>(emptyList())}
+    val moviesViewModel = MoviesViewModel()
+
+    fun updateUI(movieResponseDtos: List<MovieResponseDto>) {
+        listMovies = movieResponseDtos
+    }
+    moviesViewModel.list.observe(
+        lifecycle,
+        Observer(::updateUI)
+    )
+
+    moviesViewModel.getAllMovies(dataSource, context)
     Scaffold(
         contentColor = Color(0xFF2E4564)
     ) { innerPadding ->
@@ -145,19 +193,12 @@ fun MovieScreen() {
             .background(primaryContainerLightMediumContrast)
             .padding(innerPadding)) {
             MovieSection(
-                title = "Te podría interesar",
-                movies = listOf(
-                    "Interestelar" to 8.1,
-                    "The Space Between Us" to 6.2,
-                    "Pretty woman" to 5.1
-                )
+                title = stringResource(id = R.string.label_interes),
+                movies = listMovies
             )
             MovieSection(
-                title = "Acción",
-                movies = listOf(
-                    "Búsqueda Implacable" to 7.1,
-                    "Fallout" to 6.2
-                )
+                title = stringResource(id = R.string.label_accion),
+                movies = listMovies
             )
             PromocionesButton()
         }
