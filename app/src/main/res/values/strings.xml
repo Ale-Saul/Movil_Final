@@ -18,4 +18,7 @@
     <string name="btn_create_account">Crear cuenta</string>
     <string name="title_activity_movie">MovieActivity</string>
     <string name="btn_ver_comentarios">Ver comentarios</string>
+    <string name="label_interes">Te podría interesar</string>
+    <string name="label_accion">Acción</string>
+    <string name="promocion_label">PROMOCIONES</string>
 </resources>
