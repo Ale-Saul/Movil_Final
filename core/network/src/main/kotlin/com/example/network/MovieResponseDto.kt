@@ -9,6 +9,8 @@ data class MovieResponseDto(
     val id: String,
     @Json(name = "title")
     val title: String,
+    @Json(name = "overview")
+    val overview: String,
     @Json(name = "poster_path")
     val poster_path: String,
     @Json(name = "genre_ids")

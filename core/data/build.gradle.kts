@@ -4,7 +4,7 @@ plugins {
     alias(libs.plugins.ksp)
 }
 android {
-    namespace="com.example.model"
+    namespace="com.example.data"
 }
 dependencies {
     implementation(libs.androidx.room.runtime)
@@ -22,4 +22,5 @@ dependencies {
     testImplementation(libs.androidx.room.testing)
     // optional - Paging 3 Integration
     implementation(libs.androidx.room.paging)
+    implementation(project(":core:model"))
 }

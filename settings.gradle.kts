@@ -28,5 +28,7 @@ include(":core")
 include(":core:ui")
 include(":core:network")
 include(":core:model")
+include(":core:data")
+include(":core:repository")
 
  

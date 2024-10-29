@@ -7,8 +7,6 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.liveData
 import androidx.lifecycle.viewModelScope
-import com.example.data.AppRoomDatabase
-import com.example.model.Movie
 import com.example.network.MovieRemoteDataSource
 import com.example.network.MovieResponseDto
 import com.example.network.MoviesResponseDto
