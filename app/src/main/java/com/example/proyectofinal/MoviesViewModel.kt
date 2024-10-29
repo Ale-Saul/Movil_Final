@@ -5,6 +5,10 @@ import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.liveData
+import androidx.lifecycle.viewModelScope
+import com.example.data.AppRoomDatabase
+import com.example.model.Movie
 import com.example.network.MovieRemoteDataSource
 import com.example.network.MovieResponseDto
 import com.example.network.MoviesResponseDto
@@ -30,4 +34,17 @@ class MoviesViewModel: ViewModel() {
             }
         }
     }
+
+    //val filteredList: MutableLiveData<List<Movie>> = MutableLiveData()
+
+//    fun insertMovies(movies: List<Movie>) = viewModelScope.launch(Dispatchers.IO) {
+//        movieDao.insertMovies(movies)
+//    }
+//
+//    fun getMoviesByGenre(genreId: Int) = viewModelScope.launch(Dispatchers.IO) {
+//        val movies = movieDao.getMoviesByGenre(genreId)
+//        withContext(Dispatchers.Main){
+//            filteredList.value = movies
+//        }
+//    }
 }
