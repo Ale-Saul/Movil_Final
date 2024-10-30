@@ -21,4 +21,5 @@
     <string name="label_interes">Te podría interesar</string>
     <string name="label_accion">Acción</string>
     <string name="promocion_label">PROMOCIONES</string>
+    <string name="btn_login_account">Iniciar sesión</string>
 </resources>

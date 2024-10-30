@@ -1,22 +1,13 @@
-package com.example.proyectofinal
+package com.example.proyectofinal.screen
 
-import android.content.Intent
-import android.os.Bundle
-import androidx.activity.ComponentActivity
-import androidx.activity.compose.setContent
-import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -29,13 +20,10 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
-import androidx.compose.material.icons.filled.Email
-import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
@@ -50,134 +38,35 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.viewpager2.widget.ViewPager2
-import com.example.proyectofinal.ui.theme.AppTheme
+import com.example.proyectofinal.GenreChip
+import com.example.proyectofinal.R
 import com.example.proyectofinal.ui.theme.onPrimaryContainerLight
 import com.example.proyectofinal.ui.theme.onPrimaryLight
 import com.example.proyectofinal.ui.theme.onWhiteContainerDarkMediumContrast
-import com.example.proyectofinal.ui.theme.onWhiteLightHighContrast
 import com.example.proyectofinal.ui.theme.outlineLight
 import com.example.proyectofinal.ui.theme.tertiaryCommon
-import com.example.proyectofinal.ui.theme.tertiaryContainerDark
-import com.example.proyectofinal.ui.theme.whiteDark
-
-class LoginFirstActivity : ComponentActivity() {
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
-        setContent {
-            AppTheme {
-                LoginScreen()
-            }
-        }
-    }
-}
 
 @Composable
-fun FirstScreen() {
-    val localContext= LocalContext.current
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(
-                brush = Brush.verticalGradient(
-                    colors = listOf(
-                        onWhiteContainerDarkMediumContrast,
-                        onPrimaryContainerLight
-                    )
-                )
+fun RegisterScreen(onClick: () -> Unit) {
+    Scaffold(
+        content = {paddingValues ->
+            RegisterContentScreen(
+                modifier = Modifier.padding(paddingValues),
+                onClick = onClick
             )
-            .padding(16.dp)
-    ) {
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(16.dp),
-            verticalArrangement = Arrangement.Center,
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            Text(
-                text = stringResource(id = R.string.app_name_1),
-                style = MaterialTheme.typography.headlineMedium,
-                color = onPrimaryLight,
-                fontSize = 52.sp
-            )
-
-            Spacer(modifier = Modifier.height(70.dp))
-
-            Text(
-                text = stringResource(id = R.string.description),
-                textAlign = TextAlign.Center,
-                style = MaterialTheme.typography.bodyMedium,
-                fontSize = 20.sp,
-                color = onPrimaryLight,
-                lineHeight = 25.sp
-            )
-
-            Spacer(modifier = Modifier.height(70.dp))
-
-            OutlinedButton(
-                onClick = {
-//                    val intent = Intent(Aca)
-//                    startActitiy(localContext, )
-                },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(48.dp),
-                border = BorderStroke(1.dp, onPrimaryLight),
-                shape = RoundedCornerShape(20.dp)
-            ) {
-                Text(
-                    text = stringResource(id = R.string.btn_crear_cuenta),
-                    color = onPrimaryLight,
-                    fontSize = 18.sp
-                )
-            }
-
-            Spacer(modifier = Modifier.height(36.dp))
-
-            Button(
-                onClick = { /* Acción de Google Sign-In */ },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(48.dp),
-                colors = ButtonDefaults.buttonColors(onPrimaryLight),
-                shape = RoundedCornerShape(20.dp)
-            ) {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Image(
-                        painter = painterResource(id = R.drawable.ic_google_logo), // Asegúrate de tener el ícono de Google en tu proyecto
-                        contentDescription = "Google Logo",
-                        modifier = Modifier.size(24.dp)
-                    )
-                    Spacer(modifier = Modifier.width(8.dp))
-                    Text(
-                        text = stringResource(id = R.string.btn_google),
-                        color = Color.Black,
-                        fontSize = 18.sp
-                    )
-                }
-            }
         }
-    }
+    )
 }
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
-fun SignUpScreen() {
+fun RegisterContentScreen(modifier: Modifier, onClick: () -> Unit) {
     var username by remember { mutableStateOf("") }
     var birthDate by remember { mutableStateOf("") }
     var email by remember { mutableStateOf("") }
@@ -356,17 +245,18 @@ fun SignUpScreen() {
         }
 
         Spacer(modifier = Modifier.height(20.dp))
-        
-        Button(onClick = { /*TODO*/ },
+
+        Button(onClick = { onClick() },
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(vertical = 20.dp)
                 .height(48.dp),
             colors = ButtonDefaults.buttonColors(tertiaryCommon),
             border = BorderStroke(1.dp, onPrimaryLight),
-            shape = RoundedCornerShape(20.dp)) {
+            shape = RoundedCornerShape(20.dp)
+        ) {
             Text(
-                text = stringResource(id = R.string.btn_login_account),
+                text = stringResource(id = R.string.btn_create_account),
                 fontSize = 18.sp
             )
         }
@@ -399,110 +289,6 @@ fun GenreChip(genre: String, isSelected: Boolean, onGenreSelected: (String) -> U
                 fontSize = 16.sp
             )
         }
-        
-    }
-}
 
-@Composable
-fun LoginScreen(){
-    var username by remember { mutableStateOf("") }
-    var password by remember { mutableStateOf("") }
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(
-                Brush.verticalGradient(
-                    listOf(
-                        onWhiteContainerDarkMediumContrast,
-                        onPrimaryContainerLight
-                    )
-                )
-            )
-            .padding(top = 40.dp, start = 30.dp, end = 30.dp)
-            .verticalScroll(rememberScrollState()),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
-    ) {
-        Text(
-            text = stringResource(id = R.string.app_name_1),
-            style = MaterialTheme.typography.headlineMedium,
-            fontSize = 36.sp,
-            color = onPrimaryLight,
-            textAlign = TextAlign.Center,
-            modifier = Modifier.padding(bottom = 32.dp, top = 20.dp)
-        )
-
-        Spacer(modifier = Modifier.height(100.dp))
-
-        TextField(
-            value = username,
-            onValueChange = { username = it },
-            label = { Text(text = stringResource(id = R.string.label_name), color = onPrimaryLight) },
-            placeholder = { Text(stringResource(id = R.string.placeholder_name), color = Color.LightGray) },
-            leadingIcon = {
-                Icon(
-                    imageVector = Icons.Default.Email,
-                    contentDescription = ""
-                )
-            },
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(top = 10.dp),
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
-            colors = TextFieldDefaults.colors(
-                focusedTextColor = onPrimaryLight,
-                unfocusedTextColor = onPrimaryLight,
-                focusedContainerColor = Color.Transparent,
-                unfocusedContainerColor = Color.Transparent,
-                cursorColor = onPrimaryLight,
-                focusedIndicatorColor = onPrimaryLight,
-                unfocusedIndicatorColor = outlineLight
-            )
-        )
-
-        Spacer(modifier = Modifier.height(8.dp))
-
-        TextField(
-            value = password,
-            onValueChange = { password = it },
-            label = { Text(stringResource(id = R.string.label_password), color = onPrimaryLight) },
-            placeholder = { Text(stringResource(id = R.string.placeholder_password), color = Color.LightGray) },
-            visualTransformation = PasswordVisualTransformation(),
-            leadingIcon = {
-                Icon(
-                    imageVector = Icons.Default.Lock,
-                    contentDescription = ""
-                )
-            },
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(top = 10.dp),
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
-            colors = TextFieldDefaults.colors(
-                focusedTextColor = onPrimaryLight,
-                unfocusedTextColor = onPrimaryLight,
-                focusedContainerColor = Color.Transparent,
-                unfocusedContainerColor = Color.Transparent,
-                cursorColor = onPrimaryLight,
-                focusedIndicatorColor = onPrimaryLight,
-                unfocusedIndicatorColor = outlineLight
-            )
-        )
-
-        Spacer(modifier = Modifier.height(140.dp))
-
-        Button(onClick = { /*TODO*/ },
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(vertical = 20.dp)
-                .height(48.dp),
-            colors = ButtonDefaults.buttonColors(tertiaryCommon),
-            border = BorderStroke(1.dp, onPrimaryLight),
-            shape = RoundedCornerShape(20.dp)) {
-            Text(
-                text = stringResource(id = R.string.btn_create_account),
-                fontSize = 18.sp
-            )
-        }
     }
 }
