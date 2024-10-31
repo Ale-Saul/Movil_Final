@@ -23,4 +23,6 @@ dependencies {
     // optional - Paging 3 Integration
     implementation(libs.androidx.room.paging)
     implementation(project(":core:model"))
+    implementation(project(":core:repository"))
+    implementation(project(":core:network"))
 }

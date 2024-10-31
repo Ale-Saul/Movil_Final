@@ -73,6 +73,7 @@ dependencies {
     debugImplementation(libs.androidx.ui.test.manifest)
     implementation(project(":core:data"))
     implementation(project(":core:model"))
+    implementation(project(":core:repository"))
     implementation(libs.navigation.compose)
     implementation(libs.kotlinx.serialization.json)
     implementation(libs.retrofit.coroutines)
