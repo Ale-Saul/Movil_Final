@@ -1,5 +1,6 @@
 package com.example.data
 
+import androidx.lifecycle.LiveData
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
@@ -16,8 +17,14 @@ interface IMovieDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertMovies(movies: List<Movie>)
 
-    @Query("SELECT *FROM movie_table")
-    fun getAllMovies(): List<Movie>
+    @Query("SELECT * FROM movie_table")
+    fun getAllMovies(): LiveData<List<Movie>>
+
+    @Query("SELECT * FROM genre_table")
+    fun getAllGenres(): List<Genre>
+
+    @Query("SELECT COUNT(*) FROM movie_table")
+    suspend fun getMovieCount(): Int
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertMovie(movie: Movie)

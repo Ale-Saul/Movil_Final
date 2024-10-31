@@ -22,7 +22,9 @@ import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -37,15 +39,18 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.Observer
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import coil.compose.AsyncImage
+import com.example.model.Movie
 import com.example.network.MovieRemoteDataSource
 import com.example.network.MovieResponseDto
 import com.example.network.RetrofitBuilder
+import com.example.proyectofinal.MovieHomeViewModel
 import com.example.proyectofinal.MoviesViewModel
 import com.example.proyectofinal.R
 import com.example.proyectofinal.ui.theme.onPrimaryDark
 import com.example.proyectofinal.ui.theme.onPrimaryLight
 import com.example.proyectofinal.ui.theme.primaryContainerLightMediumContrast
 import com.example.proyectofinal.ui.theme.tertiaryCommon
+import com.example.repository.MovieRepository
 
 @Composable
 fun HomeScreen(onClick: () -> Unit) {
@@ -58,7 +63,7 @@ fun HomeScreen(onClick: () -> Unit) {
 }
 
 @Composable
-fun MovieCard(title: String, rating: Double, imageModel: String) {
+fun MovieCard(idMovie: Int, title: String,rating: Double, imageModel: String) {
     Card(
         shape = RoundedCornerShape(16.dp),
         modifier = Modifier
@@ -109,7 +114,7 @@ fun MovieCard(title: String, rating: Double, imageModel: String) {
 }
 
 @Composable
-fun MovieSection(title: String, movies: List<MovieResponseDto>) {
+fun MovieSection(title: String, movies: List<Movie>) {
     Column {
         Text(
             text = title,
@@ -122,9 +127,10 @@ fun MovieSection(title: String, movies: List<MovieResponseDto>) {
         LazyRow {
             items(movies.size) {
                 MovieCard(
+                    idMovie = movies[it].movieId,
                     title = movies[it].title,
-                    rating = movies[it].vote_average,
-                    imageModel = "https://image.tmdb.org/t/p/w185/${movies[it].poster_path}"
+                    rating = movies[it].voteAverage,
+                    imageModel = "https://image.tmdb.org/t/p/w185/${movies[it].posterPath}"
                 )
             }
         }
@@ -153,20 +159,26 @@ fun PromocionesButton() {
 fun MovieScreen(modifier: Modifier, onClick: () -> Unit) {
     val dataSource: MovieRemoteDataSource = MovieRemoteDataSource(RetrofitBuilder)
     val context = LocalContext.current
-    var listAllMovies: MovieRemoteDataSource = MovieRemoteDataSource(RetrofitBuilder)
     val lifecycle = LocalLifecycleOwner.current
-    var listMovies by remember { mutableStateOf<List<MovieResponseDto>>(emptyList()) }
-    val moviesViewModel = MoviesViewModel()
+    //var listMovies by remember { mutableStateOf<List<MovieResponseDto>>(emptyList()) }
+    val repository = MovieRepository(context)
+    val moviesHomeViewModel: MovieHomeViewModel = MovieHomeViewModel(repository, dataSource)
+    val listMovies by moviesHomeViewModel.movies.observeAsState(emptyList())
+    //val moviesViewModel = MoviesViewModel()
 
-    fun updateUI(movieResponseDtos: List<MovieResponseDto>) {
-        listMovies = movieResponseDtos
+//    fun updateUI(movieResponseDtos: List<MovieResponseDto>) {
+//        listMovies = movieResponseDtos
+//    }
+//    moviesViewModel.list.observe(
+//        lifecycle,
+//        Observer(::updateUI)
+//    )
+//
+//    moviesViewModel.getAllMovies(dataSource, context)
+
+    LaunchedEffect(Unit) {
+        moviesHomeViewModel.getAllMovies()
     }
-    moviesViewModel.list.observe(
-        lifecycle,
-        Observer(::updateUI)
-    )
-
-    moviesViewModel.getAllMovies(dataSource, context)
         Column(
             modifier = modifier
                 .fillMaxSize()

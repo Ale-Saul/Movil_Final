@@ -8,6 +8,7 @@ android {
 }
 dependencies{
     implementation(libs.androidx.room.runtime)
+    implementation(libs.androidx.lifecycle.livedata.core.ktx)
     annotationProcessor(libs.androidx.room.compiler)
     ksp(libs.androidx.room.compiler)
     // optional - Kotlin Extensions and Coroutines support for Room

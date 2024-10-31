@@ -23,6 +23,8 @@ hilt="2.52"
 ksp= "1.9.20-1.0.14"
 navigation="2.8.3"
 kotlinx-serialization="1.7.3"
+lifecycleLivedataCoreKtx = "2.8.6"
+runtimeLivedata = "1.7.4"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -62,6 +64,8 @@ converter-moshi = { group = "com.squareup.retrofit2", name = "converter-moshi", 
 retrofit-coroutines = { group = "com.jakewharton.retrofit", name = "retrofit2-kotlin-coroutines-adapter", version.ref= "retrofitCoroutines"}
 navigation-compose= { group="androidx.navigation", name="navigation-compose", version.ref="navigation"}
 kotlinx-serialization-json= { module="org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref="kotlinx-serialization"}
+androidx-lifecycle-livedata-core-ktx = { group = "androidx.lifecycle", name = "lifecycle-livedata-core-ktx", version.ref = "lifecycleLivedataCoreKtx" }
+androidx-runtime-livedata = { group = "androidx.compose.runtime", name = "runtime-livedata", version.ref = "runtimeLivedata" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
