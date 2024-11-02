@@ -100,7 +100,7 @@ fun MovieCard(idMovie: Int, title: String,rating: Double, imageModel: String) {
                         .horizontalScroll(rememberScrollState())
                 )
                 Text(
-                    text = "$rating",
+                    text = String.format("%.1f", rating),
                     fontWeight = FontWeight.SemiBold,
                     fontSize = 16.sp,
                     color = tertiaryCommon,

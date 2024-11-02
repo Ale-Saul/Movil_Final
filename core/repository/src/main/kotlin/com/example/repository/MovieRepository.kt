@@ -25,17 +25,17 @@ class MovieRepository(val context: Context)  {
             if(genresInDb.isEmpty()) {
                 val genres = listOf(
                     Genre(genreId = 28, name = "Accion"),
+                    Genre(genreId = 16, name = "Animacion"),
                     Genre(genreId = 12, name = "Aventura"),
-                    Genre(genreId = 16, name = "Catastrofe"),
-                    Genre(genreId = 12, name = "Ciencia Ficcion"),
-                    Genre(genreId = 12, name = "Comedia"),
-                    Genre(genreId = 12, name = "Documental"),
-                    Genre(genreId = 12, name = "Drama"),
-                    Genre(genreId = 12, name = "Fantasia"),
-                    Genre(genreId = 16, name = "Familiar-Infantil"),
-                    Genre(genreId = 12, name = "Musical"),
-                    Genre(genreId = 12, name = "Suspenso"),
-                    Genre(genreId = 12, name = "Terror")
+                    Genre(genreId = 878, name = "Ciencia Ficcion"),
+                    Genre(genreId = 35, name = "Comedia"),
+                    Genre(genreId = 99, name = "Documental"),
+                    Genre(genreId = 18, name = "Drama"),
+                    Genre(genreId = 14, name = "Fantasia"),
+                    Genre(genreId = 10751, name = "Familiar-Infantil"),
+                    Genre(genreId = 10402, name = "Musical"),
+                    Genre(genreId = 9648, name = "Suspenso"),
+                    Genre(genreId = 53, name = "Terror")
                 )
                 movieDao.insertGenres(genres)
             }

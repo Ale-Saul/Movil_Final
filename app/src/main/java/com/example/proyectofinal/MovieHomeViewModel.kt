@@ -6,6 +6,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.model.Movie
+import com.example.model.MovieGenreCrossRef
 import com.example.network.MovieRemoteDataSource
 import com.example.repository.MovieRepository
 import kotlinx.coroutines.CoroutineScope
@@ -36,6 +37,14 @@ class MovieHomeViewModel(
         try {
             val response = dataSource.getListResponse()
             repository.insert(response.results.map {it.toMovie()})
+            response.results.forEach {
+                movie -> movie.genre_ids.forEach {
+                    genreId -> repository.insertMovieGenreCrossRef(
+                        listOf(
+                            MovieGenreCrossRef(movie.id.toInt(), genreId)
+                    ))
+                }
+            }
         }catch (e: Exception) {
             Log.e("Loading", "Error al cargar peliculas")
         }
@@ -61,6 +70,8 @@ class MovieHomeViewModel(
         }
 
     }
+
+
 //    sealed class MovieHomeState {
 //        class Loaded(val listMovies: LiveData<List<Movie>>) : MovieHomeState()
 //    }
