@@ -68,4 +68,8 @@ class MovieRepository(val context: Context)  {
     suspend fun getMovieWithGenres(movieId: Int): List<MovieWithGenres> {
         return movieDao.getMovieWithGenres(movieId)
     }
+
+    fun getMovieById(movieId: Int): LiveData<Movie> {
+        return movieDao.getMovieById(movieId)
+    }
 }

@@ -1,9 +1,12 @@
 package com.example.proyectofinal.navigation
 
+import android.util.Log
 import androidx.compose.runtime.Composable
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import com.example.proyectofinal.screen.HomeScreen
 import com.example.proyectofinal.screen.LoginScreen
 import com.example.proyectofinal.screen.MovieDetailScreen
@@ -25,6 +28,13 @@ fun AppNavigation() {
                 }
             )
         }
+        composable(Screens.RegisterScreen.route) {
+            RegisterScreen(
+                onClick = {
+                    navController.navigate(Screens.LoginScreen.route)
+                }
+            )
+        }
         composable(Screens.LoginScreen.route) {
             LoginScreen(
                 onClick = {
@@ -33,19 +43,22 @@ fun AppNavigation() {
             )
         }
         composable(Screens.HomeScreen.route) {
-            HomeScreen(onClick = {
-                navController.navigate(Screens.MovieDetailScreen.route)
+            HomeScreen(onClick = { movieId ->
+                Log.e("Navigation", "Navigating to MovieDetailScreen with movieId: $movieId")
+                navController.navigate("movie_detail_screen/$movieId")
             })
         }
-        composable(Screens.RegisterScreen.route) {
-            RegisterScreen(
-                onClick = {
-                    navController.navigate(Screens.LoginScreen.route)
+        composable(
+            route = "movie_detail_screen/{movieId}",
+            arguments = listOf(navArgument("movieId") { type = NavType.IntType })
+        ) { backStackEntry ->
+            val movieId = backStackEntry.arguments?.getInt("movieId") ?: 0
+            MovieDetailScreen(
+                movieId = movieId,
+                onBackPressed = {
+                    navController.popBackStack()
                 }
             )
-        }
-        composable(Screens.MovieDetailScreen.route) {
-            MovieDetailScreen()
         }
 
     }

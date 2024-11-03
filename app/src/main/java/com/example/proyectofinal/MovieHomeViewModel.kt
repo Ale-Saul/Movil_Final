@@ -5,6 +5,8 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.model.Genre
+import com.example.model.GenreWithMovies
 import com.example.model.Movie
 import com.example.model.MovieGenreCrossRef
 import com.example.network.MovieRemoteDataSource
@@ -20,6 +22,9 @@ class MovieHomeViewModel(
 ) : ViewModel()  {
 
     val movies: LiveData<List<Movie>> = repository.getAllMovies()
+    val movie: LiveData<Movie>
+        get() = _movie
+    private val _movie = MutableLiveData<Movie>()
 
     init {
         fetchMoviesIfNecessary()
@@ -48,6 +53,17 @@ class MovieHomeViewModel(
         }catch (e: Exception) {
             Log.e("Loading", "Error al cargar peliculas")
         }
+    }
+
+//    fun loadMovieById(movieId: Int) {
+//        viewModelScope.launch {
+//            _movie.value = repository.getMovieById(movieId)
+//
+//        }
+//    }
+
+    fun getMovieById(movieId: Int): LiveData<Movie> {
+        return repository.getMovieById(movieId)
     }
 
     suspend fun getMoviesFilteredByGenre(genreId: Int) = repository.getMoviesFilteredByGenre(genreId)
