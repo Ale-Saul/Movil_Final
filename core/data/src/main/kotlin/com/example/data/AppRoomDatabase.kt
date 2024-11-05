@@ -4,9 +4,11 @@ import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
+import com.example.model.Genre
 import com.example.model.Movie
+import com.example.model.MovieGenreCrossRef
 import com.example.model.User
-@Database(entities = [User::class, Movie::class], version = 1)
+@Database(entities = [User::class, Movie::class, Genre::class, MovieGenreCrossRef::class], version = 1)
 abstract class AppRoomDatabase: RoomDatabase() {
     abstract fun userDao(): IUserDao
     abstract fun movieDao(): IMovieDao

@@ -1,5 +1,7 @@
 package com.example.network
 
+
+import com.example.model.Movie
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
 
@@ -17,4 +19,14 @@ data class MovieResponseDto(
     val genre_ids: List<Int>,
     @Json(name = "vote_average")
     val  vote_average: Double
-){}
+){
+    fun toMovie(): Movie {
+        return Movie(
+            movieId = id.toInt(),
+            title = title,
+            description = overview,
+            posterPath = poster_path,
+            voteAverage = vote_average
+        )
+    }
+}
