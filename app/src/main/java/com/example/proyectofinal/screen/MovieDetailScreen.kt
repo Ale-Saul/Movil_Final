@@ -1,5 +1,6 @@
 package com.example.proyectofinal.screen
 
+import android.util.Log
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -32,7 +33,9 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -41,6 +44,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -48,6 +52,9 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.Observer
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import coil.compose.AsyncImage
+import com.example.network.MovieRemoteDataSource
+import com.example.network.RetrofitBuilder
+import com.example.proyectofinal.MovieHomeViewModel
 import com.example.proyectofinal.MovieViewModel
 import com.example.proyectofinal.R
 import com.example.proyectofinal.ui.theme.onPrimaryContainerLight
@@ -55,22 +62,39 @@ import com.example.proyectofinal.ui.theme.onPrimaryLight
 import com.example.proyectofinal.ui.theme.outlineLightHighContrast
 import com.example.proyectofinal.ui.theme.primaryContainerLightMediumContrast
 import com.example.proyectofinal.ui.theme.tertiaryCommon
+import com.example.repository.MovieRepository
 
 @Composable
-fun MovieDetailScreen() {
-    DetailContentScreen(name = "Interestelar",
-        image = "https://m.media-amazon.com/images/S/pv-target-images/79194981293eabf6620ece96eb5a9c1fffa04d3374ae12986e0748800b37b9cf.jpg",
-        subtitle = "2014 - Ciencia ficcion",
-        points = "8.1/10",
-        descrip = "Gracias a un descubrimiento, un grupo de cientificos y " +
-                "exploradores, encabezadis por Cooper, se embarcan en un viaje " +
-                "espacial para encontrar un lugar con las condiciones necesarias" +
-                "para reemplazar a la Tierra y comenzar una nueva vida alli.",)
+fun MovieDetailScreen(movieId: Int?, onBackPressed: () -> Unit) {
+    val dataSource: MovieRemoteDataSource = MovieRemoteDataSource(RetrofitBuilder)
+    val context = LocalContext.current
+    val lifecycle = LocalLifecycleOwner.current
+    val repository = MovieRepository(context)
+    val moviesHomeViewModel: MovieHomeViewModel = MovieHomeViewModel(repository, dataSource)
+
+    val movie = movieId?.let { moviesHomeViewModel.getMovieById(it).observeAsState() }?.value
+    movie?.let {
+        DetailContentScreen(
+            name = it.title,
+            image = it.posterPath,
+            subtitle = "2014 - Ciencia ficcion",
+            points = it.voteAverage,
+            descrip = it.description,
+            onBackPressed = onBackPressed
+        )
+    }?: run {
+        Box(
+            modifier = Modifier.fillMaxSize(),
+            contentAlignment = Alignment.Center
+        ) {
+            Text(text = "Cargando la pelicula")
+        }
+    }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun DetailContentScreen(name: String, image: String, subtitle: String, points:String, descrip: String) {
+fun DetailContentScreen(name: String, image: String, subtitle: String, points:Double, descrip: String, onBackPressed: () -> Unit) {
     val movieImage = image
     var iconSelect by remember { mutableStateOf(false) }
     var rating by remember { mutableStateOf(0) }
@@ -97,7 +121,7 @@ fun DetailContentScreen(name: String, image: String, subtitle: String, points:St
                 title = { /*TODO*/ },
                 colors = TopAppBarDefaults.topAppBarColors(primaryContainerLightMediumContrast),
                 navigationIcon = {
-                    IconButton(onClick = { /*TODO*/ }) {
+                    IconButton(onClick = { onBackPressed() }) {
                         Icon(
                             imageVector = Icons.Default.ArrowBack,
                             modifier = Modifier.size(34.dp),
@@ -124,7 +148,7 @@ fun DetailContentScreen(name: String, image: String, subtitle: String, points:St
                 verticalArrangement = Arrangement.spacedBy(15.dp)
             ) {
                 AsyncImage(
-                    model = image,
+                    model = "https://image.tmdb.org/t/p/w185/${image}",
                     contentDescription = null,
                     modifier= Modifier
                         .height(340.dp)
@@ -173,7 +197,7 @@ fun DetailContentScreen(name: String, image: String, subtitle: String, points:St
                         fontSize = 15.sp
                     )
                     Text(
-                        text = points,
+                        text = String.format("%.1f", points),
                         style = MaterialTheme.typography.bodyMedium,
                         color = tertiaryCommon,
                         fontSize = 24.sp,

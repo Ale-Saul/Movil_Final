@@ -6,7 +6,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import com.example.proyectofinal.navigation.AppNavigation
-import com.example.proyectofinal.screen.ui.theme.AppTheme
+import com.example.proyectofinal.ui.theme.AppTheme
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {

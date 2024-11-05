@@ -8,6 +8,7 @@ android {
 }
 dependencies {
     implementation(libs.androidx.room.runtime)
+    implementation(libs.androidx.lifecycle.livedata.core.ktx)
     annotationProcessor(libs.androidx.room.compiler)
     ksp(libs.androidx.room.compiler)
     // optional - Kotlin Extensions and Coroutines support for Room
@@ -23,4 +24,5 @@ dependencies {
     // optional - Paging 3 Integration
     implementation(libs.androidx.room.paging)
     implementation(project(":core:model"))
+    implementation(project(":core:network"))
 }

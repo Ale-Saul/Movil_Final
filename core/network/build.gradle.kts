@@ -12,6 +12,7 @@ dependencies {
     implementation(libs.moshi)
     implementation(libs.converter.moshi)
     kapt(libs.moshi.kapt)
+    implementation(project(":core:model"))
 }
 
 
