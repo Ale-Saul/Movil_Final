@@ -29,8 +29,8 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -38,19 +38,25 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.model.User
+import com.example.proyectofinal.FormState
 import com.example.proyectofinal.GenreChip
 import com.example.proyectofinal.R
+import com.example.proyectofinal.viewModel.UserViewModel
 import com.example.proyectofinal.ui.theme.onPrimaryContainerLight
 import com.example.proyectofinal.ui.theme.onPrimaryLight
 import com.example.proyectofinal.ui.theme.onWhiteContainerDarkMediumContrast
 import com.example.proyectofinal.ui.theme.outlineLight
 import com.example.proyectofinal.ui.theme.tertiaryCommon
+import com.example.proyectofinal.validateForm
+import com.example.repository.UserRepository
 
 @Composable
 fun RegisterScreen(onClick: () -> Unit) {
@@ -67,15 +73,31 @@ fun RegisterScreen(onClick: () -> Unit) {
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun RegisterContentScreen(modifier: Modifier, onClick: () -> Unit) {
-    var username by remember { mutableStateOf("") }
-    var birthDate by remember { mutableStateOf("") }
-    var email by remember { mutableStateOf("") }
-    var password by remember { mutableStateOf("") }
-    var confirmPassword by remember { mutableStateOf("") }
-    var selectedGenres = remember { mutableStateListOf<String>() }
+    val context = LocalContext.current
+    val repository = UserRepository(context = context)
+    var viewModel = UserViewModel(repository)
+//
+//    var username by remember { mutableStateOf("") }
+//    var birthDate by remember { mutableStateOf("") }
+//    var email by remember { mutableStateOf("") }
+//    var password by remember { mutableStateOf("") }
+//    var confirmPassword by remember { mutableStateOf("") }
+    var formState by remember { mutableStateOf(FormState()) }
+    var isValid by remember { mutableStateOf(false) }
+
+    var selectedGenres = viewModel.selectedGenres
 
     val genres = listOf("Acción", "Aventura", "Catástrofe", "Ciencia Ficción", "Comedia", "Documental",
         "Drama", "Fantasia", "Familiar-Infantil", "Musical", "Suspenso", "Terror")
+    val predetermined = TextFieldDefaults.colors(
+        focusedTextColor = onPrimaryLight,
+        unfocusedTextColor = onPrimaryLight,
+        focusedContainerColor = Color.Transparent,
+        unfocusedContainerColor = Color.Transparent,
+        cursorColor = onPrimaryLight,
+        focusedIndicatorColor = onPrimaryLight,
+        unfocusedIndicatorColor = outlineLight
+    )
 
     Column(
         modifier = Modifier
@@ -102,74 +124,62 @@ fun RegisterContentScreen(modifier: Modifier, onClick: () -> Unit) {
         )
 
         TextField(
-            value = username,
-            onValueChange = { username = it },
+            value = formState.username,
+            onValueChange = {
+                formState = formState.copy(username = it)
+                isValid = validateForm(formState)
+            },
             label = { Text(text = stringResource(id = R.string.label_name), color = onPrimaryLight) },
             placeholder = { Text(stringResource(id = R.string.placeholder_name), color = Color.LightGray) },
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(top = 10.dp),
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
-            colors = TextFieldDefaults.colors(
-                focusedTextColor = onPrimaryLight,
-                unfocusedTextColor = onPrimaryLight,
-                focusedContainerColor = Color.Transparent,
-                unfocusedContainerColor = Color.Transparent,
-                cursorColor = onPrimaryLight,
-                focusedIndicatorColor = onPrimaryLight,
-                unfocusedIndicatorColor = outlineLight
-            )
+            colors = predetermined
         )
 
         Spacer(modifier = Modifier.height(8.dp))
 
         TextField(
-            value = birthDate,
-            onValueChange = { birthDate = it },
+            value = formState.birthDate,
+            onValueChange = {
+                formState = formState.copy(birthDate = it)
+                isValid = validateForm(formState)
+            },
             label = { Text(stringResource(id = R.string.label_date), color = onPrimaryLight) },
             placeholder = { Text(stringResource(id = R.string.placeholder_date), color = Color.LightGray) },
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(top = 10.dp),
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-            colors = TextFieldDefaults.colors(
-                focusedTextColor = onPrimaryLight,
-                unfocusedTextColor = onPrimaryLight,
-                focusedContainerColor = Color.Transparent,
-                unfocusedContainerColor = Color.Transparent,
-                cursorColor = onPrimaryLight,
-                focusedIndicatorColor = onPrimaryLight,
-                unfocusedIndicatorColor = outlineLight
-            )
+            colors = predetermined
         )
 
         Spacer(modifier = Modifier.height(8.dp))
 
         TextField(
-            value = email,
-            onValueChange = { email = it },
+            value = formState.email,
+            onValueChange = {
+                formState = formState.copy(email = it)
+                isValid = validateForm(formState)
+            },
             label = { Text(stringResource(id = R.string.label_email), color = onPrimaryLight) },
             placeholder = { Text(stringResource(id = R.string.placeholder_email), color = Color.LightGray) },
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(top = 10.dp),
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
-            colors = TextFieldDefaults.colors(
-                focusedTextColor = onPrimaryLight,
-                unfocusedTextColor = onPrimaryLight,
-                focusedContainerColor = Color.Transparent,
-                unfocusedContainerColor = Color.Transparent,
-                cursorColor = onPrimaryLight,
-                focusedIndicatorColor = onPrimaryLight,
-                unfocusedIndicatorColor = outlineLight
-            )
+            colors = predetermined
         )
 
         Spacer(modifier = Modifier.height(8.dp))
 
         TextField(
-            value = password,
-            onValueChange = { password = it },
+            value = formState.password,
+            onValueChange = {
+                formState = formState.copy(password = it)
+                isValid = validateForm(formState)
+            },
             label = { Text(stringResource(id = R.string.label_password), color = onPrimaryLight) },
             placeholder = { Text(stringResource(id = R.string.placeholder_password), color = Color.LightGray) },
             visualTransformation = PasswordVisualTransformation(),
@@ -191,8 +201,11 @@ fun RegisterContentScreen(modifier: Modifier, onClick: () -> Unit) {
         Spacer(modifier = Modifier.height(8.dp))
 
         TextField(
-            value = confirmPassword,
-            onValueChange = { confirmPassword = it },
+            value = formState.confirmPassword,
+            onValueChange = {
+                formState = formState.copy(confirmPassword = it)
+                isValid = validateForm(formState)
+            },
             label = { Text(stringResource(id = R.string.label_password2), color = onPrimaryLight) },
             placeholder = { Text(stringResource(id = R.string.placeholder_password), color = Color.LightGray) },
             visualTransformation = PasswordVisualTransformation(),
@@ -200,15 +213,7 @@ fun RegisterContentScreen(modifier: Modifier, onClick: () -> Unit) {
                 .fillMaxWidth()
                 .padding(top = 10.dp),
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
-            colors = TextFieldDefaults.colors(
-                focusedTextColor = onPrimaryLight,
-                unfocusedTextColor = onPrimaryLight,
-                focusedContainerColor = Color.Transparent,
-                unfocusedContainerColor = Color.Transparent,
-                cursorColor = onPrimaryLight,
-                focusedIndicatorColor = onPrimaryLight,
-                unfocusedIndicatorColor = outlineLight
-            )
+            colors = predetermined
         )
 
         Spacer(modifier = Modifier.height(20.dp))
@@ -237,7 +242,7 @@ fun RegisterContentScreen(modifier: Modifier, onClick: () -> Unit) {
                         if (selectedGenres.contains(it)) {
                             selectedGenres.remove(it)
                         } else {
-                            selectedGenres.add(it)
+                            selectedGenres.add(it);
                         }
                     }
                 )
@@ -246,7 +251,16 @@ fun RegisterContentScreen(modifier: Modifier, onClick: () -> Unit) {
 
         Spacer(modifier = Modifier.height(20.dp))
 
-        Button(onClick = { onClick() },
+        Button(
+            onClick = {
+                viewModel.saveUser(
+                    User(
+                        username = formState.username,
+                        birthDate = formState.birthDate,
+                        email = formState.email,
+                        password = formState.password
+                    ));
+                onClick() },
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(vertical = 20.dp)

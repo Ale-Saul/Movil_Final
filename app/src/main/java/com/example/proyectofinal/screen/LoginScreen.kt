@@ -1,5 +1,6 @@
 package com.example.proyectofinal.screen
 
+import android.widget.Toast
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -25,6 +26,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -33,18 +35,24 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.Observer
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import com.example.proyectofinal.R
 import com.example.proyectofinal.ui.theme.onPrimaryContainerLight
 import com.example.proyectofinal.ui.theme.onPrimaryLight
 import com.example.proyectofinal.ui.theme.onWhiteContainerDarkMediumContrast
 import com.example.proyectofinal.ui.theme.outlineLight
 import com.example.proyectofinal.ui.theme.tertiaryCommon
+import com.example.proyectofinal.viewModel.UserViewModel
+import com.example.repository.UserRepository
 
 @Composable
 fun LoginScreen(onClick : () -> Unit){
@@ -62,6 +70,33 @@ fun LoginScreen(onClick : () -> Unit){
 fun LoginContentScreen(modifier: Modifier, onClick: () -> Unit) {
     var username by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
+
+    val context = LocalContext.current
+    val repository = UserRepository(context = context)
+    //var userViewModel: UserViewModel = hiltViewModel()
+    var userViewModel = UserViewModel(repository)
+    var isEnabled by remember { mutableStateOf(false) }
+
+    val loginState by userViewModel.state.collectAsState()
+
+    when (loginState) {
+        is UserViewModel.LoginState.Loading -> {
+            isEnabled = false
+        }
+        is UserViewModel.LoginState.DoLogin -> {
+            isEnabled = true
+            onClick()
+        }
+        is UserViewModel.LoginState.Error -> {
+            isEnabled = true
+            Toast.makeText(context, (loginState as UserViewModel.LoginState.Error).message, Toast.LENGTH_SHORT).show()
+        }
+        is UserViewModel.LoginState.LoggedOut -> {
+            isEnabled = true
+        }
+    }
+
+    val isButtonEnabled = loginState !is UserViewModel.LoginState.Loading
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -146,7 +181,9 @@ fun LoginContentScreen(modifier: Modifier, onClick: () -> Unit) {
 
         Spacer(modifier = Modifier.height(140.dp))
 
-        Button(onClick = { onClick() },
+        Button(onClick = {
+            userViewModel.doLogin(username, password) },
+            enabled = isButtonEnabled,
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(vertical = 20.dp)

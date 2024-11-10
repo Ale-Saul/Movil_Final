@@ -1,6 +1,5 @@
 package com.example.proyectofinal.screen
 
-import android.util.Log
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -33,7 +32,6 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
@@ -54,8 +52,8 @@ import androidx.lifecycle.compose.LocalLifecycleOwner
 import coil.compose.AsyncImage
 import com.example.network.MovieRemoteDataSource
 import com.example.network.RetrofitBuilder
-import com.example.proyectofinal.MovieHomeViewModel
-import com.example.proyectofinal.MovieViewModel
+import com.example.proyectofinal.viewModel.MovieHomeViewModel
+import com.example.proyectofinal.viewModel.MovieViewModel
 import com.example.proyectofinal.R
 import com.example.proyectofinal.ui.theme.onPrimaryContainerLight
 import com.example.proyectofinal.ui.theme.onPrimaryLight

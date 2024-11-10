@@ -25,6 +25,7 @@ navigation="2.8.3"
 kotlinx-serialization="1.7.3"
 lifecycleLivedataCoreKtx = "2.8.6"
 runtimeLivedata = "1.7.4"
+hiltNavigation = "1.2.0"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -66,6 +67,12 @@ navigation-compose= { group="androidx.navigation", name="navigation-compose", ve
 kotlinx-serialization-json= { module="org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref="kotlinx-serialization"}
 androidx-lifecycle-livedata-core-ktx = { group = "androidx.lifecycle", name = "lifecycle-livedata-core-ktx", version.ref = "lifecycleLivedataCoreKtx" }
 androidx-runtime-livedata = { group = "androidx.compose.runtime", name = "runtime-livedata", version.ref = "runtimeLivedata" }
+
+#hilt
+hilt = { group="com.google.dagger", name="hilt-android", version.ref="hilt"}
+hilt-compiler = { group="com.google.dagger", name = "hilt-compiler", version.ref = "hilt"}
+hilt-testing = {group= "com.google.dagger", name="hilt-android-testing", version.ref= "hilt"}
+hilt-navigation = {group = "androidx.hilt", name = "hilt-navigation-compose", version.ref = "hiltNavigation" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

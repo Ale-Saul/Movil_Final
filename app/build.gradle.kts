@@ -2,6 +2,8 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.jetbrains.kotlin.android)
     alias(libs.plugins.kotlinSerialization)
+    alias(libs.plugins.kapt)
+    alias(libs.plugins.hilt)
 }
 
 android {
@@ -79,4 +81,13 @@ dependencies {
     implementation(libs.kotlinx.serialization.json)
     implementation(libs.retrofit.coroutines)
 
+    //hilt
+    implementation(libs.hilt)
+    implementation(libs.hilt.navigation)
+    kapt(libs.hilt.compiler)
+
+}
+
+kapt {
+    correctErrorTypes = true
 }

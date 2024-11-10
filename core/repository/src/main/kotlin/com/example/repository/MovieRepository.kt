@@ -25,13 +25,13 @@ class MovieRepository(val context: Context)  {
             if(genresInDb.isEmpty()) {
                 val genres = listOf(
                     Genre(genreId = 28, name = "Accion"),
-                    Genre(genreId = 16, name = "Animacion"),
+                    Genre(genreId = 16, name = "Animación"),
                     Genre(genreId = 12, name = "Aventura"),
-                    Genre(genreId = 878, name = "Ciencia Ficcion"),
+                    Genre(genreId = 878, name = "Ciencia Ficción"),
                     Genre(genreId = 35, name = "Comedia"),
                     Genre(genreId = 99, name = "Documental"),
                     Genre(genreId = 18, name = "Drama"),
-                    Genre(genreId = 14, name = "Fantasia"),
+                    Genre(genreId = 14, name = "Fantasía"),
                     Genre(genreId = 10751, name = "Familiar-Infantil"),
                     Genre(genreId = 10402, name = "Musical"),
                     Genre(genreId = 9648, name = "Suspenso"),

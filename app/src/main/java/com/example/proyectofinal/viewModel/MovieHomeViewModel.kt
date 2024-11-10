@@ -1,20 +1,15 @@
-package com.example.proyectofinal
+package com.example.proyectofinal.viewModel
 
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.model.Genre
-import com.example.model.GenreWithMovies
 import com.example.model.Movie
 import com.example.model.MovieGenreCrossRef
 import com.example.network.MovieRemoteDataSource
 import com.example.repository.MovieRepository
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
 class MovieHomeViewModel(
     private val repository: MovieRepository,
