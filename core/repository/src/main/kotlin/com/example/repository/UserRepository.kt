@@ -13,11 +13,22 @@ class UserRepository(val context: Context) {
     }
 
     suspend fun loginUser(email: String, password: String): Boolean {
-        return userDao.loginUser(email, password) > 0
+        return (userDao.loginUser2(email, password) > 0);
     }
 
     suspend fun getGenreIdByName(genreName: String): Int {
-        return userDao.getGenreIdByName(genreName)
+        val formattedGenreName = genreName.map {
+            char ->
+                when(char) {
+                    'ó' -> 'o'
+                    'á' -> 'a'
+                    'é' -> 'e'
+                    'í' -> 'i'
+                    'ú' -> 'u'
+                    else -> char
+                }
+            }.joinToString("")
+        return userDao.getGenreIdByName(formattedGenreName)
     }
 
     suspend fun insertUserGenreCrossRef(userGenreCrossRef: UserGenreCrossRef) {

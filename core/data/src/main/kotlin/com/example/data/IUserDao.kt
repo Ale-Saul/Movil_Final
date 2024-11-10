@@ -26,6 +26,9 @@ interface IUserDao {
     @Query("SELECT COUNT(*) FROM user_table WHERE email = :email AND password = :password")
     suspend fun loginUser(email: String, password: String) : Int
 
+    @Query("SELECT COUNT(*) FROM user_table WHERE username = :username AND password = :password")
+    suspend fun loginUser2(username: String, password: String) : Int
+
     @Query("SELECT * FROM user_table WHERE email = :email")
     suspend fun getUserByEmail(email: String): User?
 }

@@ -20,7 +20,6 @@ class UserViewModel (
     private val repository: UserRepository
 ): ViewModel() {
     var selectedGenres = mutableStateListOf<String>()
-        private set
 
     fun updateSelectedGenres(newSelectedGenres: List<String>) {
         selectedGenres.clear()
@@ -41,9 +40,8 @@ class UserViewModel (
 
     }
 
-    val state : LiveData<LoginState>
-        get() = _state
-    private var _state = MutableLiveData<LoginState>()
+    private var _state = MutableStateFlow<LoginState>(LoginState.LoggedOut)
+    val state : StateFlow<LoginState> = _state
 
     sealed class LoginState {
         object Loading: LoginState()
