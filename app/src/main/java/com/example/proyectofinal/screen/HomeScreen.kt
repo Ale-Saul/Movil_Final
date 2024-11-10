@@ -40,7 +40,7 @@ import coil.compose.AsyncImage
 import com.example.model.Movie
 import com.example.network.MovieRemoteDataSource
 import com.example.network.RetrofitBuilder
-import com.example.proyectofinal.MovieHomeViewModel
+import com.example.proyectofinal.viewModel.MovieHomeViewModel
 import com.example.proyectofinal.R
 import com.example.proyectofinal.ui.theme.onPrimaryDark
 import com.example.proyectofinal.ui.theme.onPrimaryLight

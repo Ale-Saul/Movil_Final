@@ -58,6 +58,7 @@ import com.example.proyectofinal.ui.theme.onPrimaryLight
 import com.example.proyectofinal.ui.theme.outlineLightHighContrast
 import com.example.proyectofinal.ui.theme.primaryContainerLightMediumContrast
 import com.example.proyectofinal.ui.theme.tertiaryCommon
+import com.example.proyectofinal.viewModel.MovieViewModel
 
 class MovieActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
