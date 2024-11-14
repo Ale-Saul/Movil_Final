@@ -8,12 +8,14 @@ import com.example.model.GenreWithMovies
 import com.example.model.Movie
 import com.example.model.MovieGenreCrossRef
 import com.example.model.MovieWithGenres
+import com.example.model.UserState
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 class MovieRepository(val context: Context)  {
     val movieDao = AppRoomDatabase.getDatabase(context).movieDao()
+    val stateDao = AppRoomDatabase.getDatabase(context).stateDao()
 
     init {
         initializeGenres()
@@ -24,7 +26,7 @@ class MovieRepository(val context: Context)  {
             val genresInDb = movieDao.getAllGenres()
             if(genresInDb.isEmpty()) {
                 val genres = listOf(
-                    Genre(genreId = 28, name = "Accion"),
+                    Genre(genreId = 28, name = "Acción"),
                     Genre(genreId = 16, name = "Animación"),
                     Genre(genreId = 12, name = "Aventura"),
                     Genre(genreId = 878, name = "Ciencia Ficción"),
@@ -71,5 +73,13 @@ class MovieRepository(val context: Context)  {
 
     fun getMovieById(movieId: Int): LiveData<Movie> {
         return movieDao.getMovieById(movieId)
+    }
+
+    suspend fun saveLoginState(isLoggedIn: Boolean) {
+        stateDao.setUserState(UserState(isLoggedIn = isLoggedIn))
+    }
+
+    suspend fun getLogingState(): Boolean? {
+        return stateDao.isLoggedIn()
     }
 }
