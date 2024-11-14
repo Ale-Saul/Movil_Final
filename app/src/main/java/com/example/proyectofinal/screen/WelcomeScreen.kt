@@ -3,6 +3,7 @@ package com.example.proyectofinal.screen
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -38,19 +39,20 @@ import com.example.proyectofinal.ui.theme.onPrimaryLight
 import com.example.proyectofinal.ui.theme.onWhiteContainerDarkMediumContrast
 
 @Composable
-fun WelcomeScreen(onClick: () -> Unit) {
+fun WelcomeScreen(onClick: () -> Unit, onSkip: ()-> Unit) {
     Scaffold(
         content = {paddingValues ->
             WelcomeScreenContent(
                 modifier = Modifier.padding(paddingValues),
-                onClick = onClick
+                onClick = onClick,
+                onSkip = onSkip
             )
         }
     )
 }
 
 @Composable
-fun WelcomeScreenContent(modifier: Modifier = Modifier, onClick: () -> Unit) {
+fun WelcomeScreenContent(modifier: Modifier = Modifier, onClick: () -> Unit, onSkip: () -> Unit) {
     val localContext= LocalContext.current
     Box(
         modifier = Modifier
@@ -133,6 +135,17 @@ fun WelcomeScreenContent(modifier: Modifier = Modifier, onClick: () -> Unit) {
                     )
                 }
             }
+            Spacer(modifier = Modifier.height(24.dp))
+
+            // Botón de "Omitir"
+            Text(
+                text = "Omitir",
+                color = onPrimaryLight,
+                fontSize = 16.sp,
+                modifier = Modifier
+                    .padding(top = 16.dp)
+                    .clickable(onClick = onSkip)
+            )
         }
     }
 }
