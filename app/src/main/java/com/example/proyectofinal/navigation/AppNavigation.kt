@@ -45,6 +45,9 @@ fun AppNavigation() {
             WelcomeScreen(
                 onClick = {
                     navController.navigate(Screens.RegisterScreen.route)
+                },
+                onLoginClick = {
+                    navController.navigate(Screens.LoginScreen.route)
                 }
             )
         }

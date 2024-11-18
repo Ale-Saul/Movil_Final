@@ -15,10 +15,12 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
@@ -27,6 +29,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
@@ -158,7 +161,6 @@ fun PromocionesButton() {
         )
     }
 }
-
 @Composable
 fun MovieScreen(modifier: Modifier, onClickMovie: (Int) -> Unit) {
     val dataSource: MovieRemoteDataSource = MovieRemoteDataSource(RetrofitBuilder)
@@ -166,39 +168,46 @@ fun MovieScreen(modifier: Modifier, onClickMovie: (Int) -> Unit) {
     val lifecycle = LocalLifecycleOwner.current
     //var listMovies by remember { mutableStateOf<List<MovieResponseDto>>(emptyList()) }
     val repository = MovieRepository(context)
+
     val moviesHomeViewModel: MovieHomeViewModel = MovieHomeViewModel(repository, dataSource)
     val listMovies by moviesHomeViewModel.movies.observeAsState(emptyList())
-    //val moviesViewModel = MoviesViewModel()
+    //val movieInterestViewModel: MovieInterestViewModel = MovieInterestViewModel(repository)
 
-//    fun updateUI(movieResponseDtos: List<MovieResponseDto>) {
-//        listMovies = movieResponseDtos
-//    }
-//    moviesViewModel.list.observe(
-//        lifecycle,
-//        Observer(::updateUI)
-//    )
-//
-//    moviesViewModel.getAllMovies(dataSource, context)
+    //val moviesInterest by movieInterestViewModel.moviesInterest.observeAsState(emptyList())
+    //val isDataLoaded by moviesHomeViewModel.isDataLoaded.observeAsState(false)
 
     LaunchedEffect(Unit) {
         moviesHomeViewModel.getAllMovies()
+        //movieInterestViewModel.getMoviesFilteredByGenre(isDataLoaded)
     }
-        Column(
-            modifier = modifier
-                .fillMaxSize()
-                .background(primaryContainerLightMediumContrast)
-        ) {
-            MovieSection(
-                title = stringResource(id = R.string.label_interes),
-                movies = listMovies,
-                onClickMovie = onClickMovie
-            )
-            MovieSection(
-                title = stringResource(id = R.string.label_accion),
-                movies = listMovies,
-                onClickMovie = onClickMovie
-            )
-            PromocionesButton()
+    Column(
+        modifier = modifier
+            .fillMaxSize()
+            .background(primaryContainerLightMediumContrast)
+    ) {
+        MovieSection(
+            title = stringResource(id = R.string.label_interes),
+            movies = listMovies,
+            onClickMovie = onClickMovie
+        )
+        PromocionesButton()
+
+        if (!true) {
+            CircularProgressIndicator(modifier = Modifier.align(Alignment.CenterHorizontally))
+        } else {
+//            LazyColumn {
+//                items(moviesInterest.size){
+//                    moviesInterest[it].second?.let { it1 ->
+//                        MovieSection(
+//                            title = moviesInterest[it].first,
+//                            movies = it1,
+//                            onClickMovie = onClickMovie
+//                        )
+//                    }
+//                }
+//            }
         }
+
+    }
 
 }

@@ -40,8 +40,8 @@ interface IMovieDao {
     suspend fun getMovieWithGenres(movieId: Int): List<MovieWithGenres>
 
     @Transaction
-    @Query("SELECT * FROM genre_table WHERE genreId = :genreId")
-    suspend fun getGenreWithMovies(genreId: Int): List<GenreWithMovies>
+    @Query("SELECT movie_table.* FROM movie_table JOIN MovieGenreCrossRef ON movie_table.movieId = MovieGenreCrossRef.movieId WHERE genreId = :genreId")
+    suspend fun getGenreWithMovies(genreId: Int): List<Movie>?
 
     @Query("SELECT * FROM movie_table WHERE movieId = :movieId")
     fun getMovieById(movieId: Int): LiveData<Movie>

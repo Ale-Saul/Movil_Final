@@ -16,6 +16,7 @@ class MovieHomeViewModel(
     private val dataSource: MovieRemoteDataSource
 ) : ViewModel()  {
 
+    val isDataLoaded: Boolean = true
     val movies: LiveData<List<Movie>> = repository.getAllMovies()
     val movie: LiveData<Movie>
         get() = _movie

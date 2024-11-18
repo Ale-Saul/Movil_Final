@@ -26,14 +26,14 @@ class MovieRepository(val context: Context)  {
             val genresInDb = movieDao.getAllGenres()
             if(genresInDb.isEmpty()) {
                 val genres = listOf(
-                    Genre(genreId = 28, name = "Acción"),
-                    Genre(genreId = 16, name = "Animación"),
+                    Genre(genreId = 28, name = "Accion"),
+                    Genre(genreId = 16, name = "Animacion"),
                     Genre(genreId = 12, name = "Aventura"),
-                    Genre(genreId = 878, name = "Ciencia Ficción"),
+                    Genre(genreId = 878, name = "Ciencia Ficcion"),
                     Genre(genreId = 35, name = "Comedia"),
                     Genre(genreId = 99, name = "Documental"),
                     Genre(genreId = 18, name = "Drama"),
-                    Genre(genreId = 14, name = "Fantasía"),
+                    Genre(genreId = 14, name = "Fantasia"),
                     Genre(genreId = 10751, name = "Familiar-Infantil"),
                     Genre(genreId = 10402, name = "Musical"),
                     Genre(genreId = 9648, name = "Suspenso"),
@@ -47,7 +47,7 @@ class MovieRepository(val context: Context)  {
         return movieDao.insertMovies(movies)
     }
 
-    suspend fun getMoviesFilteredByGenre(genreId: Int) : List<GenreWithMovies>{
+    suspend fun getMoviesFilteredByGenre(genreId: Int): List<Movie>? {
         return movieDao.getGenreWithMovies(genreId)
     }
 
@@ -75,11 +75,7 @@ class MovieRepository(val context: Context)  {
         return movieDao.getMovieById(movieId)
     }
 
-    suspend fun saveLoginState(isLoggedIn: Boolean) {
-        stateDao.setUserState(UserState(isLoggedIn = isLoggedIn))
-    }
-
-    suspend fun getLogingState(): Boolean? {
-        return stateDao.isLoggedIn()
+    fun getAllGenres(): List<Genre> {
+        return movieDao.getAllGenres()
     }
 }
