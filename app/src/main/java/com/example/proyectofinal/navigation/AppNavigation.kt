@@ -29,13 +29,13 @@ fun AppNavigation() {
     val database = remember { AppRoomDatabase.getDatabase(context) }
 
     var startDestination by remember { mutableStateOf(Screens.WelcomeScreen.route) }
-    LaunchedEffect(Unit) {
-        val isLoggedIn = withContext(Dispatchers.IO) {
-            database.stateDao().isLoggedIn() ?: false
-        }
-        startDestination = if (isLoggedIn) Screens.HomeScreen.route else Screens.WelcomeScreen.route
-
-    }
+//    LaunchedEffect(Unit) {
+//        val isLoggedIn = withContext(Dispatchers.IO) {
+//            database.stateDao().isLoggedIn() ?: false
+//        }
+//        startDestination = if (isLoggedIn) Screens.HomeScreen.route else Screens.WelcomeScreen.route
+//
+//    }
 
     NavHost(
         navController = navController,
@@ -67,7 +67,6 @@ fun AppNavigation() {
         }
         composable(Screens.HomeScreen.route) {
             HomeScreen(onClick = { movieId ->
-                Log.e("Navigation", "Navigating to MovieDetailScreen with movieId: $movieId")
                 navController.navigate("movie_detail_screen/$movieId")
             })
         }

@@ -31,9 +31,11 @@ class UserViewModel (
         Log.d("holita", user.toString())
         viewModelScope.launch {
             val userId = repository.insert(user)
+            Log.d("holitaaa", userId.toString())
             Log.d("holiyta", selectedGenres.toString())
             selectedGenres.forEach {genreName ->
                 val genreId = repository.getGenreIdByName(genreName)
+                Log.d("holitaa", genreId.toString())
                 repository.insertUserGenreCrossRef(UserGenreCrossRef(userId.toInt(), genreId))
             }
         }

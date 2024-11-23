@@ -11,6 +11,7 @@ import com.example.model.MovieWithGenres
 import com.example.model.UserState
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
 
 class MovieRepository(val context: Context)  {
@@ -47,7 +48,7 @@ class MovieRepository(val context: Context)  {
         return movieDao.insertMovies(movies)
     }
 
-    suspend fun getMoviesFilteredByGenre(genreId: Int): List<Movie>? {
+    fun getMoviesFilteredByGenre(genreId: Int): Flow<List<Movie>?> {
         return movieDao.getGenreWithMovies(genreId)
     }
 

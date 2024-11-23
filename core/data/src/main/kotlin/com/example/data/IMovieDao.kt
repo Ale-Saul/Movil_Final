@@ -11,6 +11,7 @@ import com.example.model.GenreWithMovies
 import com.example.model.Movie
 import com.example.model.MovieGenreCrossRef
 import com.example.model.MovieWithGenres
+import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface IMovieDao {
@@ -20,7 +21,7 @@ interface IMovieDao {
     @Query("SELECT * FROM movie_table")
     fun getAllMovies(): LiveData<List<Movie>>
 
-    @Query("SELECT * FROM genre_table")
+    @Query("SELECT genre_table.* FROM UserGenreCrossRef JOIN genre_table ON UserGenreCrossRef.genreId = genre_table.genreId WHERE UserGenreCrossRef.userId = 2")
     fun getAllGenres(): List<Genre>
 
     @Query("SELECT COUNT(*) FROM movie_table")
@@ -41,7 +42,7 @@ interface IMovieDao {
 
     @Transaction
     @Query("SELECT movie_table.* FROM movie_table JOIN MovieGenreCrossRef ON movie_table.movieId = MovieGenreCrossRef.movieId WHERE genreId = :genreId")
-    suspend fun getGenreWithMovies(genreId: Int): List<Movie>?
+    fun getGenreWithMovies(genreId: Int): Flow<List<Movie>?>
 
     @Query("SELECT * FROM movie_table WHERE movieId = :movieId")
     fun getMovieById(movieId: Int): LiveData<Movie>

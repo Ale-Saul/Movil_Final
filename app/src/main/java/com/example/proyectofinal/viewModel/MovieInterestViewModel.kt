@@ -1,5 +1,6 @@
 package com.example.proyectofinal.viewModel
 
+import android.content.Context
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -8,36 +9,51 @@ import androidx.lifecycle.viewModelScope
 import com.example.model.Movie
 import com.example.repository.MovieRepository
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-class MovieInterestViewModel(
-    private val repository: MovieRepository
-) : ViewModel()  {
-    val moviesInterest: LiveData<List<Pair<String, List<Movie>?>>>
-        get() = _moviesInterest
-    val _moviesInterest = MutableLiveData<List<Pair<String, List<Movie>?>>>()
-
-    fun getMovieById(movieId: Int): LiveData<Movie> {
-        return repository.getMovieById(movieId)
+class MovieInterestViewModel: ViewModel()  {
+    sealed class MoviesInterestState {
+        object Loading : MoviesInterestState()
+        class Success(val movies: List<Pair<String, List<Movie>>>) : MoviesInterestState()
+        class Error(val message: String) : MoviesInterestState()
     }
 
-    fun getMoviesFilteredByGenre(isDataLoaded : Boolean) {
-        viewModelScope.launch (Dispatchers.IO){
-            if( isDataLoaded ) {
+    val _moviesInterest = MutableLiveData<MoviesInterestState>()
+    val moviesInterest: LiveData<MoviesInterestState>
+        get() = _moviesInterest
+
+    fun getMovieById(context: Context, movieId: Int): LiveData<Movie> {
+        return MovieRepository(context = context).getMovieById(movieId)
+    }
+
+    fun getMoviesFilteredByGenre(context: Context, isDataLoaded : Boolean) {
+        viewModelScope.launch(Dispatchers.IO) {
+            try{
+                val repository = MovieRepository(context)
                 val genresAll = repository.getAllGenres()
                 val moviesFiltered = genresAll.map { genre ->
-                    (genre.name to repository.getMoviesFilteredByGenre(genre.genreId))
+                    val movies = repository.getMoviesFilteredByGenre(genre.genreId).first()
+                    Log.d("holita2.1", "Peliculas filtradas: ${genre.genreId}")
+                    Log.d("holita2.2", "Peliculas filtradas: ${movies}")
+                    genre.name to movies
                 }
+                Log.d("holita2", "Peliculas filtradas: $moviesFiltered")
                 withContext(Dispatchers.Main) {
-                    _moviesInterest.value = moviesFiltered
+                    Log.d("holita10", "ahora no: ${_moviesInterest.value}")
+                    _moviesInterest.value = MoviesInterestState.Success(moviesFiltered as List<Pair<String, List<Movie>>>)
+                    Log.d("holita10", "ahora si: ${_moviesInterest.value}")
                 }
-            } else {
+            } catch (e: Exception) {
                 Log.e("MovieHomeViewModel", "No se han cargado las peliculas")
+                withContext(Dispatchers.Main) {
+                    _moviesInterest.value = MoviesInterestState.Error("No se han cargado las peliculas")
+                }
             }
         }
     }
-
-
-
 }
