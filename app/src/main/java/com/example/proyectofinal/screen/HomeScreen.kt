@@ -49,12 +49,13 @@ import com.example.proyectofinal.ui.theme.tertiaryCommon
 import com.example.repository.MovieRepository
 
 @Composable
-fun HomeScreen(onClick: (Int) -> Unit) {
+fun HomeScreen(onClick: (Int) -> Unit, onNavigateToCinemas: () -> Unit) {
     Scaffold(
         content = {paddingValues ->
             MovieScreen(
                 modifier = Modifier.padding(paddingValues),
-                onClickMovie = onClick
+                onClickMovie = onClick,
+                onNavigateToCinemas = onNavigateToCinemas
             )
         }
     )
@@ -142,9 +143,9 @@ fun MovieSection(title: String, movies: List<Movie>, onClickMovie: (Int) -> Unit
 }
 
 @Composable
-fun PromocionesButton() {
+fun PromocionesButton(onNavigateToCinemas: () -> Unit) { // Recibe el callback como parámetro
     OutlinedButton(
-        onClick = { /* Acción */ },
+        onClick = { onNavigateToCinemas() }, // Usa el callback para navegar
         border = BorderStroke(1.dp, onPrimaryLight),
         shape = RoundedCornerShape(20.dp),
         modifier = Modifier
@@ -152,15 +153,17 @@ fun PromocionesButton() {
             .padding(16.dp)
             .height(48.dp)
     ) {
-        Text(text = stringResource(id = R.string.promocion_label),
+        Text(
+            text = stringResource(id = R.string.cinema_label),
             color = onPrimaryLight,
             fontSize = 18.sp
         )
     }
 }
 
+
 @Composable
-fun MovieScreen(modifier: Modifier, onClickMovie: (Int) -> Unit) {
+fun MovieScreen(modifier: Modifier, onClickMovie: (Int) -> Unit, onNavigateToCinemas: () -> Unit) {
     val dataSource: MovieRemoteDataSource = MovieRemoteDataSource(RetrofitBuilder)
     val context = LocalContext.current
     val lifecycle = LocalLifecycleOwner.current
@@ -188,6 +191,7 @@ fun MovieScreen(modifier: Modifier, onClickMovie: (Int) -> Unit) {
                 .fillMaxSize()
                 .background(primaryContainerLightMediumContrast)
         ) {
+            PromocionesButton(onNavigateToCinemas = onNavigateToCinemas)
             MovieSection(
                 title = stringResource(id = R.string.label_interes),
                 movies = listMovies,
@@ -198,7 +202,7 @@ fun MovieScreen(modifier: Modifier, onClickMovie: (Int) -> Unit) {
                 movies = listMovies,
                 onClickMovie = onClickMovie
             )
-            PromocionesButton()
+
         }
 
 }
