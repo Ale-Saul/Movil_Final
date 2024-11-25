@@ -251,8 +251,36 @@ public final class IMovieDao_Impl implements IMovieDao {
 
   @Override
   public List<Genre> getAllGenres() {
-    final String _sql = "SELECT genre_table.* FROM UserGenreCrossRef JOIN genre_table ON UserGenreCrossRef.genreId = genre_table.genreId WHERE UserGenreCrossRef.userId = 2";
+    final String _sql = "SELECT * FROM  genre_table";
     final RoomSQLiteQuery _statement = RoomSQLiteQuery.acquire(_sql, 0);
+    __db.assertNotSuspendingTransaction();
+    final Cursor _cursor = DBUtil.query(__db, _statement, false, null);
+    try {
+      final int _cursorIndexOfGenreId = CursorUtil.getColumnIndexOrThrow(_cursor, "genreId");
+      final int _cursorIndexOfName = CursorUtil.getColumnIndexOrThrow(_cursor, "name");
+      final List<Genre> _result = new ArrayList<Genre>(_cursor.getCount());
+      while (_cursor.moveToNext()) {
+        final Genre _item;
+        final int _tmpGenreId;
+        _tmpGenreId = _cursor.getInt(_cursorIndexOfGenreId);
+        final String _tmpName;
+        _tmpName = _cursor.getString(_cursorIndexOfName);
+        _item = new Genre(_tmpGenreId,_tmpName);
+        _result.add(_item);
+      }
+      return _result;
+    } finally {
+      _cursor.close();
+      _statement.release();
+    }
+  }
+
+  @Override
+  public List<Genre> getAllGenresProfile(final int userId) {
+    final String _sql = "SELECT genre_table.* FROM UserGenreCrossRef JOIN genre_table ON UserGenreCrossRef.genreId = genre_table.genreId WHERE UserGenreCrossRef.userId = ?";
+    final RoomSQLiteQuery _statement = RoomSQLiteQuery.acquire(_sql, 1);
+    int _argIndex = 1;
+    _statement.bindLong(_argIndex, userId);
     __db.assertNotSuspendingTransaction();
     final Cursor _cursor = DBUtil.query(__db, _statement, false, null);
     try {

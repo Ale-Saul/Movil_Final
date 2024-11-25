@@ -13,4 +13,11 @@ interface UserStateDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun setUserState(userState: UserState)
+
+    @Query("DELETE FROM user_state")
+    suspend fun deleteAll()
+
+    @Query("SELECT user_state.id FROM user_state")
+    suspend fun getUserState(): Int
+
 }

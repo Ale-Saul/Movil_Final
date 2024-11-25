@@ -57,6 +57,9 @@ class UserViewModel (
         viewModelScope.launch {
             if( repository.loginUser(userName, password)) {
                 _state.value = LoginState.DoLogin("Success")
+                val userIdCurrent = repository.getIdByUsername(userName)
+                repository.saveLoginState(userIdCurrent, true)
+                Log.d("holitawww", userIdCurrent.toString())
             } else {
                 _state.value = LoginState.Error("Invalid credential")
             }

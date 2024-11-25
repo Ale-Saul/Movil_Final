@@ -1,15 +1,12 @@
 package com.example.repository
 
 import android.content.Context
-import android.util.Log
 import androidx.lifecycle.LiveData
 import com.example.data.AppRoomDatabase
 import com.example.model.Genre
-import com.example.model.GenreWithMovies
 import com.example.model.Movie
 import com.example.model.MovieGenreCrossRef
 import com.example.model.MovieWithGenres
-import com.example.model.UserState
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
@@ -77,8 +74,8 @@ class MovieRepository(val context: Context)  {
         return movieDao.getMovieById(movieId)
     }
 
-    fun getAllGenres(): List<Genre> {
-        return movieDao.getAllGenres()
+    fun getAllGenresProfile(userId: Int): List<Genre> {
+        return movieDao.getAllGenresProfile(userId)
     }
 
     fun updateVoteAverage( newRating: Int, movieId: Int) {

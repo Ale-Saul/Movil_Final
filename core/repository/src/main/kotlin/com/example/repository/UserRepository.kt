@@ -38,12 +38,17 @@ class UserRepository(val context: Context) {
         return userDao.insertUserGenreCrossRef(userGenreCrossRef)
     }
 
-    suspend fun saveLoginState(isLoggedIn: Boolean) {
-        stateDao.setUserState(UserState(isLoggedIn = isLoggedIn))
+    suspend fun saveLoginState(userIdCurrent: Int, isLoggedIn: Boolean) {
+        stateDao.deleteAll()
+        stateDao.setUserState(UserState(id = userIdCurrent, isLoggedIn = isLoggedIn))
     }
 
-    suspend fun getLoginState(database:AppRoomDatabase): Boolean {
-        return stateDao.isLoggedIn() ?: false
+    suspend fun getLoginState(): Int {
+        return stateDao.getUserState()
+    }
+
+    suspend fun getIdByUsername(name: String): Int {
+        return userDao.getIdByUsername(name)
     }
 }
 

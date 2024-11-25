@@ -282,6 +282,35 @@ public final class IUserDao_Impl implements IUserDao {
     }, $completion);
   }
 
+  @Override
+  public Object getIdByUsername(final String username,
+      final Continuation<? super Integer> $completion) {
+    final String _sql = "SELECT userId FROM user_table WHERE username = ?";
+    final RoomSQLiteQuery _statement = RoomSQLiteQuery.acquire(_sql, 1);
+    int _argIndex = 1;
+    _statement.bindString(_argIndex, username);
+    final CancellationSignal _cancellationSignal = DBUtil.createCancellationSignal();
+    return CoroutinesRoom.execute(__db, false, _cancellationSignal, new Callable<Integer>() {
+      @Override
+      @NonNull
+      public Integer call() throws Exception {
+        final Cursor _cursor = DBUtil.query(__db, _statement, false, null);
+        try {
+          final int _result;
+          if (_cursor.moveToFirst()) {
+            _result = _cursor.getInt(0);
+          } else {
+            _result = 0;
+          }
+          return _result;
+        } finally {
+          _cursor.close();
+          _statement.release();
+        }
+      }
+    }, $completion);
+  }
+
   @NonNull
   public static List<Class<?>> getRequiredConverters() {
     return Collections.emptyList();

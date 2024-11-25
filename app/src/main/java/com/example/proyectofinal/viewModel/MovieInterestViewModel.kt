@@ -6,8 +6,10 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.data.UserStateDao
 import com.example.model.Movie
 import com.example.repository.MovieRepository
+import com.example.repository.UserRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -35,7 +37,9 @@ class MovieInterestViewModel: ViewModel()  {
         viewModelScope.launch(Dispatchers.IO) {
             try{
                 val repository = MovieRepository(context)
-                val genresAll = repository.getAllGenres()
+                val userFromRepo = UserRepository(context).getLoginState()
+                Log.d("holitaaaaaa1", userFromRepo.toString())
+                val genresAll = repository.getAllGenresProfile(userFromRepo)
                 val moviesFiltered = genresAll.map { genre ->
                     val movies = repository.getMoviesFilteredByGenre(genre.genreId).first()
                     Log.d("holita2.1", "Peliculas filtradas: ${genre.genreId}")

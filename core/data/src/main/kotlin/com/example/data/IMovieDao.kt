@@ -21,8 +21,11 @@ interface IMovieDao {
     @Query("SELECT * FROM movie_table")
     fun getAllMovies(): LiveData<List<Movie>>
 
-    @Query("SELECT genre_table.* FROM UserGenreCrossRef JOIN genre_table ON UserGenreCrossRef.genreId = genre_table.genreId WHERE UserGenreCrossRef.userId = 2")
+    @Query("SELECT * FROM  genre_table")
     fun getAllGenres(): List<Genre>
+
+    @Query("SELECT genre_table.* FROM UserGenreCrossRef JOIN genre_table ON UserGenreCrossRef.genreId = genre_table.genreId WHERE UserGenreCrossRef.userId = :userId")
+    fun getAllGenresProfile(userId: Int): List<Genre>
 
     @Query("SELECT COUNT(*) FROM movie_table")
     suspend fun getMovieCount(): Int
