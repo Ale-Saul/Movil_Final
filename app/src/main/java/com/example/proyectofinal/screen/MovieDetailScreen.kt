@@ -73,6 +73,7 @@ fun MovieDetailScreen(movieId: Int?, onBackPressed: () -> Unit) {
     val movie = movieId?.let { moviesHomeViewModel.getMovieById(it).observeAsState() }?.value
     movie?.let {
         DetailContentScreen(
+            keyMovie = it.movieId,
             name = it.title,
             image = it.posterPath,
             subtitle = "2014 - Ciencia ficcion",
@@ -92,11 +93,12 @@ fun MovieDetailScreen(movieId: Int?, onBackPressed: () -> Unit) {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun DetailContentScreen(name: String, image: String, subtitle: String, points:Double, descrip: String, onBackPressed: () -> Unit) {
+fun DetailContentScreen(keyMovie: Int,name: String, image: String, subtitle: String, points:Double, descrip: String, onBackPressed: () -> Unit) {
     val movieImage = image
     var iconSelect by remember { mutableStateOf(false) }
     var rating by remember { mutableStateOf(0) }
-    val movieViewModel = MovieViewModel()
+    val repository = MovieRepository(LocalContext.current)
+    val movieViewModel = MovieViewModel(repository)
     val lifecycle = LocalLifecycleOwner.current
 
     fun updateUI(i: Int) {
@@ -129,12 +131,12 @@ fun DetailContentScreen(name: String, image: String, subtitle: String, points:Do
                 }
             )
         }
-    ) { innerPadding ->
+    ) {innerPadding ->
         Box(modifier = Modifier
-            .fillMaxSize()
+            //.fillMaxSize()
             .background(primaryContainerLightMediumContrast)
             .padding(innerPadding)
-            .padding(start = 26.dp, bottom = 30.dp, end = 26.dp)
+            .padding(top = 1.dp, start = 26.dp, bottom = 30.dp, end = 26.dp)
             .clip(RoundedCornerShape(25.dp))
         ){
             Column(
@@ -146,7 +148,7 @@ fun DetailContentScreen(name: String, image: String, subtitle: String, points:Do
                 verticalArrangement = Arrangement.spacedBy(15.dp)
             ) {
                 AsyncImage(
-                    model = "https://image.tmdb.org/t/p/w185/${image}",
+                    model = "https://image.tmdb.org/t/p/w500/${image}",
                     contentDescription = null,
                     modifier= Modifier
                         .height(340.dp)
@@ -210,9 +212,10 @@ fun DetailContentScreen(name: String, image: String, subtitle: String, points:Do
                 ) {
                     RatingBar(
                         rating = rating,
-                        onRatingChanged = { newRating ->
-                            movieViewModel.update(newRating)
-                        }
+                        onRatingChanged = { newRating, movieID ->
+                            movieViewModel.update(newRating, movieID)
+                        },
+                        movieID = keyMovie
                     )
                     OutlinedButton(
                         onClick = { /*TODO*/ },
@@ -248,7 +251,8 @@ fun DetailContentScreen(name: String, image: String, subtitle: String, points:Do
 fun RatingBar(
     modifier: Modifier = Modifier,
     rating: Int = 0,
-    onRatingChanged: (Int) -> Unit
+    onRatingChanged : (Int, Int) -> Unit,
+    movieID: Int
 ) {
     var currentRating by remember { mutableStateOf(rating) }
     Row(
@@ -268,7 +272,7 @@ fun RatingBar(
                     .size(30.dp)
                     .clickable {
                         currentRating = i
-                        onRatingChanged(i)
+                        onRatingChanged(i, movieID)
                     },
                 tint = if (i <= currentRating) tertiaryCommon else outlineLightHighContrast,
             )

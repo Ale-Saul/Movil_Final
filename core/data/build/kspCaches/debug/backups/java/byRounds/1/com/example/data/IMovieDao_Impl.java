@@ -9,13 +9,13 @@ import androidx.room.CoroutinesRoom;
 import androidx.room.EntityInsertionAdapter;
 import androidx.room.RoomDatabase;
 import androidx.room.RoomSQLiteQuery;
+import androidx.room.SharedSQLiteStatement;
 import androidx.room.util.CursorUtil;
 import androidx.room.util.DBUtil;
 import androidx.room.util.RelationUtil;
 import androidx.room.util.StringUtil;
 import androidx.sqlite.db.SupportSQLiteStatement;
 import com.example.model.Genre;
-import com.example.model.GenreWithMovies;
 import com.example.model.Movie;
 import com.example.model.MovieGenreCrossRef;
 import com.example.model.MovieWithGenres;
@@ -37,6 +37,7 @@ import java.util.concurrent.Callable;
 import javax.annotation.processing.Generated;
 import kotlin.Unit;
 import kotlin.coroutines.Continuation;
+import kotlinx.coroutines.flow.Flow;
 
 @Generated("androidx.room.RoomProcessor")
 @SuppressWarnings({"unchecked", "deprecation"})
@@ -48,6 +49,8 @@ public final class IMovieDao_Impl implements IMovieDao {
   private final EntityInsertionAdapter<Genre> __insertionAdapterOfGenre;
 
   private final EntityInsertionAdapter<MovieGenreCrossRef> __insertionAdapterOfMovieGenreCrossRef;
+
+  private final SharedSQLiteStatement __preparedStmtOfSetVoteAverage;
 
   public IMovieDao_Impl(@NonNull final RoomDatabase __db) {
     this.__db = __db;
@@ -94,6 +97,14 @@ public final class IMovieDao_Impl implements IMovieDao {
           @NonNull final MovieGenreCrossRef entity) {
         statement.bindLong(1, entity.getMovieId());
         statement.bindLong(2, entity.getGenreId());
+      }
+    };
+    this.__preparedStmtOfSetVoteAverage = new SharedSQLiteStatement(__db) {
+      @Override
+      @NonNull
+      public String createQuery() {
+        final String _query = "UPDATE movie_table SET voteAverage = ? WHERE movieId = ?";
+        return _query;
       }
     };
   }
@@ -174,6 +185,27 @@ public final class IMovieDao_Impl implements IMovieDao {
   }
 
   @Override
+  public void setVoteAverage(final double newRating, final int movieID) {
+    __db.assertNotSuspendingTransaction();
+    final SupportSQLiteStatement _stmt = __preparedStmtOfSetVoteAverage.acquire();
+    int _argIndex = 1;
+    _stmt.bindDouble(_argIndex, newRating);
+    _argIndex = 2;
+    _stmt.bindLong(_argIndex, movieID);
+    try {
+      __db.beginTransaction();
+      try {
+        _stmt.executeUpdateDelete();
+        __db.setTransactionSuccessful();
+      } finally {
+        __db.endTransaction();
+      }
+    } finally {
+      __preparedStmtOfSetVoteAverage.release(_stmt);
+    }
+  }
+
+  @Override
   public LiveData<List<Movie>> getAllMovies() {
     final String _sql = "SELECT * FROM movie_table";
     final RoomSQLiteQuery _statement = RoomSQLiteQuery.acquire(_sql, 0);
@@ -219,7 +251,7 @@ public final class IMovieDao_Impl implements IMovieDao {
 
   @Override
   public List<Genre> getAllGenres() {
-    final String _sql = "SELECT * FROM genre_table";
+    final String _sql = "SELECT genre_table.* FROM UserGenreCrossRef JOIN genre_table ON UserGenreCrossRef.genreId = genre_table.genreId WHERE UserGenreCrossRef.userId = 2";
     final RoomSQLiteQuery _statement = RoomSQLiteQuery.acquire(_sql, 0);
     __db.assertNotSuspendingTransaction();
     final Cursor _cursor = DBUtil.query(__db, _statement, false, null);
@@ -338,60 +370,56 @@ public final class IMovieDao_Impl implements IMovieDao {
   }
 
   @Override
-  public Object getGenreWithMovies(final int genreId,
-      final Continuation<? super List<GenreWithMovies>> $completion) {
-    final String _sql = "SELECT * FROM genre_table WHERE genreId = ?";
+  public Flow<List<Movie>> getGenreWithMovies(final int genreId) {
+    final String _sql = "SELECT movie_table.* FROM movie_table JOIN MovieGenreCrossRef ON movie_table.movieId = MovieGenreCrossRef.movieId WHERE genreId = ?";
     final RoomSQLiteQuery _statement = RoomSQLiteQuery.acquire(_sql, 1);
     int _argIndex = 1;
     _statement.bindLong(_argIndex, genreId);
-    final CancellationSignal _cancellationSignal = DBUtil.createCancellationSignal();
-    return CoroutinesRoom.execute(__db, true, _cancellationSignal, new Callable<List<GenreWithMovies>>() {
+    return CoroutinesRoom.createFlow(__db, true, new String[] {"movie_table",
+        "MovieGenreCrossRef"}, new Callable<List<Movie>>() {
       @Override
-      @NonNull
-      public List<GenreWithMovies> call() throws Exception {
+      @Nullable
+      public List<Movie> call() throws Exception {
         __db.beginTransaction();
         try {
-          final Cursor _cursor = DBUtil.query(__db, _statement, true, null);
+          final Cursor _cursor = DBUtil.query(__db, _statement, false, null);
           try {
-            final int _cursorIndexOfGenreId = CursorUtil.getColumnIndexOrThrow(_cursor, "genreId");
-            final int _cursorIndexOfName = CursorUtil.getColumnIndexOrThrow(_cursor, "name");
-            final HashMap<Long, ArrayList<Movie>> _collectionMovies = new HashMap<Long, ArrayList<Movie>>();
+            final int _cursorIndexOfMovieId = CursorUtil.getColumnIndexOrThrow(_cursor, "movieId");
+            final int _cursorIndexOfTitle = CursorUtil.getColumnIndexOrThrow(_cursor, "title");
+            final int _cursorIndexOfDescription = CursorUtil.getColumnIndexOrThrow(_cursor, "description");
+            final int _cursorIndexOfPosterPath = CursorUtil.getColumnIndexOrThrow(_cursor, "posterPath");
+            final int _cursorIndexOfVoteAverage = CursorUtil.getColumnIndexOrThrow(_cursor, "voteAverage");
+            final List<Movie> _result = new ArrayList<Movie>(_cursor.getCount());
             while (_cursor.moveToNext()) {
-              final long _tmpKey;
-              _tmpKey = _cursor.getLong(_cursorIndexOfGenreId);
-              if (!_collectionMovies.containsKey(_tmpKey)) {
-                _collectionMovies.put(_tmpKey, new ArrayList<Movie>());
-              }
-            }
-            _cursor.moveToPosition(-1);
-            __fetchRelationshipmovieTableAscomExampleModelMovie(_collectionMovies);
-            final List<GenreWithMovies> _result = new ArrayList<GenreWithMovies>(_cursor.getCount());
-            while (_cursor.moveToNext()) {
-              final GenreWithMovies _item;
-              final Genre _tmpGenre;
-              final int _tmpGenreId;
-              _tmpGenreId = _cursor.getInt(_cursorIndexOfGenreId);
-              final String _tmpName;
-              _tmpName = _cursor.getString(_cursorIndexOfName);
-              _tmpGenre = new Genre(_tmpGenreId,_tmpName);
-              final ArrayList<Movie> _tmpMoviesCollection;
-              final long _tmpKey_1;
-              _tmpKey_1 = _cursor.getLong(_cursorIndexOfGenreId);
-              _tmpMoviesCollection = _collectionMovies.get(_tmpKey_1);
-              _item = new GenreWithMovies(_tmpGenre,_tmpMoviesCollection);
+              final Movie _item;
+              final int _tmpMovieId;
+              _tmpMovieId = _cursor.getInt(_cursorIndexOfMovieId);
+              final String _tmpTitle;
+              _tmpTitle = _cursor.getString(_cursorIndexOfTitle);
+              final String _tmpDescription;
+              _tmpDescription = _cursor.getString(_cursorIndexOfDescription);
+              final String _tmpPosterPath;
+              _tmpPosterPath = _cursor.getString(_cursorIndexOfPosterPath);
+              final double _tmpVoteAverage;
+              _tmpVoteAverage = _cursor.getDouble(_cursorIndexOfVoteAverage);
+              _item = new Movie(_tmpMovieId,_tmpTitle,_tmpDescription,_tmpPosterPath,_tmpVoteAverage);
               _result.add(_item);
             }
             __db.setTransactionSuccessful();
             return _result;
           } finally {
             _cursor.close();
-            _statement.release();
           }
         } finally {
           __db.endTransaction();
         }
       }
-    }, $completion);
+
+      @Override
+      protected void finalize() {
+        _statement.release();
+      }
+    });
   }
 
   @Override
@@ -438,6 +466,43 @@ public final class IMovieDao_Impl implements IMovieDao {
         _statement.release();
       }
     });
+  }
+
+  @Override
+  public Movie getMovieById2(final int movieId) {
+    final String _sql = "SELECT * FROM movie_table WHERE movieId = ?";
+    final RoomSQLiteQuery _statement = RoomSQLiteQuery.acquire(_sql, 1);
+    int _argIndex = 1;
+    _statement.bindLong(_argIndex, movieId);
+    __db.assertNotSuspendingTransaction();
+    final Cursor _cursor = DBUtil.query(__db, _statement, false, null);
+    try {
+      final int _cursorIndexOfMovieId = CursorUtil.getColumnIndexOrThrow(_cursor, "movieId");
+      final int _cursorIndexOfTitle = CursorUtil.getColumnIndexOrThrow(_cursor, "title");
+      final int _cursorIndexOfDescription = CursorUtil.getColumnIndexOrThrow(_cursor, "description");
+      final int _cursorIndexOfPosterPath = CursorUtil.getColumnIndexOrThrow(_cursor, "posterPath");
+      final int _cursorIndexOfVoteAverage = CursorUtil.getColumnIndexOrThrow(_cursor, "voteAverage");
+      final Movie _result;
+      if (_cursor.moveToFirst()) {
+        final int _tmpMovieId;
+        _tmpMovieId = _cursor.getInt(_cursorIndexOfMovieId);
+        final String _tmpTitle;
+        _tmpTitle = _cursor.getString(_cursorIndexOfTitle);
+        final String _tmpDescription;
+        _tmpDescription = _cursor.getString(_cursorIndexOfDescription);
+        final String _tmpPosterPath;
+        _tmpPosterPath = _cursor.getString(_cursorIndexOfPosterPath);
+        final double _tmpVoteAverage;
+        _tmpVoteAverage = _cursor.getDouble(_cursorIndexOfVoteAverage);
+        _result = new Movie(_tmpMovieId,_tmpTitle,_tmpDescription,_tmpPosterPath,_tmpVoteAverage);
+      } else {
+        _result = null;
+      }
+      return _result;
+    } finally {
+      _cursor.close();
+      _statement.release();
+    }
   }
 
   @NonNull
@@ -491,69 +556,6 @@ public final class IMovieDao_Impl implements IMovieDao {
           final String _tmpName;
           _tmpName = _cursor.getString(_cursorIndexOfName);
           _item_1 = new Genre(_tmpGenreId,_tmpName);
-          _tmpRelation.add(_item_1);
-        }
-      }
-    } finally {
-      _cursor.close();
-    }
-  }
-
-  private void __fetchRelationshipmovieTableAscomExampleModelMovie(
-      @NonNull final HashMap<Long, ArrayList<Movie>> _map) {
-    final Set<Long> __mapKeySet = _map.keySet();
-    if (__mapKeySet.isEmpty()) {
-      return;
-    }
-    if (_map.size() > RoomDatabase.MAX_BIND_PARAMETER_CNT) {
-      RelationUtil.recursiveFetchHashMap(_map, true, (map) -> {
-        __fetchRelationshipmovieTableAscomExampleModelMovie(map);
-        return Unit.INSTANCE;
-      });
-      return;
-    }
-    final StringBuilder _stringBuilder = StringUtil.newStringBuilder();
-    _stringBuilder.append("SELECT `movie_table`.`movieId` AS `movieId`,`movie_table`.`title` AS `title`,`movie_table`.`description` AS `description`,`movie_table`.`posterPath` AS `posterPath`,`movie_table`.`voteAverage` AS `voteAverage`,_junction.`genreId` FROM `MovieGenreCrossRef` AS _junction INNER JOIN `movie_table` ON (_junction.`movieId` = `movie_table`.`movieId`) WHERE _junction.`genreId` IN (");
-    final int _inputSize = __mapKeySet.size();
-    StringUtil.appendPlaceholders(_stringBuilder, _inputSize);
-    _stringBuilder.append(")");
-    final String _sql = _stringBuilder.toString();
-    final int _argCount = 0 + _inputSize;
-    final RoomSQLiteQuery _stmt = RoomSQLiteQuery.acquire(_sql, _argCount);
-    int _argIndex = 1;
-    for (long _item : __mapKeySet) {
-      _stmt.bindLong(_argIndex, _item);
-      _argIndex++;
-    }
-    final Cursor _cursor = DBUtil.query(__db, _stmt, false, null);
-    try {
-      // _junction.genreId;
-      final int _itemKeyIndex = 5;
-      if (_itemKeyIndex == -1) {
-        return;
-      }
-      final int _cursorIndexOfMovieId = 0;
-      final int _cursorIndexOfTitle = 1;
-      final int _cursorIndexOfDescription = 2;
-      final int _cursorIndexOfPosterPath = 3;
-      final int _cursorIndexOfVoteAverage = 4;
-      while (_cursor.moveToNext()) {
-        final long _tmpKey;
-        _tmpKey = _cursor.getLong(_itemKeyIndex);
-        final ArrayList<Movie> _tmpRelation = _map.get(_tmpKey);
-        if (_tmpRelation != null) {
-          final Movie _item_1;
-          final int _tmpMovieId;
-          _tmpMovieId = _cursor.getInt(_cursorIndexOfMovieId);
-          final String _tmpTitle;
-          _tmpTitle = _cursor.getString(_cursorIndexOfTitle);
-          final String _tmpDescription;
-          _tmpDescription = _cursor.getString(_cursorIndexOfDescription);
-          final String _tmpPosterPath;
-          _tmpPosterPath = _cursor.getString(_cursorIndexOfPosterPath);
-          final double _tmpVoteAverage;
-          _tmpVoteAverage = _cursor.getDouble(_cursorIndexOfVoteAverage);
-          _item_1 = new Movie(_tmpMovieId,_tmpTitle,_tmpDescription,_tmpPosterPath,_tmpVoteAverage);
           _tmpRelation.add(_item_1);
         }
       }

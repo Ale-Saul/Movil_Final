@@ -47,4 +47,9 @@ interface IMovieDao {
     @Query("SELECT * FROM movie_table WHERE movieId = :movieId")
     fun getMovieById(movieId: Int): LiveData<Movie>
 
+    @Query("UPDATE movie_table SET voteAverage = :newRating WHERE movieId = :movieID")
+    fun setVoteAverage(newRating: Double, movieID: Int)
+
+    @Query("SELECT * FROM movie_table WHERE movieId = :movieId")
+    fun getMovieById2(movieId: Int): Movie?
 }

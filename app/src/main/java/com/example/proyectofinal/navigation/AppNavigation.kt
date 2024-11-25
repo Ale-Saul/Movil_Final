@@ -1,10 +1,15 @@
 package com.example.proyectofinal.navigation
 
 import android.util.Log
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.ui.Modifier
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.example.proyectofinal.screen.BottomNavigationBar
@@ -20,62 +25,78 @@ import com.example.proyectofinal.screen.WelcomeScreen
 fun AppNavigation() {
     val navController = rememberNavController()
 
-    NavHost(
-        navController = navController,
-        startDestination = Screens.WelcomeScreen.route
-    ) {
-        composable(Screens.WelcomeScreen.route) {
-            WelcomeScreen(
-                onClick = {
-                    navController.navigate(Screens.RegisterScreen.route)
-                },
-                onLoginClick = {
-                    navController.navigate(Screens.LoginScreen.route)
-                },
-                onSkip = {
-                    navController.navigate(Screens.HomeScreen.route)
-                }
-            )
-        }
-        composable(Screens.RegisterScreen.route) {
-            RegisterScreen(
-                onClick = {
-                    navController.navigate(Screens.LoginScreen.route)
-                }
-            )
-        }
-        composable(Screens.LoginScreen.route) {
-            LoginScreen(
-                onClick = {
-                    navController.navigate(Screens.HomeScreen.route)
-                }
-            )
-        }
-        composable(Screens.HomeScreen.route) {
-            HomeScreen(onClick = { movieId ->
-                Log.e("Navigation", "Navigating to MovieDetailScreen with movieId: $movieId")
-                navController.navigate("movie_detail_screen/$movieId")
-            })
-        }
-        composable(
-            route = "movie_detail_screen/{movieId}",
-            arguments = listOf(navArgument("movieId") { type = NavType.IntType })
-        ) { backStackEntry ->
-            val movieId = backStackEntry.arguments?.getInt("movieId") ?: 0
-            MovieDetailScreen(
-                movieId = movieId,
-                onBackPressed = {
-                    navController.popBackStack()
-                }
-            )
-        }
+    val currentBackStackEntry by navController.currentBackStackEntryAsState()
+    val currentRoute = currentBackStackEntry?.destination?.route
+    val showBottomBar = currentRoute in listOf(Screens.HomeScreen.route, Screens.MovieDetailScreen.route,
+        "home", "favorites", "profile")
 
-            composable("home") { HomeScreen(onClick = { movieId ->
-                Log.e("Navigation", "Navigating to MovieDetailScreen with movieId: $movieId")
-                navController.navigate("movie_detail_screen/$movieId")
-            }) }
+    Scaffold(
+        bottomBar = {
+            if (showBottomBar) {
+                BottomNavigationBar(navController)
+            }
+        }
+    ) { innerPadding ->
+        NavHost(
+            navController = navController,
+            startDestination = Screens.WelcomeScreen.route,
+            modifier = if (showBottomBar) Modifier.padding(innerPadding) else Modifier
+        ) {
+            composable(Screens.WelcomeScreen.route) {
+                WelcomeScreen(
+                    onClick = {
+                        navController.navigate(Screens.RegisterScreen.route)
+                    },
+                    onLoginClick = {
+                        navController.navigate(Screens.LoginScreen.route)
+                    },
+                    onSkip = {
+                        navController.navigate(Screens.HomeScreen.route)
+                    }
+                )
+            }
+            composable(Screens.RegisterScreen.route) {
+                RegisterScreen(
+                    onClick = {
+                        navController.navigate(Screens.LoginScreen.route)
+                    }
+                )
+            }
+            composable(Screens.LoginScreen.route) {
+                LoginScreen(
+                    onClick = {
+                        navController.navigate(Screens.HomeScreen.route)
+                    }
+                )
+            }
+            composable(Screens.HomeScreen.route) {
+                HomeScreen(onClick = { movieId ->
+                    Log.e("Navigation", "Navigating to MovieDetailScreen with movieId: $movieId")
+                    navController.navigate("movie_detail_screen/$movieId")
+                })
+            }
+            composable(
+                route = "movie_detail_screen/{movieId}",
+                arguments = listOf(navArgument("movieId") { type = NavType.IntType })
+            ) { backStackEntry ->
+                val movieId = backStackEntry.arguments?.getInt("movieId") ?: 0
+                MovieDetailScreen(
+                    movieId = movieId,
+                    onBackPressed = {
+                        navController.popBackStack()
+                    }
+                )
+            }
+
+            composable("home") {
+                HomeScreen(onClick = { movieId ->
+                    Log.e("Navigation", "Navigating to MovieDetailScreen with movieId: $movieId")
+                    navController.navigate("movie_detail_screen/$movieId")
+                })
+            }
             composable("favorites") { FavoritesScreen() }
             composable("profile") { ProfileScreen() }
 
+        }
     }
 }

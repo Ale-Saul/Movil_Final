@@ -1,6 +1,7 @@
 package com.example.repository
 
 import android.content.Context
+import android.util.Log
 import androidx.lifecycle.LiveData
 import com.example.data.AppRoomDatabase
 import com.example.model.Genre
@@ -78,5 +79,16 @@ class MovieRepository(val context: Context)  {
 
     fun getAllGenres(): List<Genre> {
         return movieDao.getAllGenres()
+    }
+
+    fun updateVoteAverage( newRating: Int, movieId: Int) {
+        CoroutineScope(Dispatchers.IO).launch {
+            val movie = movieDao.getMovieById2(movieId)
+            val rating = movie?.voteAverage
+            if (rating != null) {
+                val calculatedRating = (rating + newRating) / 2
+                movieDao.setVoteAverage(calculatedRating, movieId)
+            }
+        }
     }
 }

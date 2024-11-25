@@ -30,10 +30,12 @@ public final class AppRoomDatabase_Impl extends AppRoomDatabase {
 
   private volatile IMovieDao _iMovieDao;
 
+  private volatile UserStateDao _userStateDao;
+
   @Override
   @NonNull
   protected SupportSQLiteOpenHelper createOpenHelper(@NonNull final DatabaseConfiguration config) {
-    final SupportSQLiteOpenHelper.Callback _openCallback = new RoomOpenHelper(config, new RoomOpenHelper.Delegate(2) {
+    final SupportSQLiteOpenHelper.Callback _openCallback = new RoomOpenHelper(config, new RoomOpenHelper.Delegate(3) {
       @Override
       public void createAllTables(@NonNull final SupportSQLiteDatabase db) {
         db.execSQL("CREATE TABLE IF NOT EXISTS `user_table` (`userId` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `username` TEXT NOT NULL, `birthDate` TEXT NOT NULL, `email` TEXT NOT NULL, `password` TEXT NOT NULL)");
@@ -41,8 +43,9 @@ public final class AppRoomDatabase_Impl extends AppRoomDatabase {
         db.execSQL("CREATE TABLE IF NOT EXISTS `genre_table` (`genreId` INTEGER NOT NULL, `name` TEXT NOT NULL, PRIMARY KEY(`genreId`))");
         db.execSQL("CREATE TABLE IF NOT EXISTS `MovieGenreCrossRef` (`movieId` INTEGER NOT NULL, `genreId` INTEGER NOT NULL, PRIMARY KEY(`movieId`, `genreId`))");
         db.execSQL("CREATE TABLE IF NOT EXISTS `UserGenreCrossRef` (`userId` INTEGER NOT NULL, `genreId` INTEGER NOT NULL, PRIMARY KEY(`userId`, `genreId`))");
+        db.execSQL("CREATE TABLE IF NOT EXISTS `user_state` (`id` INTEGER NOT NULL, `isLoggedIn` INTEGER NOT NULL, PRIMARY KEY(`id`))");
         db.execSQL("CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)");
-        db.execSQL("INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'bf18703604bc6ae0b3777ebf4dde3e60')");
+        db.execSQL("INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '66a0a922a17b35493cdacf08d07ded64')");
       }
 
       @Override
@@ -52,6 +55,7 @@ public final class AppRoomDatabase_Impl extends AppRoomDatabase {
         db.execSQL("DROP TABLE IF EXISTS `genre_table`");
         db.execSQL("DROP TABLE IF EXISTS `MovieGenreCrossRef`");
         db.execSQL("DROP TABLE IF EXISTS `UserGenreCrossRef`");
+        db.execSQL("DROP TABLE IF EXISTS `user_state`");
         final List<? extends RoomDatabase.Callback> _callbacks = mCallbacks;
         if (_callbacks != null) {
           for (RoomDatabase.Callback _callback : _callbacks) {
@@ -161,9 +165,21 @@ public final class AppRoomDatabase_Impl extends AppRoomDatabase {
                   + " Expected:\n" + _infoUserGenreCrossRef + "\n"
                   + " Found:\n" + _existingUserGenreCrossRef);
         }
+        final HashMap<String, TableInfo.Column> _columnsUserState = new HashMap<String, TableInfo.Column>(2);
+        _columnsUserState.put("id", new TableInfo.Column("id", "INTEGER", true, 1, null, TableInfo.CREATED_FROM_ENTITY));
+        _columnsUserState.put("isLoggedIn", new TableInfo.Column("isLoggedIn", "INTEGER", true, 0, null, TableInfo.CREATED_FROM_ENTITY));
+        final HashSet<TableInfo.ForeignKey> _foreignKeysUserState = new HashSet<TableInfo.ForeignKey>(0);
+        final HashSet<TableInfo.Index> _indicesUserState = new HashSet<TableInfo.Index>(0);
+        final TableInfo _infoUserState = new TableInfo("user_state", _columnsUserState, _foreignKeysUserState, _indicesUserState);
+        final TableInfo _existingUserState = TableInfo.read(db, "user_state");
+        if (!_infoUserState.equals(_existingUserState)) {
+          return new RoomOpenHelper.ValidationResult(false, "user_state(com.example.model.UserState).\n"
+                  + " Expected:\n" + _infoUserState + "\n"
+                  + " Found:\n" + _existingUserState);
+        }
         return new RoomOpenHelper.ValidationResult(true, null);
       }
-    }, "bf18703604bc6ae0b3777ebf4dde3e60", "e35b52d8db091150a0f6ba38190302c7");
+    }, "66a0a922a17b35493cdacf08d07ded64", "1b0bcc3816cdc66a1c0f0f1375d31ca8");
     final SupportSQLiteOpenHelper.Configuration _sqliteConfig = SupportSQLiteOpenHelper.Configuration.builder(config.context).name(config.name).callback(_openCallback).build();
     final SupportSQLiteOpenHelper _helper = config.sqliteOpenHelperFactory.create(_sqliteConfig);
     return _helper;
@@ -174,7 +190,7 @@ public final class AppRoomDatabase_Impl extends AppRoomDatabase {
   protected InvalidationTracker createInvalidationTracker() {
     final HashMap<String, String> _shadowTablesMap = new HashMap<String, String>(0);
     final HashMap<String, Set<String>> _viewTables = new HashMap<String, Set<String>>(0);
-    return new InvalidationTracker(this, _shadowTablesMap, _viewTables, "user_table","movie_table","genre_table","MovieGenreCrossRef","UserGenreCrossRef");
+    return new InvalidationTracker(this, _shadowTablesMap, _viewTables, "user_table","movie_table","genre_table","MovieGenreCrossRef","UserGenreCrossRef","user_state");
   }
 
   @Override
@@ -188,6 +204,7 @@ public final class AppRoomDatabase_Impl extends AppRoomDatabase {
       _db.execSQL("DELETE FROM `genre_table`");
       _db.execSQL("DELETE FROM `MovieGenreCrossRef`");
       _db.execSQL("DELETE FROM `UserGenreCrossRef`");
+      _db.execSQL("DELETE FROM `user_state`");
       super.setTransactionSuccessful();
     } finally {
       super.endTransaction();
@@ -204,6 +221,7 @@ public final class AppRoomDatabase_Impl extends AppRoomDatabase {
     final HashMap<Class<?>, List<Class<?>>> _typeConvertersMap = new HashMap<Class<?>, List<Class<?>>>();
     _typeConvertersMap.put(IUserDao.class, IUserDao_Impl.getRequiredConverters());
     _typeConvertersMap.put(IMovieDao.class, IMovieDao_Impl.getRequiredConverters());
+    _typeConvertersMap.put(UserStateDao.class, UserStateDao_Impl.getRequiredConverters());
     return _typeConvertersMap;
   }
 
@@ -246,6 +264,20 @@ public final class AppRoomDatabase_Impl extends AppRoomDatabase {
           _iMovieDao = new IMovieDao_Impl(this);
         }
         return _iMovieDao;
+      }
+    }
+  }
+
+  @Override
+  public UserStateDao stateDao() {
+    if (_userStateDao != null) {
+      return _userStateDao;
+    } else {
+      synchronized(this) {
+        if(_userStateDao == null) {
+          _userStateDao = new UserStateDao_Impl(this);
+        }
+        return _userStateDao;
       }
     }
   }
