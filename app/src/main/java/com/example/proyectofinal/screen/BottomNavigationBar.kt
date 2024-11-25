@@ -12,6 +12,9 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Person
+import androidx.compose.material3.NavigationBarItemDefaults
+import com.example.proyectofinal.ui.theme.onPrimaryLight
+import com.example.proyectofinal.ui.theme.scrimLight
 
 @Composable
 fun BottomNavigationBar(navController: NavController) {
@@ -19,8 +22,8 @@ fun BottomNavigationBar(navController: NavController) {
     val currentRoute = currentBackStackEntry.value?.destination?.route
 
     NavigationBar(
-        containerColor = Color(0xFF2D4B6E),
-        contentColor = Color.White
+        containerColor = scrimLight,
+        contentColor = onPrimaryLight
     ) {
         NavigationBarItem(
             icon = { Icon(Icons.Default.Home, contentDescription = "Inicio") },

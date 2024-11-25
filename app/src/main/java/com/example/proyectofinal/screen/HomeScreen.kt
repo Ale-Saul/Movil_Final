@@ -1,11 +1,15 @@
 package com.example.proyectofinal.screen
 
+import android.text.SpannableStringBuilder
 import android.util.Log
+import android.widget.Toast
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -15,18 +19,29 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Card
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
@@ -35,7 +50,10 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.zIndex
+import androidx.lifecycle.Observer
 import androidx.lifecycle.compose.LocalLifecycleOwner
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
 import com.example.model.Movie
 import com.example.network.MovieRemoteDataSource
@@ -46,6 +64,7 @@ import com.example.proyectofinal.ui.theme.onPrimaryDark
 import com.example.proyectofinal.ui.theme.onPrimaryLight
 import com.example.proyectofinal.ui.theme.primaryContainerLightMediumContrast
 import com.example.proyectofinal.ui.theme.tertiaryCommon
+import com.example.proyectofinal.viewModel.MovieInterestViewModel
 import com.example.repository.MovieRepository
 
 @Composable
@@ -68,7 +87,10 @@ fun MovieCard(onClick: (Int) -> Unit, movieId: Int, title: String,rating: Double
                 .padding(8.dp)
                 .size(width = 170.dp, height = 235.dp)
                 .clickable {
-                    Log.d("MovieCard", "Navigating with movieId: $movieId") // Log para verificar idMovie
+                    Log.d(
+                        "MovieCard",
+                        "Navigating with movieId: $movieId"
+                    ) // Log para verificar idMovie
                     onClick(movieId)
                 },
         ) {
@@ -158,47 +180,86 @@ fun PromocionesButton() {
         )
     }
 }
-
 @Composable
 fun MovieScreen(modifier: Modifier, onClickMovie: (Int) -> Unit) {
     val dataSource: MovieRemoteDataSource = MovieRemoteDataSource(RetrofitBuilder)
     val context = LocalContext.current
-    val lifecycle = LocalLifecycleOwner.current
-    //var listMovies by remember { mutableStateOf<List<MovieResponseDto>>(emptyList()) }
     val repository = MovieRepository(context)
+
     val moviesHomeViewModel: MovieHomeViewModel = MovieHomeViewModel(repository, dataSource)
     val listMovies by moviesHomeViewModel.movies.observeAsState(emptyList())
-    //val moviesViewModel = MoviesViewModel()
 
-//    fun updateUI(movieResponseDtos: List<MovieResponseDto>) {
-//        listMovies = movieResponseDtos
-//    }
-//    moviesViewModel.list.observe(
-//        lifecycle,
-//        Observer(::updateUI)
-//    )
-//
-//    moviesViewModel.getAllMovies(dataSource, context)
+    val movieInterestViewModel: MovieInterestViewModel = MovieInterestViewModel()
+    var moviesUI by remember { mutableStateOf(listOf<Pair<String, List<Movie>>>()) }
+    movieInterestViewModel.getMoviesFilteredByGenre(LocalContext.current, true)
 
     LaunchedEffect(Unit) {
         moviesHomeViewModel.getAllMovies()
     }
-        Column(
-            modifier = modifier
+
+    fun updateUI(moviesInterestState: MovieInterestViewModel.MoviesInterestState) {
+        when(moviesInterestState) {
+            is MovieInterestViewModel.MoviesInterestState.Loading -> {
+                Toast.makeText(context, "Loading", Toast.LENGTH_SHORT).show()
+            }
+            is MovieInterestViewModel.MoviesInterestState.Error -> {
+                Toast.makeText(context, "Error", Toast.LENGTH_SHORT).show()
+            }
+            is MovieInterestViewModel.MoviesInterestState.Success -> {
+                moviesUI = moviesInterestState.movies
+            }
+        }
+    }
+    movieInterestViewModel.moviesInterest.observe(
+        LocalLifecycleOwner.current,
+        Observer(::updateUI)
+    )
+    Box(
+        modifier= Modifier
+            .fillMaxSize()
+            .background(primaryContainerLightMediumContrast)
+    ){
+        LazyColumn(
+            verticalArrangement = Arrangement.spacedBy(16.dp),
+            modifier = Modifier
                 .fillMaxSize()
                 .background(primaryContainerLightMediumContrast)
+                .padding(top = 16.dp, bottom = 90.dp)
         ) {
-            MovieSection(
-                title = stringResource(id = R.string.label_interes),
-                movies = listMovies,
-                onClickMovie = onClickMovie
-            )
-            MovieSection(
-                title = stringResource(id = R.string.label_accion),
-                movies = listMovies,
-                onClickMovie = onClickMovie
-            )
+            item{
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                ) {
+                    MovieSection(
+                        title = stringResource(id = R.string.label_interes),
+                        movies = listMovies,
+                        onClickMovie = onClickMovie
+                    )
+                }
+            }
+            items(moviesUI.size) {
+                if (moviesUI.isNotEmpty()) {
+                    moviesUI[it].second?.let { it1 ->
+                        MovieSection(
+                            title = moviesUI[it].first,
+                            movies = it1,
+                            onClickMovie = onClickMovie
+                        )
+                    }
+                }
+            }
+        }
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .align(Alignment.BottomCenter)
+                .padding(bottom = 16.dp)
+                .zIndex(10F),
+            contentAlignment = Alignment.BottomCenter
+        ){
             PromocionesButton()
         }
+    }
 
 }

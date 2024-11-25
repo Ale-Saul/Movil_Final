@@ -11,11 +11,17 @@ import com.example.model.Movie
 import com.example.model.MovieGenreCrossRef
 import com.example.model.User
 import com.example.model.UserGenreCrossRef
+import com.example.model.UserState
 
-@Database(entities = [User::class, Movie::class, Genre::class, MovieGenreCrossRef::class, UserGenreCrossRef::class], version = 2)
+@Database(entities = [
+    User::class, Movie::class,
+    Genre::class, MovieGenreCrossRef::class,
+    UserGenreCrossRef::class,
+    UserState::class], version = 3)
 abstract class AppRoomDatabase: RoomDatabase() {
     abstract fun userDao(): IUserDao
     abstract fun movieDao(): IMovieDao
+    abstract fun stateDao(): UserStateDao
 
     companion object {
         @Volatile
@@ -55,6 +61,17 @@ abstract class AppRoomDatabase: RoomDatabase() {
             }
         }
 
+        val MIGRATION_1_3 = object : Migration(1, 3) {
+            override fun migrate(database: SupportSQLiteDatabase) {
+                database.execSQL("""
+                    CREATE TABLE user_state (
+                        id INTEGER PRIMARY KEY NOT NULL,
+                        isLoggedIn BOOLEAN NULL
+                    )
+                    """.trimIndent())
+            }
+        }
+
         fun getDatabase(context: Context): AppRoomDatabase {
             // if the Instance is not null, return it, otherwise create a new database instance.
             return Instance ?: synchronized(this) {
@@ -64,6 +81,7 @@ abstract class AppRoomDatabase: RoomDatabase() {
                     "item_database"
                 )
                     .addMigrations(MIGRATION_1_2)
+                    .addMigrations(MIGRATION_1_3)
                     .build()
                     .also { Instance = it }
             }

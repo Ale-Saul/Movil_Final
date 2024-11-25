@@ -16,6 +16,7 @@ class MovieHomeViewModel(
     private val dataSource: MovieRemoteDataSource
 ) : ViewModel()  {
 
+    val isDataLoaded: Boolean = true
     val movies: LiveData<List<Movie>> = repository.getAllMovies()
     val movie: LiveData<Movie>
         get() = _movie
@@ -35,9 +36,13 @@ class MovieHomeViewModel(
 
     private suspend fun fetchMovies() {
         try {
-            val response = dataSource.getListResponse()
-            repository.insert(response.results.map {it.toMovie()})
-            response.results.forEach {
+            val page1 = dataSource.getListResponse()
+            val page2 = dataSource.getListResponsePartTwo()
+            val page3 = dataSource.getListResponsePartThree()
+            val movies = page1.results + page2.results + page3.results
+
+            repository.insert(movies.map {it.toMovie()})
+            movies.forEach {
                 movie -> movie.genre_ids.forEach {
                     genreId -> repository.insertMovieGenreCrossRef(
                         listOf(
@@ -49,13 +54,6 @@ class MovieHomeViewModel(
             Log.e("Loading", "Error al cargar peliculas")
         }
     }
-
-//    fun loadMovieById(movieId: Int) {
-//        viewModelScope.launch {
-//            _movie.value = repository.getMovieById(movieId)
-//
-//        }
-//    }
 
     fun getMovieById(movieId: Int): LiveData<Movie> {
         return repository.getMovieById(movieId)

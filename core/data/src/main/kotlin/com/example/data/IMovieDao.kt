@@ -11,6 +11,7 @@ import com.example.model.GenreWithMovies
 import com.example.model.Movie
 import com.example.model.MovieGenreCrossRef
 import com.example.model.MovieWithGenres
+import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface IMovieDao {
@@ -20,8 +21,11 @@ interface IMovieDao {
     @Query("SELECT * FROM movie_table")
     fun getAllMovies(): LiveData<List<Movie>>
 
-    @Query("SELECT * FROM genre_table")
+    @Query("SELECT * FROM  genre_table")
     fun getAllGenres(): List<Genre>
+
+    @Query("SELECT genre_table.* FROM UserGenreCrossRef JOIN genre_table ON UserGenreCrossRef.genreId = genre_table.genreId WHERE UserGenreCrossRef.userId = :userId")
+    fun getAllGenresProfile(userId: Int): List<Genre>
 
     @Query("SELECT COUNT(*) FROM movie_table")
     suspend fun getMovieCount(): Int
@@ -40,10 +44,15 @@ interface IMovieDao {
     suspend fun getMovieWithGenres(movieId: Int): List<MovieWithGenres>
 
     @Transaction
-    @Query("SELECT * FROM genre_table WHERE genreId = :genreId")
-    suspend fun getGenreWithMovies(genreId: Int): List<GenreWithMovies>
+    @Query("SELECT movie_table.* FROM movie_table JOIN MovieGenreCrossRef ON movie_table.movieId = MovieGenreCrossRef.movieId WHERE genreId = :genreId")
+    fun getGenreWithMovies(genreId: Int): Flow<List<Movie>?>
 
     @Query("SELECT * FROM movie_table WHERE movieId = :movieId")
     fun getMovieById(movieId: Int): LiveData<Movie>
 
+    @Query("UPDATE movie_table SET voteAverage = :newRating WHERE movieId = :movieID")
+    fun setVoteAverage(newRating: Double, movieID: Int)
+
+    @Query("SELECT * FROM movie_table WHERE movieId = :movieId")
+    fun getMovieById2(movieId: Int): Movie?
 }

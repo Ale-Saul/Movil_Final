@@ -3,8 +3,14 @@ package com.example.proyectofinal.viewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.example.repository.MovieRepository
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
-class MovieViewModel: ViewModel() {
+class MovieViewModel(
+    private val repository: MovieRepository
+): ViewModel() {
     val star : LiveData<Int>
         get() = _star
     private val _star = MutableLiveData<Int>()
@@ -13,8 +19,11 @@ class MovieViewModel: ViewModel() {
         get() = _icon_favorite
     private val _icon_favorite = MutableLiveData<Boolean>()
 
-    fun update(newRating: Int) {
+    fun update(newRating: Int, movieID: Int) {
         _star.value = newRating
+        viewModelScope.launch(Dispatchers.Main){
+            repository.updateVoteAverage(newRating, movieID)
+        }
     }
 
     fun add_favorite(iconSelected: Boolean){

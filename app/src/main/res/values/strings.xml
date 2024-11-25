@@ -22,4 +22,5 @@
     <string name="label_accion">Acción</string>
     <string name="promocion_label">PROMOCIONES</string>
     <string name="btn_login_account">Iniciar sesión</string>
+    <string name="link_sign_in">Ya tengo una cuenta</string>
 </resources>

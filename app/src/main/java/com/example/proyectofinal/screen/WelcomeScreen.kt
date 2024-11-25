@@ -3,6 +3,7 @@ package com.example.proyectofinal.screen
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -31,6 +32,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.proyectofinal.R
@@ -39,12 +41,13 @@ import com.example.proyectofinal.ui.theme.onPrimaryLight
 import com.example.proyectofinal.ui.theme.onWhiteContainerDarkMediumContrast
 
 @Composable
-fun WelcomeScreen(onClick: () -> Unit, onSkip: ()-> Unit) {
+fun WelcomeScreen(onClick: () -> Unit, onLoginClick: () -> Unit, onSkip: () -> Unit) {
     Scaffold(
         content = {paddingValues ->
             WelcomeScreenContent(
                 modifier = Modifier.padding(paddingValues),
                 onClick = onClick,
+                onLoginClick = onLoginClick,
                 onSkip = onSkip
             )
         }
@@ -52,7 +55,7 @@ fun WelcomeScreen(onClick: () -> Unit, onSkip: ()-> Unit) {
 }
 
 @Composable
-fun WelcomeScreenContent(modifier: Modifier = Modifier, onClick: () -> Unit, onSkip: () -> Unit) {
+fun WelcomeScreenContent(modifier: Modifier = Modifier, onClick: () -> Unit, onLoginClick: () -> Unit, onSkip: () -> Unit) {
     val localContext= LocalContext.current
     Box(
         modifier = Modifier
@@ -134,6 +137,20 @@ fun WelcomeScreenContent(modifier: Modifier = Modifier, onClick: () -> Unit, onS
                         fontSize = 18.sp
                     )
                 }
+            }
+            Spacer(modifier = Modifier.height(16.dp))
+            Button(
+                onClick = { onLoginClick() },
+                modifier = Modifier
+                    .border(0.dp, Color.Transparent),
+                colors = ButtonDefaults.buttonColors(Color.Transparent),
+            ) {
+                Text(
+                    text = stringResource(id = R.string.link_sign_in),
+                    color = onPrimaryLight,
+                    fontSize = 16.sp,
+                    textDecoration = TextDecoration.Underline
+                )
             }
             Spacer(modifier = Modifier.height(24.dp))
 

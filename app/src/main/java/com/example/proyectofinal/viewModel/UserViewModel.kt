@@ -31,9 +31,11 @@ class UserViewModel (
         Log.d("holita", user.toString())
         viewModelScope.launch {
             val userId = repository.insert(user)
+            Log.d("holitaaa", userId.toString())
             Log.d("holiyta", selectedGenres.toString())
             selectedGenres.forEach {genreName ->
                 val genreId = repository.getGenreIdByName(genreName)
+                Log.d("holitaa", genreId.toString())
                 repository.insertUserGenreCrossRef(UserGenreCrossRef(userId.toInt(), genreId))
             }
         }
@@ -55,6 +57,9 @@ class UserViewModel (
         viewModelScope.launch {
             if( repository.loginUser(userName, password)) {
                 _state.value = LoginState.DoLogin("Success")
+                val userIdCurrent = repository.getIdByUsername(userName)
+                repository.saveLoginState(userIdCurrent, true)
+                Log.d("holitawww", userIdCurrent.toString())
             } else {
                 _state.value = LoginState.Error("Invalid credential")
             }
