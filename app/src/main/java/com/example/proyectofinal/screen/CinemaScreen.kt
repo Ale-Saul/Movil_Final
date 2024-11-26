@@ -30,7 +30,7 @@ import com.example.proyectofinal.ui.theme.primaryContainerLightMediumContrast
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CinemaScreen(cinemaList: List<Cinema>, onCinemaClick: (Cinema) -> Unit, onBackPressed: () -> Unit) {
+fun CinemaScreen(cinemaList: List<Cinema>, onCinemaClick: (Int) -> Unit, onBackPressed: () -> Unit) {
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         topBar = {
@@ -64,7 +64,7 @@ fun CinemaScreen(cinemaList: List<Cinema>, onCinemaClick: (Cinema) -> Unit, onBa
 
                 LazyColumn {
                     items(cinemaList) { cinema ->
-                        CinemaItem(cinema, onCinemaClick)
+                        CinemaItem(cinema, onCinemaClick = { onCinemaClick(cinema.cinemaId) })
                     }
                 }
             }
@@ -73,7 +73,7 @@ fun CinemaScreen(cinemaList: List<Cinema>, onCinemaClick: (Cinema) -> Unit, onBa
 }
 
 @Composable
-fun CinemaItem(cinema: Cinema, onCinemaClick: (Cinema) -> Unit) {
+fun CinemaItem(cinema: Cinema, onCinemaClick: (Int) -> Unit) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -102,7 +102,7 @@ fun CinemaItem(cinema: Cinema, onCinemaClick: (Cinema) -> Unit) {
 
         // Botón "VER"
         Button(
-            onClick = { onCinemaClick(cinema) },
+            onClick = { onCinemaClick(cinema.cinemaId) },
             shape = RoundedCornerShape(50),
             colors = ButtonDefaults.buttonColors(
                 containerColor = Color(0xFF3A506B),

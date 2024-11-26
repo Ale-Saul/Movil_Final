@@ -26,6 +26,7 @@ kotlinx-serialization="1.7.3"
 lifecycleLivedataCoreKtx = "2.8.6"
 runtimeLivedata = "1.7.4"
 hiltNavigation = "1.2.0"
+googleMaps = "4.4.1"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -67,6 +68,7 @@ navigation-compose= { group="androidx.navigation", name="navigation-compose", ve
 kotlinx-serialization-json= { module="org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref="kotlinx-serialization"}
 androidx-lifecycle-livedata-core-ktx = { group = "androidx.lifecycle", name = "lifecycle-livedata-core-ktx", version.ref = "lifecycleLivedataCoreKtx" }
 androidx-runtime-livedata = { group = "androidx.compose.runtime", name = "runtime-livedata", version.ref = "runtimeLivedata" }
+google-map = { group="com.google.maps.android", name="maps-compose", version.ref="googleMaps"}
 
 #hilt
 hilt = { group="com.google.dagger", name="hilt-android", version.ref="hilt"}

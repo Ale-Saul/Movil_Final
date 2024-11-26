@@ -80,6 +80,7 @@ dependencies {
     implementation(libs.navigation.compose)
     implementation(libs.kotlinx.serialization.json)
     implementation(libs.retrofit.coroutines)
+    implementation(libs.google.map)
 
     //hilt
     implementation(libs.hilt)

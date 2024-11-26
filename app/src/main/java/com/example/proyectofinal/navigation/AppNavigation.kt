@@ -19,6 +19,7 @@ import com.example.proyectofinal.screen.MovieDetailScreen
 import com.example.proyectofinal.screen.ProfileScreen
 import com.example.proyectofinal.screen.RegisterScreen
 import com.example.proyectofinal.screen.WelcomeScreen
+import com.example.proyectofinal.screen.CinemaDetailScreen
 import com.example.proyectofinal.viewModel.CinemaViewModel
 
 @Composable
@@ -96,8 +97,9 @@ fun AppNavigation() {
                 val viewModel = CinemaViewModel()
                 CinemaScreen(
                     cinemaList = viewModel.cinemaList,
-                    onCinemaClick = { cinema ->
-                        Log.e("CinemaScreen", "Clicked on: ${cinema.name}")
+                    onCinemaClick = { cinemaId ->
+                        Log.e("CinemaScreen", "Clicked on cinemaId: $cinemaId")
+                        navController.navigate("cinema_detail/$cinemaId") // Navega a la pantalla de detalles
                     },
                     onBackPressed = {
                         navController.popBackStack() // Regresa a la pantalla anterior
@@ -105,6 +107,26 @@ fun AppNavigation() {
                 )
             }
 
+            composable("cinema_detail/{cinemaId}") { backStackEntry ->
+                val cinemaId = backStackEntry.arguments?.getString("cinemaId")?.toIntOrNull()
+
+                if (cinemaId != null) { // Verifica que cinemaId no sea nulo
+                    val viewModel = CinemaViewModel() // Usa el ViewModel para obtener los datos
+                    val cinema = viewModel.getCinemaById(cinemaId)
+
+                    cinema?.let {
+                        CinemaDetailScreen(
+                            cinema = it,
+                            onBackPressed = {
+                                navController.popBackStack() // Regresa a la pantalla anterior
+                            }
+                        )
+                    }
+                } else {
+                    Log.e("CinemaDetail", "Invalid cinemaId")
+                    navController.popBackStack() // Regresa a la pantalla anterior si no hay un ID válido
+                }
+            }
 
         }
 
