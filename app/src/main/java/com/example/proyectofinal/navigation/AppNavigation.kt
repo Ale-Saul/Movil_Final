@@ -30,7 +30,7 @@ fun AppNavigation() {
 
     val currentBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = currentBackStackEntry?.destination?.route
-    val showBottomBar = currentRoute in listOf(Screens.HomeScreen.route, Screens.MovieDetailScreen.route,
+    val showBottomBar = currentRoute in listOf(Screens.HomeScreen.route,// Screens.MovieDetailScreen.route,
         "home", "favorites", "profile")
 
     Scaffold(

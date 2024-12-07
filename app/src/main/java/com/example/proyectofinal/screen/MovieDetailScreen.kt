@@ -2,40 +2,52 @@ package com.example.proyectofinal.screen
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.FavoriteBorder
+import androidx.compose.material.icons.filled.Send
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.outlined.Star
+import androidx.compose.material3.Button
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -44,6 +56,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -94,6 +107,21 @@ fun MovieDetailScreen(movieId: Int?, onBackPressed: () -> Unit) {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DetailContentScreen(keyMovie: Int,name: String, image: String, subtitle: String, points:Double, descrip: String, onBackPressed: () -> Unit) {
+    val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = false)
+    var isSheetOpen by remember { mutableStateOf(false) }
+
+    if (isSheetOpen) {
+        ModalBottomSheet(
+            onDismissRequest = { isSheetOpen = false },
+            sheetState = sheetState,
+            modifier = Modifier.fillMaxHeight(0.5f)
+        ) {
+            BottomSheetContent(
+                onClose = { isSheetOpen = false }
+            )
+        }
+    }
+
     val movieImage = image
     var iconSelect by remember { mutableStateOf(false) }
     var rating by remember { mutableStateOf(0) }
@@ -218,7 +246,7 @@ fun DetailContentScreen(keyMovie: Int,name: String, image: String, subtitle: Str
                         movieID = keyMovie
                     )
                     OutlinedButton(
-                        onClick = { /*TODO*/ },
+                        onClick = { isSheetOpen = true },
                         modifier = Modifier
                             .fillMaxWidth()
                             .clip(RoundedCornerShape(15.dp))
@@ -280,3 +308,91 @@ fun RatingBar(
     }
 }
 
+@Composable
+fun BottomSheetContent(onClose: () -> Unit) {
+    // Datos simulados para la lista de comentarios
+    val comments = listOf(
+        "Me encanta todo acerca de esta película, el instrumental, la historia, personajes, etc.",
+        "Casi 7 años desde su estreno. Y hace unos días la vi por primera vez. ¿Por qué? Creo que así tenía que ser.",
+        "Supe sobre esta película hace mucho tiempo, pero nunca le había dado una oportunidad. Todo lo que sabía era que..."
+    )
+
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .background(onPrimaryContainerLight)
+            .padding(16.dp)
+    ) {
+        // Título
+        Text(
+            text = "Comentarios",
+            style = TextStyle(fontSize = 20.sp, color = Color.White),
+            modifier = Modifier.align(Alignment.CenterHorizontally)
+        )
+        Spacer(modifier = Modifier.height(16.dp))
+
+        // Lista de comentarios
+        LazyColumn(
+            modifier = Modifier.weight(1f) // Ocupa todo el espacio disponible
+        ) {
+            items(comments.size) {
+                CommentItem(comment = comments[it])
+            }
+        }
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        // Caja de texto y botón
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(8.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            BasicTextField(
+                value = "",
+                onValueChange = {},
+                modifier = Modifier
+                    .weight(1f)
+                    .padding(8.dp)
+                    .border(1.dp, Color.Gray)
+                    .padding(8.dp),
+                textStyle = TextStyle(color = Color.White, fontSize = 14.sp),
+                decorationBox = { innerTextField ->
+                    Text("Escribe un comentario", color = Color.Gray)
+                    innerTextField()
+                }
+            )
+            IconButton(onClick = { /* Acción de enviar comentario */ }) {
+                Icon(
+                    imageVector = Icons.Default.Send,
+                    contentDescription = "Enviar",
+                    tint = Color.White
+                )
+            }
+        }
+    }
+}
+
+@Composable
+fun CommentItem(comment: String) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 8.dp)
+    ) {
+        // Imagen circular (placeholder)
+        Box(
+            modifier = Modifier
+                .size(40.dp)
+                .clip(CircleShape)
+                .background(Color.LightGray)
+        )
+        Spacer(modifier = Modifier.width(8.dp))
+        // Texto del comentario
+        Text(
+            text = comment,
+            style = TextStyle(fontSize = 14.sp, color = Color.White)
+        )
+    }
+}

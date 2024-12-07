@@ -1,5 +1,6 @@
 [versions]
 agp = "8.4.2"
+firebaseBom = "33.7.0"
 kotlin = "1.9.0"
 coreKtx = "1.13.1"
 junit = "4.13.2"
@@ -11,6 +12,7 @@ composeBom = "2024.10.00"
 androidTools = "31.7.1"
 appcompat = "1.7.0"
 material = "1.12.0"
+playServicesAuth = "21.2.0"
 roomRuntimeVersion = "2.6.1"
 uiTextGoogleFonts = "1.7.3"
 navigationUi = "2.8.3"
@@ -37,6 +39,8 @@ androidx-room-runtime = { module = "androidx.room:room-runtime", version.ref = "
 androidx-room-rxjava2 = { module = "androidx.room:room-rxjava2", version.ref = "roomRuntimeVersion" }
 androidx-room-rxjava3 = { module = "androidx.room:room-rxjava3", version.ref = "roomRuntimeVersion" }
 androidx-room-testing = { module = "androidx.room:room-testing", version.ref = "roomRuntimeVersion" }
+firebase-auth = { module = "com.google.firebase:firebase-auth" }
+firebase-bom = { module = "com.google.firebase:firebase-bom", version.ref = "firebaseBom" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
 androidx-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }
@@ -58,6 +62,7 @@ material = { group = "com.google.android.material", name = "material", version.r
 androidx-ui-text-google-fonts = { group = "androidx.compose.ui", name = "ui-text-google-fonts", version.ref = "uiTextGoogleFonts" }
 androidx-navigation-ui = { group = "androidx.navigation", name = "navigation-ui", version.ref = "navigationUi" }
 coil={ group="io.coil-kt", name="coil-compose", version.ref="coil"}
+play-services-auth = { module = "com.google.android.gms:play-services-auth", version.ref = "playServicesAuth" }
 retrofit = { group = "com.squareup.retrofit2", name = "retrofit", version.ref= "retrofit"}
 moshi = { group = "com.squareup.moshi", name = "moshi", version.ref= "moshi"}
 moshi-kapt = { group = "com.squareup.moshi", name = "moshi-kotlin-codegen", version.ref= "moshi"}
