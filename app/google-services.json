@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "587351348537",
+    "project_id": "ratefilm-7b2ca",
+    "storage_bucket": "ratefilm-7b2ca.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:587351348537:android:b33b4b6af955d1feaa84e8",
+        "android_client_info": {
+          "package_name": "com.example.proyectofinal"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "587351348537-v6kah2l4k6jukb0j7vd4605shk495oum.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.proyectofinal",
+            "certificate_hash": "02bfcf3d275233f98763aeb689c752e646f7a8d0"
+          }
+        },
+        {
+          "client_id": "587351348537-nmequv441aevq57gt8cceabuqqe33juj.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAQguYkek8k92LUWfgsLQzLUNGfueqkmsw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "587351348537-nmequv441aevq57gt8cceabuqqe33juj.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

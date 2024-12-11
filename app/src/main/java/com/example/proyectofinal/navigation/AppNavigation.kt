@@ -6,12 +6,14 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import com.example.proyectofinal.MainActivity
 import com.example.proyectofinal.screen.BottomNavigationBar
 import com.example.proyectofinal.screen.CinemaDetailScreen
 import com.example.proyectofinal.screen.CinemaScreen
@@ -30,7 +32,7 @@ fun AppNavigation() {
 
     val currentBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = currentBackStackEntry?.destination?.route
-    val showBottomBar = currentRoute in listOf(Screens.HomeScreen.route,// Screens.MovieDetailScreen.route,
+    val showBottomBar = currentRoute in listOf(Screens.HomeScreen.route,
         "home", "favorites", "profile")
 
     Scaffold(

@@ -1,16 +1,16 @@
 -- Merging decision tree log ---
 manifest
-ADDED from D:\Documents\Semestre 8\Programacion de dispositivos moviles\Recuperando\Movil_Final\core\model\build\intermediates\tmp\ProcessLibraryManifest\debug\tempAndroidManifest10308312359821691705.xml:2:13-83
-INJECTED from D:\Documents\Semestre 8\Programacion de dispositivos moviles\Recuperando\Movil_Final\core\model\build\intermediates\tmp\ProcessLibraryManifest\debug\tempAndroidManifest10308312359821691705.xml:2:13-83
+ADDED from D:\Documents\Semestre 8\Programacion de dispositivos moviles\Recuperando\Movil_Final\core\model\build\intermediates\tmp\ProcessLibraryManifest\debug\tempAndroidManifest14289553477788843796.xml:2:13-83
+INJECTED from D:\Documents\Semestre 8\Programacion de dispositivos moviles\Recuperando\Movil_Final\core\model\build\intermediates\tmp\ProcessLibraryManifest\debug\tempAndroidManifest14289553477788843796.xml:2:13-83
 	package
-		INJECTED from D:\Documents\Semestre 8\Programacion de dispositivos moviles\Recuperando\Movil_Final\core\model\build\intermediates\tmp\ProcessLibraryManifest\debug\tempAndroidManifest10308312359821691705.xml
+		INJECTED from D:\Documents\Semestre 8\Programacion de dispositivos moviles\Recuperando\Movil_Final\core\model\build\intermediates\tmp\ProcessLibraryManifest\debug\tempAndroidManifest14289553477788843796.xml
 	xmlns:android
-		ADDED from D:\Documents\Semestre 8\Programacion de dispositivos moviles\Recuperando\Movil_Final\core\model\build\intermediates\tmp\ProcessLibraryManifest\debug\tempAndroidManifest10308312359821691705.xml:2:23-81
+		ADDED from D:\Documents\Semestre 8\Programacion de dispositivos moviles\Recuperando\Movil_Final\core\model\build\intermediates\tmp\ProcessLibraryManifest\debug\tempAndroidManifest14289553477788843796.xml:2:23-81
 uses-sdk
-INJECTED from D:\Documents\Semestre 8\Programacion de dispositivos moviles\Recuperando\Movil_Final\core\model\build\intermediates\tmp\ProcessLibraryManifest\debug\tempAndroidManifest10308312359821691705.xml reason: use-sdk injection requested
-INJECTED from D:\Documents\Semestre 8\Programacion de dispositivos moviles\Recuperando\Movil_Final\core\model\build\intermediates\tmp\ProcessLibraryManifest\debug\tempAndroidManifest10308312359821691705.xml
-INJECTED from D:\Documents\Semestre 8\Programacion de dispositivos moviles\Recuperando\Movil_Final\core\model\build\intermediates\tmp\ProcessLibraryManifest\debug\tempAndroidManifest10308312359821691705.xml
+INJECTED from D:\Documents\Semestre 8\Programacion de dispositivos moviles\Recuperando\Movil_Final\core\model\build\intermediates\tmp\ProcessLibraryManifest\debug\tempAndroidManifest14289553477788843796.xml reason: use-sdk injection requested
+INJECTED from D:\Documents\Semestre 8\Programacion de dispositivos moviles\Recuperando\Movil_Final\core\model\build\intermediates\tmp\ProcessLibraryManifest\debug\tempAndroidManifest14289553477788843796.xml
+INJECTED from D:\Documents\Semestre 8\Programacion de dispositivos moviles\Recuperando\Movil_Final\core\model\build\intermediates\tmp\ProcessLibraryManifest\debug\tempAndroidManifest14289553477788843796.xml
 	android:targetSdkVersion
-		INJECTED from D:\Documents\Semestre 8\Programacion de dispositivos moviles\Recuperando\Movil_Final\core\model\build\intermediates\tmp\ProcessLibraryManifest\debug\tempAndroidManifest10308312359821691705.xml
+		INJECTED from D:\Documents\Semestre 8\Programacion de dispositivos moviles\Recuperando\Movil_Final\core\model\build\intermediates\tmp\ProcessLibraryManifest\debug\tempAndroidManifest14289553477788843796.xml
 	android:minSdkVersion
-		INJECTED from D:\Documents\Semestre 8\Programacion de dispositivos moviles\Recuperando\Movil_Final\core\model\build\intermediates\tmp\ProcessLibraryManifest\debug\tempAndroidManifest10308312359821691705.xml
+		INJECTED from D:\Documents\Semestre 8\Programacion de dispositivos moviles\Recuperando\Movil_Final\core\model\build\intermediates\tmp\ProcessLibraryManifest\debug\tempAndroidManifest14289553477788843796.xml

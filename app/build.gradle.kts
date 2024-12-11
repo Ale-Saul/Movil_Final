@@ -4,16 +4,17 @@ plugins {
     alias(libs.plugins.kotlinSerialization)
     alias(libs.plugins.kapt)
     alias(libs.plugins.hilt)
+    alias(libs.plugins.google.gms.google.services)
 }
 
 android {
     namespace = "com.example.proyectofinal"
-    compileSdk = 34
+    compileSdk = 35
 
     defaultConfig {
         applicationId = "com.example.proyectofinal"
         minSdk = 24
-        targetSdk = 34
+        targetSdk = 35
         versionCode = 1
         versionName = "1.0"
 
@@ -43,13 +44,17 @@ android {
         compose = true
     }
     composeOptions {
-        kotlinCompilerExtensionVersion = "1.5.1"
+        kotlinCompilerExtensionVersion = "1.5.9"
     }
     packaging {
         resources {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
+            excludes += "META-INF/NOTICE"
+            excludes += "META-INF/LICENSE"
+            excludes += "META-INF/versions/9/OSGI-INF/MANIFEST.MF"
         }
     }
+
 }
 
 dependencies {
@@ -67,6 +72,8 @@ dependencies {
     implementation(libs.coil)
     implementation(project(":core:network"))
     implementation(libs.androidx.runtime.livedata)
+    implementation(libs.identity.jvm)
+    implementation(libs.googleid)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)

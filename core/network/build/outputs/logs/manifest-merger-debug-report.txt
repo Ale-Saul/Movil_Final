@@ -1,7 +1,7 @@
 -- Merging decision tree log ---
 manifest
-ADDED from D:\Documents\Semestre 8\Programacion de dispositivos moviles\Recuperando\Movil_Final\core\network\src\main\AndroidManifest.xml:2:1-4:12
-INJECTED from D:\Documents\Semestre 8\Programacion de dispositivos moviles\Recuperando\Movil_Final\core\network\src\main\AndroidManifest.xml:2:1-4:12
+ADDED from D:\Documents\Semestre 8\Programacion de dispositivos moviles\Recuperando\Movil_Final\core\network\src\main\AndroidManifest.xml:2:1-5:12
+INJECTED from D:\Documents\Semestre 8\Programacion de dispositivos moviles\Recuperando\Movil_Final\core\network\src\main\AndroidManifest.xml:2:1-5:12
 	package
 		INJECTED from D:\Documents\Semestre 8\Programacion de dispositivos moviles\Recuperando\Movil_Final\core\network\src\main\AndroidManifest.xml
 	xmlns:android
@@ -10,6 +10,10 @@ uses-permission#android.permission.INTERNET
 ADDED from D:\Documents\Semestre 8\Programacion de dispositivos moviles\Recuperando\Movil_Final\core\network\src\main\AndroidManifest.xml:3:5-66
 	android:name
 		ADDED from D:\Documents\Semestre 8\Programacion de dispositivos moviles\Recuperando\Movil_Final\core\network\src\main\AndroidManifest.xml:3:22-64
+uses-permission#android.permission.GET_ACCOUNTS
+ADDED from D:\Documents\Semestre 8\Programacion de dispositivos moviles\Recuperando\Movil_Final\core\network\src\main\AndroidManifest.xml:4:5-71
+	android:name
+		ADDED from D:\Documents\Semestre 8\Programacion de dispositivos moviles\Recuperando\Movil_Final\core\network\src\main\AndroidManifest.xml:4:22-68
 uses-sdk
 INJECTED from D:\Documents\Semestre 8\Programacion de dispositivos moviles\Recuperando\Movil_Final\core\network\src\main\AndroidManifest.xml reason: use-sdk injection requested
 INJECTED from D:\Documents\Semestre 8\Programacion de dispositivos moviles\Recuperando\Movil_Final\core\network\src\main\AndroidManifest.xml

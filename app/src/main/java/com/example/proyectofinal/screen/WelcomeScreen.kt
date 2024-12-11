@@ -1,5 +1,9 @@
 package com.example.proyectofinal.screen
 
+import android.app.Activity
+import android.util.Log
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -24,6 +28,11 @@ import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
@@ -39,6 +48,13 @@ import com.example.proyectofinal.R
 import com.example.proyectofinal.ui.theme.onPrimaryContainerLight
 import com.example.proyectofinal.ui.theme.onPrimaryLight
 import com.example.proyectofinal.ui.theme.onWhiteContainerDarkMediumContrast
+import com.example.proyectofinal.viewModel.GoogleAuthClient
+import com.example.proyectofinal.viewModel.UserViewModel
+import com.example.repository.UserRepository
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.launch
 
 @Composable
 fun WelcomeScreen(onClick: () -> Unit, onLoginClick: () -> Unit, onSkip: () -> Unit) {
@@ -57,6 +73,27 @@ fun WelcomeScreen(onClick: () -> Unit, onLoginClick: () -> Unit, onSkip: () -> U
 @Composable
 fun WelcomeScreenContent(modifier: Modifier = Modifier, onClick: () -> Unit, onLoginClick: () -> Unit, onSkip: () -> Unit) {
     val localContext= LocalContext.current
+    val coroutineScope = rememberCoroutineScope()
+    val activity = localContext as? Activity ?: throw IllegalStateException("Activity not found")
+
+    // Aquí usas la actividad para configurar Google Sign-In
+    val googleAuthClient = GoogleAuthClient(activity)//aqui era applicationContext
+
+    var isSignIn by rememberSaveable { mutableStateOf(googleAuthClient.isSignedIn()) }
+
+    // Registrar el ActivityResultLauncher para el inicio de sesión
+    val signInLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.StartActivityForResult(),
+        onResult = { result ->
+            if (result.resultCode == Activity.RESULT_OK) {
+                coroutineScope.launch {
+                    val signInSuccess = googleAuthClient.signIn()
+                    isSignIn = signInSuccess
+                }
+            }
+        }
+    )
+
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -70,6 +107,14 @@ fun WelcomeScreenContent(modifier: Modifier = Modifier, onClick: () -> Unit, onL
             )
             .padding(16.dp)
     ) {
+        if(isSignIn) {
+            OutlinedButton(onClick = {
+                isSignIn = false
+            }) {
+                Text(text = "ya funciona :D", fontSize = 16.sp,
+                    modifier = Modifier.padding(16.dp))
+            }
+        }else{
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -115,7 +160,16 @@ fun WelcomeScreenContent(modifier: Modifier = Modifier, onClick: () -> Unit, onL
             Spacer(modifier = Modifier.height(36.dp))
 
             Button(
-                onClick = { /* Acción de Google Sign-In */ },
+                onClick = {
+                    coroutineScope.launch {
+                        val result = googleAuthClient.signIn()
+                        if (result) {
+                            isSignIn = true
+                        } else {
+                            Log.e("WelcomeScreenContent", "SignIn failed")
+                        }
+                    }
+                },
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(48.dp),
@@ -126,7 +180,7 @@ fun WelcomeScreenContent(modifier: Modifier = Modifier, onClick: () -> Unit, onL
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Image(
-                        painter = painterResource(id = R.drawable.ic_google_logo), // Asegúrate de tener el ícono de Google en tu proyecto
+                        painter = painterResource(id = R.drawable.ic_google_logo),
                         contentDescription = "Google Logo",
                         modifier = Modifier.size(24.dp)
                     )
@@ -154,7 +208,6 @@ fun WelcomeScreenContent(modifier: Modifier = Modifier, onClick: () -> Unit, onL
             }
             Spacer(modifier = Modifier.height(24.dp))
 
-            // Botón de "Omitir"
             Text(
                 text = "Omitir",
                 color = onPrimaryLight,
@@ -163,6 +216,6 @@ fun WelcomeScreenContent(modifier: Modifier = Modifier, onClick: () -> Unit, onL
                     .padding(top = 16.dp)
                     .clickable(onClick = onSkip)
             )
-        }
+        }}
     }
 }
