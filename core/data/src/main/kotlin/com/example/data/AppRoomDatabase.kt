@@ -12,7 +12,7 @@ import com.example.model.MovieGenreCrossRef
 import com.example.model.User
 import com.example.model.UserGenreCrossRef
 
-@Database(entities = [User::class, Movie::class, Genre::class, MovieGenreCrossRef::class, UserGenreCrossRef::class], version = 2)
+@Database(entities = [User::class, Movie::class, Genre::class, MovieGenreCrossRef::class, UserGenreCrossRef::class], version = 3)
 abstract class AppRoomDatabase: RoomDatabase() {
     abstract fun userDao(): IUserDao
     abstract fun movieDao(): IMovieDao
@@ -55,6 +55,14 @@ abstract class AppRoomDatabase: RoomDatabase() {
             }
         }
 
+        val MIGRATION_2_3 = object : Migration(2, 3) {
+            override fun migrate(database: SupportSQLiteDatabase) {
+                database.execSQL("""
+                 ALTER TABLE movie_table ADD COLUMN isFavorite INTEGER NOT NULL DEFAULT 0
+            """.trimIndent())
+            }
+        }
+
         fun getDatabase(context: Context): AppRoomDatabase {
             // if the Instance is not null, return it, otherwise create a new database instance.
             return Instance ?: synchronized(this) {
@@ -63,7 +71,7 @@ abstract class AppRoomDatabase: RoomDatabase() {
                     AppRoomDatabase::class.java,
                     "item_database"
                 )
-                    .addMigrations(MIGRATION_1_2)
+                    .addMigrations(MIGRATION_1_2, MIGRATION_2_3)
                     .build()
                     .also { Instance = it }
             }
