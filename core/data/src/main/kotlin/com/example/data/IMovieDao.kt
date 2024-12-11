@@ -6,6 +6,7 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Transaction
+import androidx.room.Update
 import com.example.model.Genre
 import com.example.model.GenreWithMovies
 import com.example.model.Movie
@@ -45,5 +46,8 @@ interface IMovieDao {
 
     @Query("SELECT * FROM movie_table WHERE movieId = :movieId")
     fun getMovieById(movieId: Int): LiveData<Movie>
+
+    @Query("UPDATE movie_table SET isFavorite = :isFavorite WHERE movieId = :movieId")
+    suspend fun updateFavorite(movieId: Int , isFavorite: Boolean)
 
 }

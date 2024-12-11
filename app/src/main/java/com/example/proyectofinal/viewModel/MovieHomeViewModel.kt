@@ -9,6 +9,8 @@ import com.example.model.Movie
 import com.example.model.MovieGenreCrossRef
 import com.example.network.MovieRemoteDataSource
 import com.example.repository.MovieRepository
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
 class MovieHomeViewModel(
@@ -16,7 +18,11 @@ class MovieHomeViewModel(
     private val dataSource: MovieRemoteDataSource
 ) : ViewModel()  {
 
-    val movies: LiveData<List<Movie>> = repository.getAllMovies()
+    val movies: LiveData<List<Movie>>
+        get() = _movies
+    var _movies = repository.getAllMovies()
+    //private val _movies = MutableStateFlow<List<Movie>>(emptyList())
+    //val movies: StateFlow<List<Movie>> get() = _movies
     val movie: LiveData<Movie>
         get() = _movie
     private val _movie = MutableLiveData<Movie>()
@@ -77,7 +83,8 @@ class MovieHomeViewModel(
 
     fun getAllMovies() {
         viewModelScope.launch {
-            repository.getAllMovies()
+            _movies = repository.getAllMovies()
+            Log.d("FetchMovies", "Fetched movies: ${movies.value}")
         }
 
     }

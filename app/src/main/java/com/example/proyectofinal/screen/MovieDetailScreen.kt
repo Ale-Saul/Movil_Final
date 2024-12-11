@@ -1,5 +1,6 @@
 package com.example.proyectofinal.screen
 
+import android.util.Log
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -61,6 +62,10 @@ import com.example.proyectofinal.ui.theme.outlineLightHighContrast
 import com.example.proyectofinal.ui.theme.primaryContainerLightMediumContrast
 import com.example.proyectofinal.ui.theme.tertiaryCommon
 import com.example.repository.MovieRepository
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import java.sql.Types.NULL
 
 @Composable
 fun MovieDetailScreen(movieId: Int?, onBackPressed: () -> Unit) {
@@ -69,16 +74,19 @@ fun MovieDetailScreen(movieId: Int?, onBackPressed: () -> Unit) {
     val lifecycle = LocalLifecycleOwner.current
     val repository = MovieRepository(context)
     val moviesHomeViewModel: MovieHomeViewModel = MovieHomeViewModel(repository, dataSource)
-
     val movie = movieId?.let { moviesHomeViewModel.getMovieById(it).observeAsState() }?.value
+
     movie?.let {
         DetailContentScreen(
+            movieId = movieId,
             name = it.title,
             image = it.posterPath,
             subtitle = "2014 - Ciencia ficcion",
             points = it.voteAverage,
             descrip = it.description,
-            onBackPressed = onBackPressed
+            onBackPressed = onBackPressed,
+            isFavorite = it.isFavorite,
+            repository=repository
         )
     }?: run {
         Box(
@@ -92,13 +100,14 @@ fun MovieDetailScreen(movieId: Int?, onBackPressed: () -> Unit) {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun DetailContentScreen(name: String, image: String, subtitle: String, points:Double, descrip: String, onBackPressed: () -> Unit) {
+fun DetailContentScreen(movieId: Int?, name: String, image: String, subtitle: String, points:Double, descrip: String, onBackPressed: () -> Unit, isFavorite:Boolean, repository: MovieRepository) {
     val movieImage = image
-    var iconSelect by remember { mutableStateOf(false) }
+    val dataSource: MovieRemoteDataSource = MovieRemoteDataSource(RetrofitBuilder)
+    val moviesHomeViewModel: MovieHomeViewModel = MovieHomeViewModel(repository, dataSource)
+    var iconSelect by remember { mutableStateOf(isFavorite) }
     var rating by remember { mutableStateOf(0) }
-    val movieViewModel = MovieViewModel()
+    val movieViewModel:MovieViewModel = MovieViewModel()
     val lifecycle = LocalLifecycleOwner.current
-
     fun updateUI(i: Int) {
         rating = i
     }
@@ -108,6 +117,8 @@ fun DetailContentScreen(name: String, image: String, subtitle: String, points:Do
     )
     fun updateUIFav(b: Boolean) {
         iconSelect = b
+        Log.d("favoritos","cambio de icono $iconSelect , $b")
+
     }
     movieViewModel.icon_favorite.observe(
         lifecycle,
@@ -160,7 +171,7 @@ fun DetailContentScreen(name: String, image: String, subtitle: String, points:Do
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(
-                        text = name,
+                        text = isFavorite.toString()/*name*/,
                         style = MaterialTheme.typography.bodyLarge,
                         fontSize = 24.sp,
                         fontWeight = FontWeight.SemiBold,
@@ -168,8 +179,13 @@ fun DetailContentScreen(name: String, image: String, subtitle: String, points:Do
                     )
                     IconButton(
                         onClick = {
-                            movieViewModel.add_favorite(iconSelect)
-                        },
+                            Log.d("favorite", "id : ${conversor(movieId)} $movieId ")
+                            //CoroutineScope(Dispatchers.IO).launch {
+                                movieViewModel.add_favorite(conversor(movieId), !iconSelect, repository)
+                            //}
+                            //movieViewModel.logi(conversor(movieId), repository)
+
+                                                                },
                         colors = IconButtonDefaults.iconButtonColors(
                             containerColor = Color.Transparent
                         )
@@ -276,3 +292,11 @@ fun RatingBar(
     }
 }
 
+fun conversor(elemento:Int?): Int{
+    if(elemento==NULL){
+        return 0
+    }
+    else{
+        return elemento!!
+    }
+}

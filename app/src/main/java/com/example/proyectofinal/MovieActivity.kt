@@ -52,6 +52,7 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.Observer
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import coil.compose.AsyncImage
+import com.example.proyectofinal.screen.conversor
 import com.example.proyectofinal.ui.theme.AppTheme
 import com.example.proyectofinal.ui.theme.onPrimaryContainerLight
 import com.example.proyectofinal.ui.theme.onPrimaryLight
@@ -59,6 +60,7 @@ import com.example.proyectofinal.ui.theme.outlineLightHighContrast
 import com.example.proyectofinal.ui.theme.primaryContainerLightMediumContrast
 import com.example.proyectofinal.ui.theme.tertiaryCommon
 import com.example.proyectofinal.viewModel.MovieViewModel
+import com.example.repository.MovieRepository
 
 class MovieActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -66,6 +68,7 @@ class MovieActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             AppTheme {
+                /*
                     MovieScreen(
                         name = "Interestelar",
                         image = "https://m.media-amazon.com/images/S/pv-target-images/79194981293eabf6620ece96eb5a9c1fffa04d3374ae12986e0748800b37b9cf.jpg",
@@ -75,7 +78,8 @@ class MovieActivity : ComponentActivity() {
                                 "exploradores, encabezadis por Cooper, se embarcan en un viaje " +
                                 "espacial para encontrar un lugar con las condiciones necesarias" +
                                 "para reemplazar a la Tierra y comenzar una nueva vida alli.",
-                    )
+                        isFavorite = false
+                    )*/
             }
         }
     }
@@ -83,9 +87,9 @@ class MovieActivity : ComponentActivity() {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MovieScreen(name: String, image: String, subtitle: String, points:String, descrip: String) {
+fun MovieScreen(movieId: Int?, name: String, image: String, subtitle: String, points:String, descrip: String, isFavorite: Boolean, repository: MovieRepository) {
     val movieImage = image
-    var iconSelect by remember { mutableStateOf(false) }
+    var iconSelect by remember { mutableStateOf(isFavorite) }
     var rating by remember { mutableStateOf(0) }
     val movieViewModel = MovieViewModel()
     val lifecycle = LocalLifecycleOwner.current
@@ -159,7 +163,7 @@ fun MovieScreen(name: String, image: String, subtitle: String, points:String, de
                     )
                     IconButton(
                         onClick = {
-                            movieViewModel.add_favorite(iconSelect)
+                            //movieViewModel.add_favorite(conversor(movieId), iconSelect, repository)
                         },
                         colors = IconButtonDefaults.iconButtonColors(
                             containerColor = Color.Transparent
@@ -173,7 +177,6 @@ fun MovieScreen(name: String, image: String, subtitle: String, points:String, de
                         )
                     }
                 }
-
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceBetween,

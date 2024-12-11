@@ -86,6 +86,9 @@ dependencies {
     implementation(libs.hilt.navigation)
     kapt(libs.hilt.compiler)
 
+    implementation(libs.lifecycle.compose)
+    //implementation(libs.lifecycle)
+
 }
 
 kapt {

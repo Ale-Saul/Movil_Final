@@ -26,7 +26,8 @@ data class MovieResponseDto(
             title = title,
             description = overview,
             posterPath = poster_path,
-            voteAverage = vote_average
+            voteAverage = vote_average,
+            isFavorite=false
         )
     }
 }

@@ -9,6 +9,7 @@ import androidx.room.CoroutinesRoom;
 import androidx.room.EntityInsertionAdapter;
 import androidx.room.RoomDatabase;
 import androidx.room.RoomSQLiteQuery;
+import androidx.room.SharedSQLiteStatement;
 import androidx.room.util.CursorUtil;
 import androidx.room.util.DBUtil;
 import androidx.room.util.RelationUtil;
@@ -49,13 +50,15 @@ public final class IMovieDao_Impl implements IMovieDao {
 
   private final EntityInsertionAdapter<MovieGenreCrossRef> __insertionAdapterOfMovieGenreCrossRef;
 
+  private final SharedSQLiteStatement __preparedStmtOfUpdateFavorite;
+
   public IMovieDao_Impl(@NonNull final RoomDatabase __db) {
     this.__db = __db;
     this.__insertionAdapterOfMovie = new EntityInsertionAdapter<Movie>(__db) {
       @Override
       @NonNull
       protected String createQuery() {
-        return "INSERT OR REPLACE INTO `movie_table` (`movieId`,`title`,`description`,`posterPath`,`voteAverage`) VALUES (?,?,?,?,?)";
+        return "INSERT OR REPLACE INTO `movie_table` (`movieId`,`title`,`description`,`posterPath`,`voteAverage`,`isFavorite`) VALUES (?,?,?,?,?,?)";
       }
 
       @Override
@@ -66,6 +69,8 @@ public final class IMovieDao_Impl implements IMovieDao {
         statement.bindString(3, entity.getDescription());
         statement.bindString(4, entity.getPosterPath());
         statement.bindDouble(5, entity.getVoteAverage());
+        final int _tmp = entity.isFavorite() ? 1 : 0;
+        statement.bindLong(6, _tmp);
       }
     };
     this.__insertionAdapterOfGenre = new EntityInsertionAdapter<Genre>(__db) {
@@ -94,6 +99,14 @@ public final class IMovieDao_Impl implements IMovieDao {
           @NonNull final MovieGenreCrossRef entity) {
         statement.bindLong(1, entity.getMovieId());
         statement.bindLong(2, entity.getGenreId());
+      }
+    };
+    this.__preparedStmtOfUpdateFavorite = new SharedSQLiteStatement(__db) {
+      @Override
+      @NonNull
+      public String createQuery() {
+        final String _query = "UPDATE movie_table SET isFavorite = ? WHERE movieId = ?";
+        return _query;
       }
     };
   }
@@ -174,6 +187,35 @@ public final class IMovieDao_Impl implements IMovieDao {
   }
 
   @Override
+  public Object updateFavorite(final int movieId, final boolean isFavorite,
+      final Continuation<? super Unit> $completion) {
+    return CoroutinesRoom.execute(__db, true, new Callable<Unit>() {
+      @Override
+      @NonNull
+      public Unit call() throws Exception {
+        final SupportSQLiteStatement _stmt = __preparedStmtOfUpdateFavorite.acquire();
+        int _argIndex = 1;
+        final int _tmp = isFavorite ? 1 : 0;
+        _stmt.bindLong(_argIndex, _tmp);
+        _argIndex = 2;
+        _stmt.bindLong(_argIndex, movieId);
+        try {
+          __db.beginTransaction();
+          try {
+            _stmt.executeUpdateDelete();
+            __db.setTransactionSuccessful();
+            return Unit.INSTANCE;
+          } finally {
+            __db.endTransaction();
+          }
+        } finally {
+          __preparedStmtOfUpdateFavorite.release(_stmt);
+        }
+      }
+    }, $completion);
+  }
+
+  @Override
   public LiveData<List<Movie>> getAllMovies() {
     final String _sql = "SELECT * FROM movie_table";
     final RoomSQLiteQuery _statement = RoomSQLiteQuery.acquire(_sql, 0);
@@ -188,6 +230,7 @@ public final class IMovieDao_Impl implements IMovieDao {
           final int _cursorIndexOfDescription = CursorUtil.getColumnIndexOrThrow(_cursor, "description");
           final int _cursorIndexOfPosterPath = CursorUtil.getColumnIndexOrThrow(_cursor, "posterPath");
           final int _cursorIndexOfVoteAverage = CursorUtil.getColumnIndexOrThrow(_cursor, "voteAverage");
+          final int _cursorIndexOfIsFavorite = CursorUtil.getColumnIndexOrThrow(_cursor, "isFavorite");
           final List<Movie> _result = new ArrayList<Movie>(_cursor.getCount());
           while (_cursor.moveToNext()) {
             final Movie _item;
@@ -201,7 +244,11 @@ public final class IMovieDao_Impl implements IMovieDao {
             _tmpPosterPath = _cursor.getString(_cursorIndexOfPosterPath);
             final double _tmpVoteAverage;
             _tmpVoteAverage = _cursor.getDouble(_cursorIndexOfVoteAverage);
-            _item = new Movie(_tmpMovieId,_tmpTitle,_tmpDescription,_tmpPosterPath,_tmpVoteAverage);
+            final boolean _tmpIsFavorite;
+            final int _tmp;
+            _tmp = _cursor.getInt(_cursorIndexOfIsFavorite);
+            _tmpIsFavorite = _tmp != 0;
+            _item = new Movie(_tmpMovieId,_tmpTitle,_tmpDescription,_tmpPosterPath,_tmpVoteAverage,_tmpIsFavorite);
             _result.add(_item);
           }
           return _result;
@@ -292,6 +339,7 @@ public final class IMovieDao_Impl implements IMovieDao {
             final int _cursorIndexOfDescription = CursorUtil.getColumnIndexOrThrow(_cursor, "description");
             final int _cursorIndexOfPosterPath = CursorUtil.getColumnIndexOrThrow(_cursor, "posterPath");
             final int _cursorIndexOfVoteAverage = CursorUtil.getColumnIndexOrThrow(_cursor, "voteAverage");
+            final int _cursorIndexOfIsFavorite = CursorUtil.getColumnIndexOrThrow(_cursor, "isFavorite");
             final HashMap<Long, ArrayList<Genre>> _collectionGenres = new HashMap<Long, ArrayList<Genre>>();
             while (_cursor.moveToNext()) {
               final long _tmpKey;
@@ -316,7 +364,11 @@ public final class IMovieDao_Impl implements IMovieDao {
               _tmpPosterPath = _cursor.getString(_cursorIndexOfPosterPath);
               final double _tmpVoteAverage;
               _tmpVoteAverage = _cursor.getDouble(_cursorIndexOfVoteAverage);
-              _tmpMovie = new Movie(_tmpMovieId,_tmpTitle,_tmpDescription,_tmpPosterPath,_tmpVoteAverage);
+              final boolean _tmpIsFavorite;
+              final int _tmp;
+              _tmp = _cursor.getInt(_cursorIndexOfIsFavorite);
+              _tmpIsFavorite = _tmp != 0;
+              _tmpMovie = new Movie(_tmpMovieId,_tmpTitle,_tmpDescription,_tmpPosterPath,_tmpVoteAverage,_tmpIsFavorite);
               final ArrayList<Genre> _tmpGenresCollection;
               final long _tmpKey_1;
               _tmpKey_1 = _cursor.getLong(_cursorIndexOfMovieId);
@@ -411,6 +463,7 @@ public final class IMovieDao_Impl implements IMovieDao {
           final int _cursorIndexOfDescription = CursorUtil.getColumnIndexOrThrow(_cursor, "description");
           final int _cursorIndexOfPosterPath = CursorUtil.getColumnIndexOrThrow(_cursor, "posterPath");
           final int _cursorIndexOfVoteAverage = CursorUtil.getColumnIndexOrThrow(_cursor, "voteAverage");
+          final int _cursorIndexOfIsFavorite = CursorUtil.getColumnIndexOrThrow(_cursor, "isFavorite");
           final Movie _result;
           if (_cursor.moveToFirst()) {
             final int _tmpMovieId;
@@ -423,7 +476,11 @@ public final class IMovieDao_Impl implements IMovieDao {
             _tmpPosterPath = _cursor.getString(_cursorIndexOfPosterPath);
             final double _tmpVoteAverage;
             _tmpVoteAverage = _cursor.getDouble(_cursorIndexOfVoteAverage);
-            _result = new Movie(_tmpMovieId,_tmpTitle,_tmpDescription,_tmpPosterPath,_tmpVoteAverage);
+            final boolean _tmpIsFavorite;
+            final int _tmp;
+            _tmp = _cursor.getInt(_cursorIndexOfIsFavorite);
+            _tmpIsFavorite = _tmp != 0;
+            _result = new Movie(_tmpMovieId,_tmpTitle,_tmpDescription,_tmpPosterPath,_tmpVoteAverage,_tmpIsFavorite);
           } else {
             _result = null;
           }
@@ -513,7 +570,7 @@ public final class IMovieDao_Impl implements IMovieDao {
       return;
     }
     final StringBuilder _stringBuilder = StringUtil.newStringBuilder();
-    _stringBuilder.append("SELECT `movie_table`.`movieId` AS `movieId`,`movie_table`.`title` AS `title`,`movie_table`.`description` AS `description`,`movie_table`.`posterPath` AS `posterPath`,`movie_table`.`voteAverage` AS `voteAverage`,_junction.`genreId` FROM `MovieGenreCrossRef` AS _junction INNER JOIN `movie_table` ON (_junction.`movieId` = `movie_table`.`movieId`) WHERE _junction.`genreId` IN (");
+    _stringBuilder.append("SELECT `movie_table`.`movieId` AS `movieId`,`movie_table`.`title` AS `title`,`movie_table`.`description` AS `description`,`movie_table`.`posterPath` AS `posterPath`,`movie_table`.`voteAverage` AS `voteAverage`,`movie_table`.`isFavorite` AS `isFavorite`,_junction.`genreId` FROM `MovieGenreCrossRef` AS _junction INNER JOIN `movie_table` ON (_junction.`movieId` = `movie_table`.`movieId`) WHERE _junction.`genreId` IN (");
     final int _inputSize = __mapKeySet.size();
     StringUtil.appendPlaceholders(_stringBuilder, _inputSize);
     _stringBuilder.append(")");
@@ -528,7 +585,7 @@ public final class IMovieDao_Impl implements IMovieDao {
     final Cursor _cursor = DBUtil.query(__db, _stmt, false, null);
     try {
       // _junction.genreId;
-      final int _itemKeyIndex = 5;
+      final int _itemKeyIndex = 6;
       if (_itemKeyIndex == -1) {
         return;
       }
@@ -537,6 +594,7 @@ public final class IMovieDao_Impl implements IMovieDao {
       final int _cursorIndexOfDescription = 2;
       final int _cursorIndexOfPosterPath = 3;
       final int _cursorIndexOfVoteAverage = 4;
+      final int _cursorIndexOfIsFavorite = 5;
       while (_cursor.moveToNext()) {
         final long _tmpKey;
         _tmpKey = _cursor.getLong(_itemKeyIndex);
@@ -553,7 +611,11 @@ public final class IMovieDao_Impl implements IMovieDao {
           _tmpPosterPath = _cursor.getString(_cursorIndexOfPosterPath);
           final double _tmpVoteAverage;
           _tmpVoteAverage = _cursor.getDouble(_cursorIndexOfVoteAverage);
-          _item_1 = new Movie(_tmpMovieId,_tmpTitle,_tmpDescription,_tmpPosterPath,_tmpVoteAverage);
+          final boolean _tmpIsFavorite;
+          final int _tmp;
+          _tmp = _cursor.getInt(_cursorIndexOfIsFavorite);
+          _tmpIsFavorite = _tmp != 0;
+          _item_1 = new Movie(_tmpMovieId,_tmpTitle,_tmpDescription,_tmpPosterPath,_tmpVoteAverage,_tmpIsFavorite);
           _tmpRelation.add(_item_1);
         }
       }

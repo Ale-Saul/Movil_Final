@@ -25,4 +25,5 @@ dependencies {
     implementation(libs.androidx.room.paging)
     implementation(project(":core:model"))
     implementation(project(":core:network"))
+
 }

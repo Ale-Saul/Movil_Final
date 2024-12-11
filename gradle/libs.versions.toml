@@ -1,5 +1,5 @@
 [versions]
-agp = "8.4.2"
+agp = "8.6.0"
 kotlin = "1.9.0"
 coreKtx = "1.13.1"
 junit = "4.13.2"
@@ -73,6 +73,7 @@ hilt = { group="com.google.dagger", name="hilt-android", version.ref="hilt"}
 hilt-compiler = { group="com.google.dagger", name = "hilt-compiler", version.ref = "hilt"}
 hilt-testing = {group= "com.google.dagger", name="hilt-android-testing", version.ref= "hilt"}
 hilt-navigation = {group = "androidx.hilt", name = "hilt-navigation-compose", version.ref = "hiltNavigation" }
+lifecycle-compose ={group="androidx.lifecycle", name="lifecycle-runtime-compose", version = "2.6.0"}
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

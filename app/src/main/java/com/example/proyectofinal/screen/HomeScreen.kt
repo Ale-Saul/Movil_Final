@@ -25,12 +25,14 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -61,16 +63,18 @@ fun HomeScreen(onClick: (Int) -> Unit) {
 }
 
 @Composable
-fun MovieCard(onClick: (Int) -> Unit, movieId: Int, title: String,rating: Double, imageModel: String) {
+fun MovieCard(onClick: (Int) -> Unit, movieId: Int, title: String,rating: Double, imageModel: String, isFavorite: Boolean) {
     Card(
             shape = RoundedCornerShape(16.dp),
             modifier = Modifier
+                .fillMaxWidth(0.5f)
                 .padding(8.dp)
                 .size(width = 170.dp, height = 235.dp)
                 .clickable {
                     Log.d("MovieCard", "Navigating with movieId: $movieId") // Log para verificar idMovie
                     onClick(movieId)
-                },
+                }
+
         ) {
             Column(
                 modifier = Modifier
@@ -107,7 +111,7 @@ fun MovieCard(onClick: (Int) -> Unit, movieId: Int, title: String,rating: Double
                         fontSize = 16.sp,
                         color = tertiaryCommon,
                         modifier = Modifier
-                            .padding(8.dp)
+                            .padding(8.dp).testTag("RATING_TEST_TAG")
                     )
                 }
 
@@ -134,7 +138,8 @@ fun MovieSection(title: String, movies: List<Movie>, onClickMovie: (Int) -> Unit
                     movieId = movies[it].movieId,
                     title = movies[it].title,
                     rating = movies[it].voteAverage,
-                    imageModel = "https://image.tmdb.org/t/p/w185/${movies[it].posterPath}"
+                    imageModel = "https://image.tmdb.org/t/p/w185/${movies[it].posterPath}",
+                    isFavorite = movies[it].isFavorite
                 )
             }
         }
@@ -168,6 +173,8 @@ fun MovieScreen(modifier: Modifier, onClickMovie: (Int) -> Unit) {
     val repository = MovieRepository(context)
     val moviesHomeViewModel: MovieHomeViewModel = MovieHomeViewModel(repository, dataSource)
     val listMovies by moviesHomeViewModel.movies.observeAsState(emptyList())
+    //val listMovies by moviesHomeViewModel.movies.collectAsState(initial = emptyList())
+    //val listMovies = moviesHomeViewModel.movies.collectAsStateWithLifecycle(initial = emptyList())
     //val moviesViewModel = MoviesViewModel()
 
 //    fun updateUI(movieResponseDtos: List<MovieResponseDto>) {

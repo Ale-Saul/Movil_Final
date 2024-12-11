@@ -59,6 +59,12 @@ fun AppNavigation() {
                     navController.navigate("movie_detail_screen/$movieId")
                 })
             }
+            composable(Screens.FavoritesScreen.route) {
+                HomeScreen(onClick = { movieId ->
+                    Log.e("Navigation", "Navigating to MovieDetailScreen with movieId: $movieId")
+                    navController.navigate("movie_detail_screen/$movieId")
+                })
+            }
             composable(
                 route = "movie_detail_screen/{movieId}",
                 arguments = listOf(navArgument("movieId") { type = NavType.IntType })
@@ -76,7 +82,10 @@ fun AppNavigation() {
                 Log.e("Navigation", "Navigating to MovieDetailScreen with movieId: $movieId")
                 navController.navigate("movie_detail_screen/$movieId")
             }) }
-            composable("favorites") { FavoritesScreen() }
+            composable("favorites") { FavoritesScreen(onClick = { movieId ->
+                Log.e("Navigation", "Navigating to MovieDetailScreen with movieId: $movieId")
+                navController.navigate("movie_detail_screen/$movieId")
+            }) }
             composable("profile") { ProfileScreen() }
         }
 

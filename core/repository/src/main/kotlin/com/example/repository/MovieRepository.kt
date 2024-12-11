@@ -1,6 +1,7 @@
 package com.example.repository
 
 import android.content.Context
+import android.util.Log
 import androidx.lifecycle.LiveData
 import com.example.data.AppRoomDatabase
 import com.example.model.Genre
@@ -54,6 +55,7 @@ class MovieRepository(val context: Context)  {
     }
 
     fun getAllMovies(): LiveData<List<Movie>> {
+        Log.d("favorite", "movies in repostory?: ${movieDao.getAllMovies().value}")
         return movieDao.getAllMovies()
     }
 
@@ -71,5 +73,10 @@ class MovieRepository(val context: Context)  {
 
     fun getMovieById(movieId: Int): LiveData<Movie> {
         return movieDao.getMovieById(movieId)
+    }
+
+    suspend fun updateFavorite(movieId: Int, isFavorite: Boolean){
+        Log.d("favoritos","acceso repositorio $isFavorite")
+        movieDao.updateFavorite(movieId, isFavorite)
     }
 }
