@@ -231,7 +231,7 @@ fun RegisterContentScreen(modifier: Modifier, onClick: () -> Unit) {
         FlowRow(
             modifier = Modifier.fillMaxWidth(),
             maxItemsInEachRow = 2,
-            horizontalArrangement = Arrangement.spacedBy(25.dp),
+            horizontalArrangement = Arrangement.spacedBy(5.dp),
             verticalArrangement = Arrangement.spacedBy(20.dp)
         ) {
             genres.forEach { genre ->
@@ -289,18 +289,19 @@ fun GenreChip(genre: String, isSelected: Boolean, onGenreSelected: (String) -> U
         border = BorderStroke(1.dp, onPrimaryLight),
         modifier = Modifier
             .height(40.dp)
-            .width(160.dp)
+            //.width(100.dp)
     ) {
         Row {
             if(isSelected){
                 Icon(
                     imageVector = Icons.Default.Check,
                     contentDescription = null,
-                    modifier = Modifier.size(18.dp))
+                    modifier = Modifier.size(14.dp)
+                )
             }
             Text(
                 text = genre,
-                fontSize = 16.sp
+                fontSize = 14.sp
             )
         }
 

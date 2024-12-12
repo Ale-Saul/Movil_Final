@@ -258,7 +258,7 @@ fun DetailContentScreen(keyMovie: Int,name: String, image: String, subtitle: Str
                         Text(
                             text = stringResource(id = R.string.btn_ver_comentarios),
                             color = onPrimaryLight,
-                            fontSize = 16.sp
+                            fontSize = 14.sp
                         )
                     }
                 }

@@ -2,6 +2,7 @@ package com.example.proyectofinal.screen
 
 import android.app.Activity
 import android.util.Log
+import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.BorderStroke
@@ -49,6 +50,7 @@ import com.example.proyectofinal.ui.theme.onPrimaryContainerLight
 import com.example.proyectofinal.ui.theme.onPrimaryLight
 import com.example.proyectofinal.ui.theme.onWhiteContainerDarkMediumContrast
 import com.example.proyectofinal.viewModel.GoogleAuthClient
+import com.example.proyectofinal.viewModel.GoogleSignInUtils
 import com.example.proyectofinal.viewModel.UserViewModel
 import com.example.repository.UserRepository
 import kotlinx.coroutines.Dispatchers
@@ -74,25 +76,35 @@ fun WelcomeScreen(onClick: () -> Unit, onLoginClick: () -> Unit, onSkip: () -> U
 fun WelcomeScreenContent(modifier: Modifier = Modifier, onClick: () -> Unit, onLoginClick: () -> Unit, onSkip: () -> Unit) {
     val localContext= LocalContext.current
     val coroutineScope = rememberCoroutineScope()
-    val activity = localContext as? Activity ?: throw IllegalStateException("Activity not found")
-
-    // Aquí usas la actividad para configurar Google Sign-In
-    val googleAuthClient = GoogleAuthClient(activity)//aqui era applicationContext
-
-    var isSignIn by rememberSaveable { mutableStateOf(googleAuthClient.isSignedIn()) }
-
-    // Registrar el ActivityResultLauncher para el inicio de sesión
-    val signInLauncher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.StartActivityForResult(),
-        onResult = { result ->
-            if (result.resultCode == Activity.RESULT_OK) {
-                coroutineScope.launch {
-                    val signInSuccess = googleAuthClient.signIn()
-                    isSignIn = signInSuccess
-                }
+//    val activity = localContext as? Activity ?: throw IllegalStateException("Activity not found")
+//
+//    // Aquí usas la actividad para configurar Google Sign-In
+//    val googleAuthClient = GoogleAuthClient(activity)//aqui era applicationContext
+//
+//    var isSignIn by rememberSaveable { mutableStateOf(googleAuthClient.isSignedIn()) }
+//
+//    // Registrar el ActivityResultLauncher para el inicio de sesión
+//    val signInLauncher = rememberLauncherForActivityResult(
+//        contract = ActivityResultContracts.StartActivityForResult(),
+//        onResult = { result ->
+//            if (result.resultCode == Activity.RESULT_OK) {
+//                coroutineScope.launch {
+//                    val signInSuccess = googleAuthClient.signIn()
+//                    isSignIn = signInSuccess
+//                }
+//            }
+//        }
+//    )
+    val launcher = rememberLauncherForActivityResult(contract = ActivityResultContracts.StartActivityForResult()) {
+        GoogleSignInUtils.doGoogleSignIn(
+            context = localContext,
+            scope = coroutineScope,
+            launcher = null,
+            login = {
+                Toast.makeText(localContext,"Login successful", Toast.LENGTH_SHORT).show()
             }
-        }
-    )
+        )
+    }
 
     Box(
         modifier = Modifier
@@ -107,14 +119,14 @@ fun WelcomeScreenContent(modifier: Modifier = Modifier, onClick: () -> Unit, onL
             )
             .padding(16.dp)
     ) {
-        if(isSignIn) {
-            OutlinedButton(onClick = {
-                isSignIn = false
-            }) {
-                Text(text = "ya funciona :D", fontSize = 16.sp,
-                    modifier = Modifier.padding(16.dp))
-            }
-        }else{
+//        if(isSignIn) {
+//            OutlinedButton(onClick = {
+//                isSignIn = false
+//            }) {
+//                Text(text = "ya funciona :D", fontSize = 16.sp,
+//                    modifier = Modifier.padding(16.dp))
+//            }
+//        }else{
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -161,14 +173,23 @@ fun WelcomeScreenContent(modifier: Modifier = Modifier, onClick: () -> Unit, onL
 
             Button(
                 onClick = {
-                    coroutineScope.launch {
-                        val result = googleAuthClient.signIn()
-                        if (result) {
-                            isSignIn = true
-                        } else {
-                            Log.e("WelcomeScreenContent", "SignIn failed")
+//                    coroutineScope.launch {
+//                        val result = googleAuthClient.signIn()
+//                        if (result) {
+//                            isSignIn = true
+//                        } else {
+//                            Log.e("WelcomeScreenContent", "SignIn failed")
+//                        }
+//                    }
+                    GoogleSignInUtils.doGoogleSignIn(
+                        context = localContext,
+                        scope = coroutineScope,
+                        launcher = launcher,
+                        login = {
+                            Toast.makeText(localContext,"Login successful", Toast.LENGTH_SHORT).show()
                         }
-                    }
+                    )
+
                 },
                 modifier = Modifier
                     .fillMaxWidth()
@@ -216,6 +237,6 @@ fun WelcomeScreenContent(modifier: Modifier = Modifier, onClick: () -> Unit, onL
                     .padding(top = 16.dp)
                     .clickable(onClick = onSkip)
             )
-        }}
+        }
     }
 }
