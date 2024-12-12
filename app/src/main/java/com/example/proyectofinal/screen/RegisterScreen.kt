@@ -46,9 +46,11 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.model.User
+import com.example.proyectofinal.FormErrorState
 import com.example.proyectofinal.FormState
 import com.example.proyectofinal.GenreChip
 import com.example.proyectofinal.R
+import com.example.proyectofinal.isFormValid
 import com.example.proyectofinal.viewModel.UserViewModel
 import com.example.proyectofinal.ui.theme.onPrimaryContainerLight
 import com.example.proyectofinal.ui.theme.onPrimaryLight
@@ -76,13 +78,8 @@ fun RegisterContentScreen(modifier: Modifier, onClick: () -> Unit) {
     val context = LocalContext.current
     val repository = UserRepository(context = context)
     var viewModel = UserViewModel(repository)
-//
-//    var username by remember { mutableStateOf("") }
-//    var birthDate by remember { mutableStateOf("") }
-//    var email by remember { mutableStateOf("") }
-//    var password by remember { mutableStateOf("") }
-//    var confirmPassword by remember { mutableStateOf("") }
     var formState by remember { mutableStateOf(FormState()) }
+    var errors by remember { mutableStateOf(FormErrorState()) }
     var isValid by remember { mutableStateOf(false) }
 
     var selectedGenres = viewModel.selectedGenres
@@ -98,6 +95,10 @@ fun RegisterContentScreen(modifier: Modifier, onClick: () -> Unit) {
         focusedIndicatorColor = onPrimaryLight,
         unfocusedIndicatorColor = outlineLight
     )
+
+    fun validate(){
+        errors = validateForm(formState)
+    }
 
     Column(
         modifier = Modifier
@@ -127,9 +128,17 @@ fun RegisterContentScreen(modifier: Modifier, onClick: () -> Unit) {
             value = formState.username,
             onValueChange = {
                 formState = formState.copy(username = it)
-                isValid = validateForm(formState)
+                validate()
             },
+            supportingText = {
+                if (errors.usernameError != null) {
+                    Text(
+                        text = errors.usernameError.toString(),
+                        color = Color.Red
+                    )
+                }},
             label = { Text(text = stringResource(id = R.string.label_name), color = onPrimaryLight) },
+            isError = errors.usernameError != null,
             placeholder = { Text(stringResource(id = R.string.placeholder_name), color = Color.LightGray) },
             modifier = Modifier
                 .fillMaxWidth()
@@ -144,7 +153,15 @@ fun RegisterContentScreen(modifier: Modifier, onClick: () -> Unit) {
             value = formState.birthDate,
             onValueChange = {
                 formState = formState.copy(birthDate = it)
-                isValid = validateForm(formState)
+                validate()
+            },
+            isError = errors.birthDateError != null,
+            supportingText = {
+                if (errors.birthDateError != null){
+                    Text(
+                        text = errors.birthDateError.toString(),
+                        color = Color.Red)
+                }
             },
             label = { Text(stringResource(id = R.string.label_date), color = onPrimaryLight) },
             placeholder = { Text(stringResource(id = R.string.placeholder_date), color = Color.LightGray) },
@@ -161,7 +178,16 @@ fun RegisterContentScreen(modifier: Modifier, onClick: () -> Unit) {
             value = formState.email,
             onValueChange = {
                 formState = formState.copy(email = it)
-                isValid = validateForm(formState)
+                validate()
+            },
+            isError = errors.emailError != null,
+            supportingText = {
+                if (errors.emailError != null) {
+                    Text(
+                        text = errors.emailError.toString(),
+                        color = Color.Red
+                    )
+                }
             },
             label = { Text(stringResource(id = R.string.label_email), color = onPrimaryLight) },
             placeholder = { Text(stringResource(id = R.string.placeholder_email), color = Color.LightGray) },
@@ -178,7 +204,16 @@ fun RegisterContentScreen(modifier: Modifier, onClick: () -> Unit) {
             value = formState.password,
             onValueChange = {
                 formState = formState.copy(password = it)
-                isValid = validateForm(formState)
+                validate()
+            },
+            isError = errors.passwordError != null,
+            supportingText = {
+                if (errors.passwordError != null) {
+                    Text(
+                        text = errors.passwordError.toString(),
+                        color = Color.Red
+                    )
+                }
             },
             label = { Text(stringResource(id = R.string.label_password), color = onPrimaryLight) },
             placeholder = { Text(stringResource(id = R.string.placeholder_password), color = Color.LightGray) },
@@ -204,7 +239,16 @@ fun RegisterContentScreen(modifier: Modifier, onClick: () -> Unit) {
             value = formState.confirmPassword,
             onValueChange = {
                 formState = formState.copy(confirmPassword = it)
-                isValid = validateForm(formState)
+                validate()
+            },
+            isError = errors.confirmPasswordError != null,
+            supportingText = {
+                if (errors.confirmPasswordError != null) {
+                    Text(
+                        text = errors.confirmPasswordError.toString(),
+                        color = Color.Red
+                    )
+                }
             },
             label = { Text(stringResource(id = R.string.label_password2), color = onPrimaryLight) },
             placeholder = { Text(stringResource(id = R.string.placeholder_password), color = Color.LightGray) },
@@ -253,14 +297,19 @@ fun RegisterContentScreen(modifier: Modifier, onClick: () -> Unit) {
 
         Button(
             onClick = {
-                viewModel.saveUser(
-                    User(
-                        username = formState.username,
-                        birthDate = formState.birthDate,
-                        email = formState.email,
-                        password = formState.password
-                    ));
-                onClick() },
+                validate()
+                if(isFormValid(errors)){
+                    viewModel.saveUser(
+                        User(
+                            username = formState.username,
+                            birthDate = formState.birthDate,
+                            email = formState.email,
+                            password = formState.password
+                        ));
+                    onClick()
+                }
+            },
+            enabled = isFormValid(errors),
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(vertical = 20.dp)
