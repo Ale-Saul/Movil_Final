@@ -12,7 +12,7 @@ android {
     compileSdk = 35
 
     defaultConfig {
-        applicationId = "com.example.proyectofinal"
+        applicationId = "com.ucbsistemas.proyectofinal"
         minSdk = 24
         targetSdk = 35
         versionCode = 1

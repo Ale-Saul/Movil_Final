@@ -193,7 +193,7 @@ fun LoginContentScreen(modifier: Modifier, onClick: () -> Unit) {
             shape = RoundedCornerShape(20.dp)
         ) {
             Text(
-                text = stringResource(id = R.string.btn_create_account),
+                text = stringResource(id = R.string.btn_sign_in),
                 fontSize = 18.sp
             )
         }

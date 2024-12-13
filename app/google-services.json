@@ -41,6 +41,43 @@
           ]
         }
       }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:587351348537:android:476bd6bdd924ffb8aa84e8",
+        "android_client_info": {
+          "package_name": "com.ucbsistemas.proyectofinal"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "587351348537-vp027aa48acm50m9rlkfvbl4hcjff41o.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.ucbsistemas.proyectofinal",
+            "certificate_hash": "02bfcf3d275233f98763aeb689c752e646f7a8d0"
+          }
+        },
+        {
+          "client_id": "587351348537-nmequv441aevq57gt8cceabuqqe33juj.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAQguYkek8k92LUWfgsLQzLUNGfueqkmsw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "587351348537-nmequv441aevq57gt8cceabuqqe33juj.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
     }
   ],
   "configuration_version": "1"

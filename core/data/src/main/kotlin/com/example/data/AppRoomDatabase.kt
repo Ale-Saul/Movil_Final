@@ -8,6 +8,8 @@ import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
 import com.example.model.Genre
 import com.example.model.Movie
+import com.example.model.MovieComment
+import com.example.model.MovieDetails
 import com.example.model.MovieGenreCrossRef
 import com.example.model.User
 import com.example.model.UserGenreCrossRef
@@ -17,11 +19,15 @@ import com.example.model.UserState
     User::class, Movie::class,
     Genre::class, MovieGenreCrossRef::class,
     UserGenreCrossRef::class,
-    UserState::class], version = 4)
+    UserState::class,MovieComment::class,
+    MovieDetails::class], version = 5)
 abstract class AppRoomDatabase: RoomDatabase() {
     abstract fun userDao(): IUserDao
     abstract fun movieDao(): IMovieDao
     abstract fun stateDao(): UserStateDao
+    abstract fun movieCommentDao(): IMovieCommentDao
+    abstract fun movieDetailsDao(): IMovieDetailsDao
+
 
     companion object {
         @Volatile
@@ -79,6 +85,27 @@ abstract class AppRoomDatabase: RoomDatabase() {
                 database.execSQL("ALTER TABLE movie_table ADD COLUMN newVote REAL NOT NULL DEFAULT 0.0")
             }
         }
+        val MIGRATION_1_5 = object : Migration(1, 5) {
+            override fun migrate(database: SupportSQLiteDatabase) {
+                // Crear la tabla de comentarios
+                database.execSQL("""
+                    CREATE TABLE IF NOT EXISTS movie_comments (
+                        commentId INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+                        movieId INTEGER NOT NULL,
+                        comment TEXT NOT NULL,
+                        FOREIGN KEY (movieId) REFERENCES MovieDetails(movieId) ON DELETE CASCADE
+                    )
+                """.trimIndent())
+
+                database.execSQL("""
+                    CREATE TABLE IF NOT EXISTS movie_details_table (
+                        movieId INTEGER PRIMARY KEY NOT NULL,
+                        vote INTEGER NOT NULL,
+                        isFavorite BOOLEAN NULL
+                    )
+                """.trimIndent())
+            }
+        }
 
         fun getDatabase(context: Context): AppRoomDatabase {
             // if the Instance is not null, return it, otherwise create a new database instance.
@@ -91,6 +118,7 @@ abstract class AppRoomDatabase: RoomDatabase() {
                     .addMigrations(MIGRATION_1_2)
                     .addMigrations(MIGRATION_1_3)
                     .addMigrations(MIGRATION_1_4)
+                    .addMigrations(MIGRATION_1_5)
                     .build()
                     .also { Instance = it }
             }

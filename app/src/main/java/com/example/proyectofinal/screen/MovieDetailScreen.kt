@@ -44,6 +44,8 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
@@ -64,8 +66,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.Observer
 import androidx.lifecycle.compose.LocalLifecycleOwner
+import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
 import com.example.model.Movie
+import com.example.model.MovieDetails
 import com.example.network.MovieRemoteDataSource
 import com.example.network.RetrofitBuilder
 import com.example.proyectofinal.viewModel.MovieHomeViewModel
@@ -73,10 +77,14 @@ import com.example.proyectofinal.viewModel.MovieViewModel
 import com.example.proyectofinal.R
 import com.example.proyectofinal.ui.theme.onPrimaryContainerLight
 import com.example.proyectofinal.ui.theme.onPrimaryLight
+import com.example.proyectofinal.ui.theme.onSecondaryContainerLight
 import com.example.proyectofinal.ui.theme.outlineLightHighContrast
 import com.example.proyectofinal.ui.theme.primaryContainerLightMediumContrast
 import com.example.proyectofinal.ui.theme.tertiaryCommon
+import com.example.proyectofinal.viewModel.MovieDetailsViewModel
+import com.example.repository.MovieDetailsRepository
 import com.example.repository.MovieRepository
+import dagger.hilt.android.scopes.ViewModelScoped
 
 @Composable
 fun MovieDetailScreen(movieId: Int?, onBackPressed: () -> Unit) {
@@ -90,12 +98,6 @@ fun MovieDetailScreen(movieId: Int?, onBackPressed: () -> Unit) {
     movie?.let {
         DetailContentScreen(
             eachMovie = it,
-            name = it.title,
-            image = it.posterPath,
-            subtitle = it.releaseDate,
-            points = if (it.newVote == 0.0) it.voteAverage else it.newVote,
-            descrip = it.description,
-            stars = it.voteSelf,
             onBackPressed = onBackPressed
         )
     }?: run {
@@ -110,7 +112,7 @@ fun MovieDetailScreen(movieId: Int?, onBackPressed: () -> Unit) {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun DetailContentScreen(eachMovie: Movie, name: String, image: String, subtitle: String, points:Double, descrip: String, stars: Int, onBackPressed: () -> Unit) {
+fun DetailContentScreen(eachMovie: Movie, onBackPressed: () -> Unit) {
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = false)
     var isSheetOpen by remember { mutableStateOf(false) }
 
@@ -118,7 +120,9 @@ fun DetailContentScreen(eachMovie: Movie, name: String, image: String, subtitle:
         ModalBottomSheet(
             onDismissRequest = { isSheetOpen = false },
             sheetState = sheetState,
-            modifier = Modifier.fillMaxHeight(0.5f)
+            modifier = Modifier
+                .background(onSecondaryContainerLight)
+                .fillMaxHeight(0.5f)
         ) {
             BottomSheetContent(
                 onClose = { isSheetOpen = false }
@@ -129,26 +133,30 @@ fun DetailContentScreen(eachMovie: Movie, name: String, image: String, subtitle:
     val points by remember {
         derivedStateOf{ if (eachMovie.newVote == 0.0) eachMovie.voteAverage else eachMovie.newVote }
     }
-    var iconSelect by remember { mutableStateOf(false) }
-    var rating by remember { mutableStateOf(eachMovie.voteSelf) }
+
     val repository = MovieRepository(LocalContext.current)
     val movieViewModel = MovieViewModel(repository)
+
+    val detailRepository = MovieDetailsRepository(LocalContext.current)
+    val movieDetailsViewModel = MovieDetailsViewModel(detailRepository)
+    val movieDetails by movieDetailsViewModel.movieDetails.collectAsState()
     val lifecycle = LocalLifecycleOwner.current
 
-    fun updateUI(i: Int) {
-        rating = i
+    LaunchedEffect(Unit) {
+        movieDetailsViewModel.fetchMovie(eachMovie.movieId)
     }
-    movieViewModel.star.observe(
-        lifecycle,
-        Observer(::updateUI)
-    )
-    fun updateUIFav(b: Boolean) {
-        iconSelect = b
-    }
-    movieViewModel.icon_favorite.observe(
-        lifecycle,
-        Observer(::updateUIFav)
-    )
+//    var iconSelect = movieDetails.iconSelect
+//    var rating = movieDetails.rating
+
+//    fun updateAll(details: MovieDetails) {
+//        rating = details.vote
+//        iconSelect = details.isFavorite
+//    }
+//    movieDetailsViewModel.movieDetails.observe(
+//        lifecycle,
+//        Observer(::updateAll)
+//    )
+
     Scaffold(modifier = Modifier.fillMaxSize(),
         topBar = {
             CenterAlignedTopAppBar(
@@ -204,14 +212,15 @@ fun DetailContentScreen(eachMovie: Movie, name: String, image: String, subtitle:
                     )
                     IconButton(
                         onClick = {
-                            movieViewModel.add_favorite(iconSelect)
+                           // movieViewModel.add_favorite(iconSelect)
+                            movieDetailsViewModel.saveMovieDetails(eachMovie.movieId, movieDetails.rating, !movieDetails.iconSelect)
                         },
                         colors = IconButtonDefaults.iconButtonColors(
                             containerColor = Color.Transparent
                         )
                     ) {
                         Icon(
-                            imageVector = if (iconSelect) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
+                            imageVector = if (movieDetails.iconSelect) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
                             contentDescription = "Favoritos",
                             modifier = Modifier.size(34.dp),
                             tint = onPrimaryLight
@@ -245,9 +254,14 @@ fun DetailContentScreen(eachMovie: Movie, name: String, image: String, subtitle:
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     RatingBar(
-                        rating = rating,
+                        rating = movieDetails.rating,
                         onRatingChanged = { newRating, movieID ->
-                            movieViewModel.update(newRating, movieID)
+                           // movieViewModel.update(newRating, movieID)
+                            movieDetailsViewModel.saveMovieDetails(
+                                movieID,
+                                newRating,
+                                movieDetails.iconSelect
+                            )
                         },
                         movieID = eachMovie.movieId
                     )
@@ -270,7 +284,7 @@ fun DetailContentScreen(eachMovie: Movie, name: String, image: String, subtitle:
                 }
 
                 Text(
-                    text = descrip,
+                    text = eachMovie.description,
                     color = onPrimaryLight,
                     modifier = Modifier
                         .fillMaxWidth()
@@ -284,7 +298,7 @@ fun DetailContentScreen(eachMovie: Movie, name: String, image: String, subtitle:
 @Composable
 fun RatingBar(
     modifier: Modifier = Modifier,
-    rating: Int = 0,
+    rating: Int,
     onRatingChanged : (Int, Int) -> Unit,
     movieID: Int
 ) {

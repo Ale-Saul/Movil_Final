@@ -12,7 +12,7 @@
     <string name="label_email">Correo electrónico:*</string>
     <string name="placeholder_email">tuCorreoAqui@gmail.com</string>
     <string name="label_password">Contraseña:*</string>
-    <string name="placeholder_password">*********</string>
+    <string name="placeholder_password">Ingresa tu contraseña</string>
     <string name="label_password2">Repetir contraseña:*</string>
     <string name="subtitle">Gustos</string>
     <string name="btn_create_account">Crear cuenta</string>
@@ -24,4 +24,5 @@
     <string name="btn_login_account">Iniciar sesión</string>
     <string name="link_sign_in">Ya tengo una cuenta</string>
     <string name="client_id">587351348537-nmequv441aevq57gt8cceabuqqe33juj.apps.googleusercontent.com</string>
+    <string name="btn_sign_in">Iniciar sesión</string>
 </resources>
