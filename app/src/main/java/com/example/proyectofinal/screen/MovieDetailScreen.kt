@@ -46,6 +46,7 @@ import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.currentCompositionErrors
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
@@ -134,28 +135,12 @@ fun DetailContentScreen(eachMovie: Movie, onBackPressed: () -> Unit) {
         derivedStateOf{ if (eachMovie.newVote == 0.0) eachMovie.voteAverage else eachMovie.newVote }
     }
 
-    val repository = MovieRepository(LocalContext.current)
-    val movieViewModel = MovieViewModel(repository)
-
     val detailRepository = MovieDetailsRepository(LocalContext.current)
     val movieDetailsViewModel = MovieDetailsViewModel(detailRepository)
     val movieDetails by movieDetailsViewModel.movieDetails.collectAsState()
-    val lifecycle = LocalLifecycleOwner.current
 
-    LaunchedEffect(Unit) {
-        movieDetailsViewModel.fetchMovie(eachMovie.movieId)
-    }
-//    var iconSelect = movieDetails.iconSelect
-//    var rating = movieDetails.rating
+    movieDetailsViewModel.fetchMovie(eachMovie.movieId)
 
-//    fun updateAll(details: MovieDetails) {
-//        rating = details.vote
-//        iconSelect = details.isFavorite
-//    }
-//    movieDetailsViewModel.movieDetails.observe(
-//        lifecycle,
-//        Observer(::updateAll)
-//    )
 
     Scaffold(modifier = Modifier.fillMaxSize(),
         topBar = {
@@ -302,7 +287,8 @@ fun RatingBar(
     onRatingChanged : (Int, Int) -> Unit,
     movieID: Int
 ) {
-    var currentRating by remember { mutableStateOf(rating) }
+    var currentRating by remember(rating) { mutableStateOf(rating) }
+    Log.d("holitatriste?", currentRating.toString())
     Row(
         modifier = modifier,
         verticalAlignment = Alignment.CenterVertically
@@ -401,7 +387,6 @@ fun CommentItem(comment: String) {
             .fillMaxWidth()
             .padding(vertical = 8.dp)
     ) {
-        // Imagen circular (placeholder)
         Box(
             modifier = Modifier
                 .size(40.dp)
@@ -409,7 +394,6 @@ fun CommentItem(comment: String) {
                 .background(Color.LightGray)
         )
         Spacer(modifier = Modifier.width(8.dp))
-        // Texto del comentario
         Text(
             text = comment,
             style = TextStyle(fontSize = 14.sp, color = Color.White)
