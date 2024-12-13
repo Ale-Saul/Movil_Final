@@ -33,6 +33,8 @@ hiltNavigation = "1.2.0"
 googleGmsGoogleServices = "4.4.2"
 identityJvm = "202411.1"
 googleid = "1.1.1"
+googleMaps = "4.4.1"
+playServicesMaps = "19.0.0"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -80,6 +82,8 @@ androidx-runtime-livedata = { group = "androidx.compose.runtime", name = "runtim
 androidx-credentials = {module="androidx.credentials:credentials", version.ref="credentials"}
 androidx-credentials-play-services-auth = { module="androidx.credentials:credentials-play-services-auth", version.ref="credentials"}
 firebase-auth-ktx = {module="com.google.firebase:firebase-auth-ktx"}
+google-map = { group="com.google.maps.android", name="maps-compose", version.ref="googleMaps"}
+
 #hilt
 hilt = { group="com.google.dagger", name="hilt-android", version.ref="hilt"}
 hilt-compiler = { group="com.google.dagger", name = "hilt-compiler", version.ref = "hilt"}
@@ -87,6 +91,7 @@ hilt-testing = {group= "com.google.dagger", name="hilt-android-testing", version
 hilt-navigation = {group = "androidx.hilt", name = "hilt-navigation-compose", version.ref = "hiltNavigation" }
 identity-jvm = { group = "com.android.identity", name = "identity-jvm", version.ref = "identityJvm" }
 googleid = { group = "com.google.android.libraries.identity.googleid", name = "googleid", version.ref = "googleid" }
+play-services-maps = { group = "com.google.android.gms", name = "play-services-maps", version.ref = "playServicesMaps" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

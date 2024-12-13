@@ -74,6 +74,7 @@ dependencies {
     implementation(libs.androidx.runtime.livedata)
     implementation(libs.identity.jvm)
     implementation(libs.googleid)
+    implementation(libs.play.services.maps)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -99,6 +100,9 @@ dependencies {
     implementation(platform(libs.firebase.bom))
     implementation(libs.firebase.auth)
     implementation(libs.play.services.auth)
+
+    //google map
+    implementation(libs.google.map)
 
 }
 
