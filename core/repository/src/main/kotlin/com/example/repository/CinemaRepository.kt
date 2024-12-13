@@ -7,7 +7,7 @@ class CinemaRepository {
         Cinema(
             cinemaId = 1,
             name = "Cine Center",
-            imageUrl = "https://www.cinecenter.com.bo/images/icons/logo.png",
+            imageUrl = "https://play-lh.googleusercontent.com/7VH4tLwI_xI3qnn6HKCiYN5fYqhodHxZpTnMAFAtz6NQC5uXH4F8DX_93tMVCrMpwsw",
             latitude = -17.4200773,
             longitude = -66.3091207,
             openingHours = "10:00 AM",

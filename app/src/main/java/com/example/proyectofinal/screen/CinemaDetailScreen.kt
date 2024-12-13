@@ -3,17 +3,12 @@ package com.example.proyectofinal.screen
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.CenterAlignedTopAppBar
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -22,12 +17,19 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import coil.compose.rememberImagePainter
 import com.example.model.Cinema
-import androidx.compose.material3.Scaffold
-
+import com.google.android.gms.maps.model.CameraPosition
+import com.google.android.gms.maps.model.LatLng
+import com.google.maps.android.compose.GoogleMap
+import com.google.maps.android.compose.Marker
+import com.google.maps.android.compose.MarkerState
+import com.google.maps.android.compose.rememberCameraPositionState
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CinemaDetailScreen(cinema: Cinema, onBackPressed: () -> Unit) {
+    // Crear un estado para permitir el desplazamiento vertical
+    val scrollState = rememberScrollState()
+
     Scaffold(
         topBar = {
             CenterAlignedTopAppBar(
@@ -43,12 +45,14 @@ fun CinemaDetailScreen(cinema: Cinema, onBackPressed: () -> Unit) {
             )
         }
     ) { innerPadding ->
+        // Columna que permitirá desplazarse verticalmente
         Column(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(innerPadding)
                 .padding(16.dp)
                 .background(Color(0xFF0B132B))
+                .verticalScroll(scrollState) // Activar el desplazamiento vertical
         ) {
             // Imagen del cine
             Image(
@@ -82,33 +86,22 @@ fun CinemaDetailScreen(cinema: Cinema, onBackPressed: () -> Unit) {
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            // Imagen adicional donde irá el mapa en el futuro
-            Image(
-                painter = rememberImagePainter(cinema.imageUrl), // Usa la misma imagen por ahora
-                contentDescription = "Ubicación de ${cinema.name}",
+            // GoogleMap con la ubicación del cine
+            val ucb = LatLng(cinema.latitude, cinema.longitude)
+            val cameraPositionState = rememberCameraPositionState {
+                position = CameraPosition.fromLatLngZoom(ucb, 10f)
+            }
+            GoogleMap(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(200.dp)
-                    .clip(RoundedCornerShape(16.dp))
-            )
-
-            Spacer(modifier = Modifier.height(16.dp))
-
-            // Botón para abrir en Google Maps (si quieres mantenerlo)
-            Button(
-                onClick = {
-                    /*val gmmIntentUri = Uri.parse("geo:${cinema.latitude},${cinema.longitude}")
-                    val mapIntent = Intent(Intent.ACTION_VIEW, gmmIntentUri)
-                    mapIntent.setPackage("com.google.android.apps.maps")
-                    context.startActivity(mapIntent)*/
-                },
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = Color(0xFF3A506B),
-                    contentColor = Color.White
-                ),
-                modifier = Modifier.align(Alignment.CenterHorizontally)
+                    .height(300.dp), // Ajusta el tamaño del mapa
+                cameraPositionState = cameraPositionState
             ) {
-                Text(text = "Abrir en Google Maps")
+                Marker(
+                    state = MarkerState(position = ucb),
+                    title = cinema.name,
+                    snippet = "Marker in ${cinema.name}"
+                )
             }
         }
     }
