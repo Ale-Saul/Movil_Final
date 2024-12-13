@@ -1,5 +1,6 @@
 package com.example.proyectofinal.screen
 
+import android.util.Log
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -43,6 +44,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
@@ -63,6 +65,7 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.Observer
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import coil.compose.AsyncImage
+import com.example.model.Movie
 import com.example.network.MovieRemoteDataSource
 import com.example.network.RetrofitBuilder
 import com.example.proyectofinal.viewModel.MovieHomeViewModel
@@ -86,12 +89,13 @@ fun MovieDetailScreen(movieId: Int?, onBackPressed: () -> Unit) {
     val movie = movieId?.let { moviesHomeViewModel.getMovieById(it).observeAsState() }?.value
     movie?.let {
         DetailContentScreen(
-            keyMovie = it.movieId,
+            eachMovie = it,
             name = it.title,
             image = it.posterPath,
-            subtitle = "2014 - Ciencia ficcion",
-            points = it.voteAverage,
+            subtitle = it.releaseDate,
+            points = if (it.newVote == 0.0) it.voteAverage else it.newVote,
             descrip = it.description,
+            stars = it.voteSelf,
             onBackPressed = onBackPressed
         )
     }?: run {
@@ -106,7 +110,7 @@ fun MovieDetailScreen(movieId: Int?, onBackPressed: () -> Unit) {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun DetailContentScreen(keyMovie: Int,name: String, image: String, subtitle: String, points:Double, descrip: String, onBackPressed: () -> Unit) {
+fun DetailContentScreen(eachMovie: Movie, name: String, image: String, subtitle: String, points:Double, descrip: String, stars: Int, onBackPressed: () -> Unit) {
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = false)
     var isSheetOpen by remember { mutableStateOf(false) }
 
@@ -122,9 +126,11 @@ fun DetailContentScreen(keyMovie: Int,name: String, image: String, subtitle: Str
         }
     }
 
-    val movieImage = image
+    val points by remember {
+        derivedStateOf{ if (eachMovie.newVote == 0.0) eachMovie.voteAverage else eachMovie.newVote }
+    }
     var iconSelect by remember { mutableStateOf(false) }
-    var rating by remember { mutableStateOf(0) }
+    var rating by remember { mutableStateOf(eachMovie.voteSelf) }
     val repository = MovieRepository(LocalContext.current)
     val movieViewModel = MovieViewModel(repository)
     val lifecycle = LocalLifecycleOwner.current
@@ -176,7 +182,7 @@ fun DetailContentScreen(keyMovie: Int,name: String, image: String, subtitle: Str
                 verticalArrangement = Arrangement.spacedBy(15.dp)
             ) {
                 AsyncImage(
-                    model = "https://image.tmdb.org/t/p/w500/${image}",
+                    model = "https://image.tmdb.org/t/p/w500/${eachMovie.posterPath}",
                     contentDescription = null,
                     modifier= Modifier
                         .height(340.dp)
@@ -190,7 +196,7 @@ fun DetailContentScreen(keyMovie: Int,name: String, image: String, subtitle: Str
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(
-                        text = name,
+                        text = eachMovie.title,
                         style = MaterialTheme.typography.bodyLarge,
                         fontSize = 24.sp,
                         fontWeight = FontWeight.SemiBold,
@@ -219,7 +225,7 @@ fun DetailContentScreen(keyMovie: Int,name: String, image: String, subtitle: Str
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(
-                        text = subtitle,
+                        text = eachMovie.releaseDate,
                         style = MaterialTheme.typography.bodySmall,
                         color = onPrimaryLight,
                         fontSize = 15.sp
@@ -243,7 +249,7 @@ fun DetailContentScreen(keyMovie: Int,name: String, image: String, subtitle: Str
                         onRatingChanged = { newRating, movieID ->
                             movieViewModel.update(newRating, movieID)
                         },
-                        movieID = keyMovie
+                        movieID = eachMovie.movieId
                     )
                     OutlinedButton(
                         onClick = { isSheetOpen = true },

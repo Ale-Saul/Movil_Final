@@ -35,17 +35,17 @@ public final class AppRoomDatabase_Impl extends AppRoomDatabase {
   @Override
   @NonNull
   protected SupportSQLiteOpenHelper createOpenHelper(@NonNull final DatabaseConfiguration config) {
-    final SupportSQLiteOpenHelper.Callback _openCallback = new RoomOpenHelper(config, new RoomOpenHelper.Delegate(3) {
+    final SupportSQLiteOpenHelper.Callback _openCallback = new RoomOpenHelper(config, new RoomOpenHelper.Delegate(4) {
       @Override
       public void createAllTables(@NonNull final SupportSQLiteDatabase db) {
         db.execSQL("CREATE TABLE IF NOT EXISTS `user_table` (`userId` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `username` TEXT NOT NULL, `birthDate` TEXT NOT NULL, `email` TEXT NOT NULL, `password` TEXT NOT NULL)");
-        db.execSQL("CREATE TABLE IF NOT EXISTS `movie_table` (`movieId` INTEGER NOT NULL, `title` TEXT NOT NULL, `description` TEXT NOT NULL, `posterPath` TEXT NOT NULL, `voteAverage` REAL NOT NULL, PRIMARY KEY(`movieId`))");
+        db.execSQL("CREATE TABLE IF NOT EXISTS `movie_table` (`movieId` INTEGER NOT NULL, `title` TEXT NOT NULL, `description` TEXT NOT NULL, `posterPath` TEXT NOT NULL, `voteAverage` REAL NOT NULL, `releaseDate` TEXT NOT NULL, `voteSelf` INTEGER NOT NULL, `newVote` REAL NOT NULL, PRIMARY KEY(`movieId`))");
         db.execSQL("CREATE TABLE IF NOT EXISTS `genre_table` (`genreId` INTEGER NOT NULL, `name` TEXT NOT NULL, PRIMARY KEY(`genreId`))");
         db.execSQL("CREATE TABLE IF NOT EXISTS `MovieGenreCrossRef` (`movieId` INTEGER NOT NULL, `genreId` INTEGER NOT NULL, PRIMARY KEY(`movieId`, `genreId`))");
         db.execSQL("CREATE TABLE IF NOT EXISTS `UserGenreCrossRef` (`userId` INTEGER NOT NULL, `genreId` INTEGER NOT NULL, PRIMARY KEY(`userId`, `genreId`))");
         db.execSQL("CREATE TABLE IF NOT EXISTS `user_state` (`id` INTEGER NOT NULL, `isLoggedIn` INTEGER NOT NULL, PRIMARY KEY(`id`))");
         db.execSQL("CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)");
-        db.execSQL("INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '66a0a922a17b35493cdacf08d07ded64')");
+        db.execSQL("INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '9b35c4ab5630a92730c59be766b25707')");
       }
 
       @Override
@@ -114,12 +114,15 @@ public final class AppRoomDatabase_Impl extends AppRoomDatabase {
                   + " Expected:\n" + _infoUserTable + "\n"
                   + " Found:\n" + _existingUserTable);
         }
-        final HashMap<String, TableInfo.Column> _columnsMovieTable = new HashMap<String, TableInfo.Column>(5);
+        final HashMap<String, TableInfo.Column> _columnsMovieTable = new HashMap<String, TableInfo.Column>(8);
         _columnsMovieTable.put("movieId", new TableInfo.Column("movieId", "INTEGER", true, 1, null, TableInfo.CREATED_FROM_ENTITY));
         _columnsMovieTable.put("title", new TableInfo.Column("title", "TEXT", true, 0, null, TableInfo.CREATED_FROM_ENTITY));
         _columnsMovieTable.put("description", new TableInfo.Column("description", "TEXT", true, 0, null, TableInfo.CREATED_FROM_ENTITY));
         _columnsMovieTable.put("posterPath", new TableInfo.Column("posterPath", "TEXT", true, 0, null, TableInfo.CREATED_FROM_ENTITY));
         _columnsMovieTable.put("voteAverage", new TableInfo.Column("voteAverage", "REAL", true, 0, null, TableInfo.CREATED_FROM_ENTITY));
+        _columnsMovieTable.put("releaseDate", new TableInfo.Column("releaseDate", "TEXT", true, 0, null, TableInfo.CREATED_FROM_ENTITY));
+        _columnsMovieTable.put("voteSelf", new TableInfo.Column("voteSelf", "INTEGER", true, 0, null, TableInfo.CREATED_FROM_ENTITY));
+        _columnsMovieTable.put("newVote", new TableInfo.Column("newVote", "REAL", true, 0, null, TableInfo.CREATED_FROM_ENTITY));
         final HashSet<TableInfo.ForeignKey> _foreignKeysMovieTable = new HashSet<TableInfo.ForeignKey>(0);
         final HashSet<TableInfo.Index> _indicesMovieTable = new HashSet<TableInfo.Index>(0);
         final TableInfo _infoMovieTable = new TableInfo("movie_table", _columnsMovieTable, _foreignKeysMovieTable, _indicesMovieTable);
@@ -179,7 +182,7 @@ public final class AppRoomDatabase_Impl extends AppRoomDatabase {
         }
         return new RoomOpenHelper.ValidationResult(true, null);
       }
-    }, "66a0a922a17b35493cdacf08d07ded64", "1b0bcc3816cdc66a1c0f0f1375d31ca8");
+    }, "9b35c4ab5630a92730c59be766b25707", "bebff15678ebc7daf9ce9325dfd433ad");
     final SupportSQLiteOpenHelper.Configuration _sqliteConfig = SupportSQLiteOpenHelper.Configuration.builder(config.context).name(config.name).callback(_openCallback).build();
     final SupportSQLiteOpenHelper _helper = config.sqliteOpenHelperFactory.create(_sqliteConfig);
     return _helper;

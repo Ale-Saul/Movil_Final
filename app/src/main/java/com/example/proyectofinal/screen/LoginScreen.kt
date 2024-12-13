@@ -74,7 +74,7 @@ fun LoginContentScreen(modifier: Modifier, onClick: () -> Unit) {
     val context = LocalContext.current
     val repository = UserRepository(context = context)
     //var userViewModel: UserViewModel = hiltViewModel()
-    var userViewModel = UserViewModel(repository)
+    var userViewModel = UserViewModel(repository, context)
     var isEnabled by remember { mutableStateOf(false) }
 
     val loginState by userViewModel.state.collectAsState()

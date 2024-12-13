@@ -25,7 +25,7 @@ public class MovieResponseDtoJsonAdapter(
   moshi: Moshi,
 ) : JsonAdapter<MovieResponseDto>() {
   private val options: JsonReader.Options = JsonReader.Options.of("id", "title", "overview",
-      "poster_path", "genre_ids", "vote_average")
+      "poster_path", "genre_ids", "vote_average", "release_date")
 
   private val stringAdapter: JsonAdapter<String> = moshi.adapter(String::class.java, emptySet(),
       "id")
@@ -47,6 +47,7 @@ public class MovieResponseDtoJsonAdapter(
     var poster_path: String? = null
     var genre_ids: List<Int>? = null
     var vote_average: Double? = null
+    var release_date: String? = null
     reader.beginObject()
     while (reader.hasNext()) {
       when (reader.selectName(options)) {
@@ -61,6 +62,8 @@ public class MovieResponseDtoJsonAdapter(
             "genre_ids", reader)
         5 -> vote_average = doubleAdapter.fromJson(reader) ?:
             throw Util.unexpectedNull("vote_average", "vote_average", reader)
+        6 -> release_date = stringAdapter.fromJson(reader) ?:
+            throw Util.unexpectedNull("release_date", "release_date", reader)
         -1 -> {
           // Unknown name, skip it.
           reader.skipName()
@@ -77,6 +80,8 @@ public class MovieResponseDtoJsonAdapter(
             reader),
         genre_ids = genre_ids ?: throw Util.missingProperty("genre_ids", "genre_ids", reader),
         vote_average = vote_average ?: throw Util.missingProperty("vote_average", "vote_average",
+            reader),
+        release_date = release_date ?: throw Util.missingProperty("release_date", "release_date",
             reader)
     )
   }
@@ -98,6 +103,8 @@ public class MovieResponseDtoJsonAdapter(
     listOfIntAdapter.toJson(writer, value_.genre_ids)
     writer.name("vote_average")
     doubleAdapter.toJson(writer, value_.vote_average)
+    writer.name("release_date")
+    stringAdapter.toJson(writer, value_.release_date)
     writer.endObject()
   }
 }

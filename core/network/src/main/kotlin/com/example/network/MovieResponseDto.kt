@@ -18,7 +18,9 @@ data class MovieResponseDto(
     @Json(name = "genre_ids")
     val genre_ids: List<Int>,
     @Json(name = "vote_average")
-    val  vote_average: Double
+    val  vote_average: Double,
+    @Json(name = "release_date")
+    val release_date: String
 ){
     fun toMovie(): Movie {
         return Movie(
@@ -26,7 +28,10 @@ data class MovieResponseDto(
             title = title,
             description = overview,
             posterPath = poster_path,
-            voteAverage = vote_average
+            voteAverage = vote_average,
+            releaseDate = release_date,
+            voteSelf = 0,
+            newVote = 0.0
         )
     }
 }

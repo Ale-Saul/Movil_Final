@@ -1,6 +1,7 @@
 package com.example.repository
 
 import android.content.Context
+import android.util.Log
 import androidx.lifecycle.LiveData
 import com.example.data.AppRoomDatabase
 import com.example.model.Genre
@@ -11,6 +12,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class MovieRepository(val context: Context)  {
     val movieDao = AppRoomDatabase.getDatabase(context).movieDao()
@@ -82,10 +84,23 @@ class MovieRepository(val context: Context)  {
         CoroutineScope(Dispatchers.IO).launch {
             val movie = movieDao.getMovieById2(movieId)
             val rating = movie?.voteAverage
+            Log.d("holitarating", rating.toString())
             if (rating != null) {
+                //movieDao.setVoteStars(newRating, movieId)
                 val calculatedRating = (rating + newRating) / 2
-                movieDao.setVoteAverage(calculatedRating, movieId)
+                Log.d(
+                    "holitaDB_OPERATION",
+                    "VoteStars updated: movieId=$movieId, newRating=$calculatedRating"
+                )
+                withContext(Dispatchers.IO) {
+                    movieDao.updateVotes(movieId, newRating, calculatedRating)
+                }
             }
+
         }
+    }
+
+    fun tester(): String{
+        return "It's alright"
     }
 }

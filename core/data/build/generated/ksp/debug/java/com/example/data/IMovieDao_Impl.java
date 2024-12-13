@@ -8,6 +8,7 @@ import androidx.lifecycle.LiveData;
 import androidx.room.CoroutinesRoom;
 import androidx.room.EntityInsertionAdapter;
 import androidx.room.RoomDatabase;
+import androidx.room.RoomDatabaseKt;
 import androidx.room.RoomSQLiteQuery;
 import androidx.room.SharedSQLiteStatement;
 import androidx.room.util.CursorUtil;
@@ -50,7 +51,9 @@ public final class IMovieDao_Impl implements IMovieDao {
 
   private final EntityInsertionAdapter<MovieGenreCrossRef> __insertionAdapterOfMovieGenreCrossRef;
 
-  private final SharedSQLiteStatement __preparedStmtOfSetVoteAverage;
+  private final SharedSQLiteStatement __preparedStmtOfSetNewVote;
+
+  private final SharedSQLiteStatement __preparedStmtOfSetVoteStars;
 
   public IMovieDao_Impl(@NonNull final RoomDatabase __db) {
     this.__db = __db;
@@ -58,7 +61,7 @@ public final class IMovieDao_Impl implements IMovieDao {
       @Override
       @NonNull
       protected String createQuery() {
-        return "INSERT OR REPLACE INTO `movie_table` (`movieId`,`title`,`description`,`posterPath`,`voteAverage`) VALUES (?,?,?,?,?)";
+        return "INSERT OR REPLACE INTO `movie_table` (`movieId`,`title`,`description`,`posterPath`,`voteAverage`,`releaseDate`,`voteSelf`,`newVote`) VALUES (?,?,?,?,?,?,?,?)";
       }
 
       @Override
@@ -69,6 +72,9 @@ public final class IMovieDao_Impl implements IMovieDao {
         statement.bindString(3, entity.getDescription());
         statement.bindString(4, entity.getPosterPath());
         statement.bindDouble(5, entity.getVoteAverage());
+        statement.bindString(6, entity.getReleaseDate());
+        statement.bindLong(7, entity.getVoteSelf());
+        statement.bindDouble(8, entity.getNewVote());
       }
     };
     this.__insertionAdapterOfGenre = new EntityInsertionAdapter<Genre>(__db) {
@@ -99,11 +105,19 @@ public final class IMovieDao_Impl implements IMovieDao {
         statement.bindLong(2, entity.getGenreId());
       }
     };
-    this.__preparedStmtOfSetVoteAverage = new SharedSQLiteStatement(__db) {
+    this.__preparedStmtOfSetNewVote = new SharedSQLiteStatement(__db) {
       @Override
       @NonNull
       public String createQuery() {
-        final String _query = "UPDATE movie_table SET voteAverage = ? WHERE movieId = ?";
+        final String _query = "UPDATE movie_table SET newVote = ? WHERE movieId = ?";
+        return _query;
+      }
+    };
+    this.__preparedStmtOfSetVoteStars = new SharedSQLiteStatement(__db) {
+      @Override
+      @NonNull
+      public String createQuery() {
+        final String _query = "UPDATE movie_table SET voteSelf = ? WHERE movieId = ?";
         return _query;
       }
     };
@@ -185,9 +199,15 @@ public final class IMovieDao_Impl implements IMovieDao {
   }
 
   @Override
-  public void setVoteAverage(final double newRating, final int movieID) {
+  public Object updateVotes(final int movieId, final int voteStars, final double newVote,
+      final Continuation<? super Unit> $completion) {
+    return RoomDatabaseKt.withTransaction(__db, (__cont) -> IMovieDao.DefaultImpls.updateVotes(IMovieDao_Impl.this, movieId, voteStars, newVote, __cont), $completion);
+  }
+
+  @Override
+  public void setNewVote(final double newRating, final int movieID) {
     __db.assertNotSuspendingTransaction();
-    final SupportSQLiteStatement _stmt = __preparedStmtOfSetVoteAverage.acquire();
+    final SupportSQLiteStatement _stmt = __preparedStmtOfSetNewVote.acquire();
     int _argIndex = 1;
     _stmt.bindDouble(_argIndex, newRating);
     _argIndex = 2;
@@ -201,7 +221,28 @@ public final class IMovieDao_Impl implements IMovieDao {
         __db.endTransaction();
       }
     } finally {
-      __preparedStmtOfSetVoteAverage.release(_stmt);
+      __preparedStmtOfSetNewVote.release(_stmt);
+    }
+  }
+
+  @Override
+  public void setVoteStars(final int newRating, final int movieID) {
+    __db.assertNotSuspendingTransaction();
+    final SupportSQLiteStatement _stmt = __preparedStmtOfSetVoteStars.acquire();
+    int _argIndex = 1;
+    _stmt.bindLong(_argIndex, newRating);
+    _argIndex = 2;
+    _stmt.bindLong(_argIndex, movieID);
+    try {
+      __db.beginTransaction();
+      try {
+        _stmt.executeUpdateDelete();
+        __db.setTransactionSuccessful();
+      } finally {
+        __db.endTransaction();
+      }
+    } finally {
+      __preparedStmtOfSetVoteStars.release(_stmt);
     }
   }
 
@@ -220,6 +261,9 @@ public final class IMovieDao_Impl implements IMovieDao {
           final int _cursorIndexOfDescription = CursorUtil.getColumnIndexOrThrow(_cursor, "description");
           final int _cursorIndexOfPosterPath = CursorUtil.getColumnIndexOrThrow(_cursor, "posterPath");
           final int _cursorIndexOfVoteAverage = CursorUtil.getColumnIndexOrThrow(_cursor, "voteAverage");
+          final int _cursorIndexOfReleaseDate = CursorUtil.getColumnIndexOrThrow(_cursor, "releaseDate");
+          final int _cursorIndexOfVoteSelf = CursorUtil.getColumnIndexOrThrow(_cursor, "voteSelf");
+          final int _cursorIndexOfNewVote = CursorUtil.getColumnIndexOrThrow(_cursor, "newVote");
           final List<Movie> _result = new ArrayList<Movie>(_cursor.getCount());
           while (_cursor.moveToNext()) {
             final Movie _item;
@@ -233,7 +277,13 @@ public final class IMovieDao_Impl implements IMovieDao {
             _tmpPosterPath = _cursor.getString(_cursorIndexOfPosterPath);
             final double _tmpVoteAverage;
             _tmpVoteAverage = _cursor.getDouble(_cursorIndexOfVoteAverage);
-            _item = new Movie(_tmpMovieId,_tmpTitle,_tmpDescription,_tmpPosterPath,_tmpVoteAverage);
+            final String _tmpReleaseDate;
+            _tmpReleaseDate = _cursor.getString(_cursorIndexOfReleaseDate);
+            final int _tmpVoteSelf;
+            _tmpVoteSelf = _cursor.getInt(_cursorIndexOfVoteSelf);
+            final double _tmpNewVote;
+            _tmpNewVote = _cursor.getDouble(_cursorIndexOfNewVote);
+            _item = new Movie(_tmpMovieId,_tmpTitle,_tmpDescription,_tmpPosterPath,_tmpVoteAverage,_tmpReleaseDate,_tmpVoteSelf,_tmpNewVote);
             _result.add(_item);
           }
           return _result;
@@ -352,6 +402,9 @@ public final class IMovieDao_Impl implements IMovieDao {
             final int _cursorIndexOfDescription = CursorUtil.getColumnIndexOrThrow(_cursor, "description");
             final int _cursorIndexOfPosterPath = CursorUtil.getColumnIndexOrThrow(_cursor, "posterPath");
             final int _cursorIndexOfVoteAverage = CursorUtil.getColumnIndexOrThrow(_cursor, "voteAverage");
+            final int _cursorIndexOfReleaseDate = CursorUtil.getColumnIndexOrThrow(_cursor, "releaseDate");
+            final int _cursorIndexOfVoteSelf = CursorUtil.getColumnIndexOrThrow(_cursor, "voteSelf");
+            final int _cursorIndexOfNewVote = CursorUtil.getColumnIndexOrThrow(_cursor, "newVote");
             final HashMap<Long, ArrayList<Genre>> _collectionGenres = new HashMap<Long, ArrayList<Genre>>();
             while (_cursor.moveToNext()) {
               final long _tmpKey;
@@ -376,7 +429,13 @@ public final class IMovieDao_Impl implements IMovieDao {
               _tmpPosterPath = _cursor.getString(_cursorIndexOfPosterPath);
               final double _tmpVoteAverage;
               _tmpVoteAverage = _cursor.getDouble(_cursorIndexOfVoteAverage);
-              _tmpMovie = new Movie(_tmpMovieId,_tmpTitle,_tmpDescription,_tmpPosterPath,_tmpVoteAverage);
+              final String _tmpReleaseDate;
+              _tmpReleaseDate = _cursor.getString(_cursorIndexOfReleaseDate);
+              final int _tmpVoteSelf;
+              _tmpVoteSelf = _cursor.getInt(_cursorIndexOfVoteSelf);
+              final double _tmpNewVote;
+              _tmpNewVote = _cursor.getDouble(_cursorIndexOfNewVote);
+              _tmpMovie = new Movie(_tmpMovieId,_tmpTitle,_tmpDescription,_tmpPosterPath,_tmpVoteAverage,_tmpReleaseDate,_tmpVoteSelf,_tmpNewVote);
               final ArrayList<Genre> _tmpGenresCollection;
               final long _tmpKey_1;
               _tmpKey_1 = _cursor.getLong(_cursorIndexOfMovieId);
@@ -417,6 +476,9 @@ public final class IMovieDao_Impl implements IMovieDao {
             final int _cursorIndexOfDescription = CursorUtil.getColumnIndexOrThrow(_cursor, "description");
             final int _cursorIndexOfPosterPath = CursorUtil.getColumnIndexOrThrow(_cursor, "posterPath");
             final int _cursorIndexOfVoteAverage = CursorUtil.getColumnIndexOrThrow(_cursor, "voteAverage");
+            final int _cursorIndexOfReleaseDate = CursorUtil.getColumnIndexOrThrow(_cursor, "releaseDate");
+            final int _cursorIndexOfVoteSelf = CursorUtil.getColumnIndexOrThrow(_cursor, "voteSelf");
+            final int _cursorIndexOfNewVote = CursorUtil.getColumnIndexOrThrow(_cursor, "newVote");
             final List<Movie> _result = new ArrayList<Movie>(_cursor.getCount());
             while (_cursor.moveToNext()) {
               final Movie _item;
@@ -430,7 +492,13 @@ public final class IMovieDao_Impl implements IMovieDao {
               _tmpPosterPath = _cursor.getString(_cursorIndexOfPosterPath);
               final double _tmpVoteAverage;
               _tmpVoteAverage = _cursor.getDouble(_cursorIndexOfVoteAverage);
-              _item = new Movie(_tmpMovieId,_tmpTitle,_tmpDescription,_tmpPosterPath,_tmpVoteAverage);
+              final String _tmpReleaseDate;
+              _tmpReleaseDate = _cursor.getString(_cursorIndexOfReleaseDate);
+              final int _tmpVoteSelf;
+              _tmpVoteSelf = _cursor.getInt(_cursorIndexOfVoteSelf);
+              final double _tmpNewVote;
+              _tmpNewVote = _cursor.getDouble(_cursorIndexOfNewVote);
+              _item = new Movie(_tmpMovieId,_tmpTitle,_tmpDescription,_tmpPosterPath,_tmpVoteAverage,_tmpReleaseDate,_tmpVoteSelf,_tmpNewVote);
               _result.add(_item);
             }
             __db.setTransactionSuccessful();
@@ -467,6 +535,9 @@ public final class IMovieDao_Impl implements IMovieDao {
           final int _cursorIndexOfDescription = CursorUtil.getColumnIndexOrThrow(_cursor, "description");
           final int _cursorIndexOfPosterPath = CursorUtil.getColumnIndexOrThrow(_cursor, "posterPath");
           final int _cursorIndexOfVoteAverage = CursorUtil.getColumnIndexOrThrow(_cursor, "voteAverage");
+          final int _cursorIndexOfReleaseDate = CursorUtil.getColumnIndexOrThrow(_cursor, "releaseDate");
+          final int _cursorIndexOfVoteSelf = CursorUtil.getColumnIndexOrThrow(_cursor, "voteSelf");
+          final int _cursorIndexOfNewVote = CursorUtil.getColumnIndexOrThrow(_cursor, "newVote");
           final Movie _result;
           if (_cursor.moveToFirst()) {
             final int _tmpMovieId;
@@ -479,7 +550,13 @@ public final class IMovieDao_Impl implements IMovieDao {
             _tmpPosterPath = _cursor.getString(_cursorIndexOfPosterPath);
             final double _tmpVoteAverage;
             _tmpVoteAverage = _cursor.getDouble(_cursorIndexOfVoteAverage);
-            _result = new Movie(_tmpMovieId,_tmpTitle,_tmpDescription,_tmpPosterPath,_tmpVoteAverage);
+            final String _tmpReleaseDate;
+            _tmpReleaseDate = _cursor.getString(_cursorIndexOfReleaseDate);
+            final int _tmpVoteSelf;
+            _tmpVoteSelf = _cursor.getInt(_cursorIndexOfVoteSelf);
+            final double _tmpNewVote;
+            _tmpNewVote = _cursor.getDouble(_cursorIndexOfNewVote);
+            _result = new Movie(_tmpMovieId,_tmpTitle,_tmpDescription,_tmpPosterPath,_tmpVoteAverage,_tmpReleaseDate,_tmpVoteSelf,_tmpNewVote);
           } else {
             _result = null;
           }
@@ -510,6 +587,9 @@ public final class IMovieDao_Impl implements IMovieDao {
       final int _cursorIndexOfDescription = CursorUtil.getColumnIndexOrThrow(_cursor, "description");
       final int _cursorIndexOfPosterPath = CursorUtil.getColumnIndexOrThrow(_cursor, "posterPath");
       final int _cursorIndexOfVoteAverage = CursorUtil.getColumnIndexOrThrow(_cursor, "voteAverage");
+      final int _cursorIndexOfReleaseDate = CursorUtil.getColumnIndexOrThrow(_cursor, "releaseDate");
+      final int _cursorIndexOfVoteSelf = CursorUtil.getColumnIndexOrThrow(_cursor, "voteSelf");
+      final int _cursorIndexOfNewVote = CursorUtil.getColumnIndexOrThrow(_cursor, "newVote");
       final Movie _result;
       if (_cursor.moveToFirst()) {
         final int _tmpMovieId;
@@ -522,7 +602,13 @@ public final class IMovieDao_Impl implements IMovieDao {
         _tmpPosterPath = _cursor.getString(_cursorIndexOfPosterPath);
         final double _tmpVoteAverage;
         _tmpVoteAverage = _cursor.getDouble(_cursorIndexOfVoteAverage);
-        _result = new Movie(_tmpMovieId,_tmpTitle,_tmpDescription,_tmpPosterPath,_tmpVoteAverage);
+        final String _tmpReleaseDate;
+        _tmpReleaseDate = _cursor.getString(_cursorIndexOfReleaseDate);
+        final int _tmpVoteSelf;
+        _tmpVoteSelf = _cursor.getInt(_cursorIndexOfVoteSelf);
+        final double _tmpNewVote;
+        _tmpNewVote = _cursor.getDouble(_cursorIndexOfNewVote);
+        _result = new Movie(_tmpMovieId,_tmpTitle,_tmpDescription,_tmpPosterPath,_tmpVoteAverage,_tmpReleaseDate,_tmpVoteSelf,_tmpNewVote);
       } else {
         _result = null;
       }
