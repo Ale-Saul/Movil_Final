@@ -16,6 +16,7 @@ import java.lang.Override;
 import java.lang.String;
 import java.lang.SuppressWarnings;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -32,10 +33,14 @@ public final class AppRoomDatabase_Impl extends AppRoomDatabase {
 
   private volatile UserStateDao _userStateDao;
 
+  private volatile IMovieCommentDao _iMovieCommentDao;
+
+  private volatile IMovieDetailsDao _iMovieDetailsDao;
+
   @Override
   @NonNull
   protected SupportSQLiteOpenHelper createOpenHelper(@NonNull final DatabaseConfiguration config) {
-    final SupportSQLiteOpenHelper.Callback _openCallback = new RoomOpenHelper(config, new RoomOpenHelper.Delegate(4) {
+    final SupportSQLiteOpenHelper.Callback _openCallback = new RoomOpenHelper(config, new RoomOpenHelper.Delegate(5) {
       @Override
       public void createAllTables(@NonNull final SupportSQLiteDatabase db) {
         db.execSQL("CREATE TABLE IF NOT EXISTS `user_table` (`userId` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `username` TEXT NOT NULL, `birthDate` TEXT NOT NULL, `email` TEXT NOT NULL, `password` TEXT NOT NULL)");
@@ -44,8 +49,10 @@ public final class AppRoomDatabase_Impl extends AppRoomDatabase {
         db.execSQL("CREATE TABLE IF NOT EXISTS `MovieGenreCrossRef` (`movieId` INTEGER NOT NULL, `genreId` INTEGER NOT NULL, PRIMARY KEY(`movieId`, `genreId`))");
         db.execSQL("CREATE TABLE IF NOT EXISTS `UserGenreCrossRef` (`userId` INTEGER NOT NULL, `genreId` INTEGER NOT NULL, PRIMARY KEY(`userId`, `genreId`))");
         db.execSQL("CREATE TABLE IF NOT EXISTS `user_state` (`id` INTEGER NOT NULL, `isLoggedIn` INTEGER NOT NULL, PRIMARY KEY(`id`))");
+        db.execSQL("CREATE TABLE IF NOT EXISTS `movie_comments` (`commentId` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `movieId` INTEGER NOT NULL, `comment` TEXT NOT NULL, FOREIGN KEY(`movieId`) REFERENCES `movie_table`(`movieId`) ON UPDATE NO ACTION ON DELETE CASCADE )");
+        db.execSQL("CREATE TABLE IF NOT EXISTS `movie_details_table` (`movieId` INTEGER NOT NULL, `vote` INTEGER NOT NULL, `isFavorite` INTEGER NOT NULL, PRIMARY KEY(`movieId`))");
         db.execSQL("CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)");
-        db.execSQL("INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '9b35c4ab5630a92730c59be766b25707')");
+        db.execSQL("INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '7477d9173b3ec091ba9668217eb91247')");
       }
 
       @Override
@@ -56,6 +63,8 @@ public final class AppRoomDatabase_Impl extends AppRoomDatabase {
         db.execSQL("DROP TABLE IF EXISTS `MovieGenreCrossRef`");
         db.execSQL("DROP TABLE IF EXISTS `UserGenreCrossRef`");
         db.execSQL("DROP TABLE IF EXISTS `user_state`");
+        db.execSQL("DROP TABLE IF EXISTS `movie_comments`");
+        db.execSQL("DROP TABLE IF EXISTS `movie_details_table`");
         final List<? extends RoomDatabase.Callback> _callbacks = mCallbacks;
         if (_callbacks != null) {
           for (RoomDatabase.Callback _callback : _callbacks) {
@@ -77,6 +86,7 @@ public final class AppRoomDatabase_Impl extends AppRoomDatabase {
       @Override
       public void onOpen(@NonNull final SupportSQLiteDatabase db) {
         mDatabase = db;
+        db.execSQL("PRAGMA foreign_keys = ON");
         internalInitInvalidationTracker(db);
         final List<? extends RoomDatabase.Callback> _callbacks = mCallbacks;
         if (_callbacks != null) {
@@ -180,9 +190,36 @@ public final class AppRoomDatabase_Impl extends AppRoomDatabase {
                   + " Expected:\n" + _infoUserState + "\n"
                   + " Found:\n" + _existingUserState);
         }
+        final HashMap<String, TableInfo.Column> _columnsMovieComments = new HashMap<String, TableInfo.Column>(3);
+        _columnsMovieComments.put("commentId", new TableInfo.Column("commentId", "INTEGER", true, 1, null, TableInfo.CREATED_FROM_ENTITY));
+        _columnsMovieComments.put("movieId", new TableInfo.Column("movieId", "INTEGER", true, 0, null, TableInfo.CREATED_FROM_ENTITY));
+        _columnsMovieComments.put("comment", new TableInfo.Column("comment", "TEXT", true, 0, null, TableInfo.CREATED_FROM_ENTITY));
+        final HashSet<TableInfo.ForeignKey> _foreignKeysMovieComments = new HashSet<TableInfo.ForeignKey>(1);
+        _foreignKeysMovieComments.add(new TableInfo.ForeignKey("movie_table", "CASCADE", "NO ACTION", Arrays.asList("movieId"), Arrays.asList("movieId")));
+        final HashSet<TableInfo.Index> _indicesMovieComments = new HashSet<TableInfo.Index>(0);
+        final TableInfo _infoMovieComments = new TableInfo("movie_comments", _columnsMovieComments, _foreignKeysMovieComments, _indicesMovieComments);
+        final TableInfo _existingMovieComments = TableInfo.read(db, "movie_comments");
+        if (!_infoMovieComments.equals(_existingMovieComments)) {
+          return new RoomOpenHelper.ValidationResult(false, "movie_comments(com.example.model.MovieComment).\n"
+                  + " Expected:\n" + _infoMovieComments + "\n"
+                  + " Found:\n" + _existingMovieComments);
+        }
+        final HashMap<String, TableInfo.Column> _columnsMovieDetailsTable = new HashMap<String, TableInfo.Column>(3);
+        _columnsMovieDetailsTable.put("movieId", new TableInfo.Column("movieId", "INTEGER", true, 1, null, TableInfo.CREATED_FROM_ENTITY));
+        _columnsMovieDetailsTable.put("vote", new TableInfo.Column("vote", "INTEGER", true, 0, null, TableInfo.CREATED_FROM_ENTITY));
+        _columnsMovieDetailsTable.put("isFavorite", new TableInfo.Column("isFavorite", "INTEGER", true, 0, null, TableInfo.CREATED_FROM_ENTITY));
+        final HashSet<TableInfo.ForeignKey> _foreignKeysMovieDetailsTable = new HashSet<TableInfo.ForeignKey>(0);
+        final HashSet<TableInfo.Index> _indicesMovieDetailsTable = new HashSet<TableInfo.Index>(0);
+        final TableInfo _infoMovieDetailsTable = new TableInfo("movie_details_table", _columnsMovieDetailsTable, _foreignKeysMovieDetailsTable, _indicesMovieDetailsTable);
+        final TableInfo _existingMovieDetailsTable = TableInfo.read(db, "movie_details_table");
+        if (!_infoMovieDetailsTable.equals(_existingMovieDetailsTable)) {
+          return new RoomOpenHelper.ValidationResult(false, "movie_details_table(com.example.model.MovieDetails).\n"
+                  + " Expected:\n" + _infoMovieDetailsTable + "\n"
+                  + " Found:\n" + _existingMovieDetailsTable);
+        }
         return new RoomOpenHelper.ValidationResult(true, null);
       }
-    }, "9b35c4ab5630a92730c59be766b25707", "bebff15678ebc7daf9ce9325dfd433ad");
+    }, "7477d9173b3ec091ba9668217eb91247", "03576ce941da89f717e46a6ae8414a26");
     final SupportSQLiteOpenHelper.Configuration _sqliteConfig = SupportSQLiteOpenHelper.Configuration.builder(config.context).name(config.name).callback(_openCallback).build();
     final SupportSQLiteOpenHelper _helper = config.sqliteOpenHelperFactory.create(_sqliteConfig);
     return _helper;
@@ -193,24 +230,36 @@ public final class AppRoomDatabase_Impl extends AppRoomDatabase {
   protected InvalidationTracker createInvalidationTracker() {
     final HashMap<String, String> _shadowTablesMap = new HashMap<String, String>(0);
     final HashMap<String, Set<String>> _viewTables = new HashMap<String, Set<String>>(0);
-    return new InvalidationTracker(this, _shadowTablesMap, _viewTables, "user_table","movie_table","genre_table","MovieGenreCrossRef","UserGenreCrossRef","user_state");
+    return new InvalidationTracker(this, _shadowTablesMap, _viewTables, "user_table","movie_table","genre_table","MovieGenreCrossRef","UserGenreCrossRef","user_state","movie_comments","movie_details_table");
   }
 
   @Override
   public void clearAllTables() {
     super.assertNotMainThread();
     final SupportSQLiteDatabase _db = super.getOpenHelper().getWritableDatabase();
+    final boolean _supportsDeferForeignKeys = android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP;
     try {
+      if (!_supportsDeferForeignKeys) {
+        _db.execSQL("PRAGMA foreign_keys = FALSE");
+      }
       super.beginTransaction();
+      if (_supportsDeferForeignKeys) {
+        _db.execSQL("PRAGMA defer_foreign_keys = TRUE");
+      }
       _db.execSQL("DELETE FROM `user_table`");
       _db.execSQL("DELETE FROM `movie_table`");
       _db.execSQL("DELETE FROM `genre_table`");
       _db.execSQL("DELETE FROM `MovieGenreCrossRef`");
       _db.execSQL("DELETE FROM `UserGenreCrossRef`");
       _db.execSQL("DELETE FROM `user_state`");
+      _db.execSQL("DELETE FROM `movie_comments`");
+      _db.execSQL("DELETE FROM `movie_details_table`");
       super.setTransactionSuccessful();
     } finally {
       super.endTransaction();
+      if (!_supportsDeferForeignKeys) {
+        _db.execSQL("PRAGMA foreign_keys = TRUE");
+      }
       _db.query("PRAGMA wal_checkpoint(FULL)").close();
       if (!_db.inTransaction()) {
         _db.execSQL("VACUUM");
@@ -225,6 +274,8 @@ public final class AppRoomDatabase_Impl extends AppRoomDatabase {
     _typeConvertersMap.put(IUserDao.class, IUserDao_Impl.getRequiredConverters());
     _typeConvertersMap.put(IMovieDao.class, IMovieDao_Impl.getRequiredConverters());
     _typeConvertersMap.put(UserStateDao.class, UserStateDao_Impl.getRequiredConverters());
+    _typeConvertersMap.put(IMovieCommentDao.class, IMovieCommentDao_Impl.getRequiredConverters());
+    _typeConvertersMap.put(IMovieDetailsDao.class, IMovieDetailsDao_Impl.getRequiredConverters());
     return _typeConvertersMap;
   }
 
@@ -281,6 +332,34 @@ public final class AppRoomDatabase_Impl extends AppRoomDatabase {
           _userStateDao = new UserStateDao_Impl(this);
         }
         return _userStateDao;
+      }
+    }
+  }
+
+  @Override
+  public IMovieCommentDao movieCommentDao() {
+    if (_iMovieCommentDao != null) {
+      return _iMovieCommentDao;
+    } else {
+      synchronized(this) {
+        if(_iMovieCommentDao == null) {
+          _iMovieCommentDao = new IMovieCommentDao_Impl(this);
+        }
+        return _iMovieCommentDao;
+      }
+    }
+  }
+
+  @Override
+  public IMovieDetailsDao movieDetailsDao() {
+    if (_iMovieDetailsDao != null) {
+      return _iMovieDetailsDao;
+    } else {
+      synchronized(this) {
+        if(_iMovieDetailsDao == null) {
+          _iMovieDetailsDao = new IMovieDetailsDao_Impl(this);
+        }
+        return _iMovieDetailsDao;
       }
     }
   }
