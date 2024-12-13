@@ -67,6 +67,7 @@ dependencies {
     implementation(libs.coil)
     implementation(project(":core:network"))
     implementation(libs.androidx.runtime.livedata)
+    implementation(libs.play.services.maps)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -88,6 +89,9 @@ dependencies {
 
     implementation(libs.androidx.room.runtime)
     implementation(libs.androidx.room.ktx)
+
+    //google map
+    implementation(libs.google.map)
 
 }
 
