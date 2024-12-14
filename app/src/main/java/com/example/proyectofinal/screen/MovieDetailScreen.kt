@@ -41,6 +41,7 @@ import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
@@ -82,7 +83,9 @@ import com.example.proyectofinal.ui.theme.onSecondaryContainerLight
 import com.example.proyectofinal.ui.theme.outlineLightHighContrast
 import com.example.proyectofinal.ui.theme.primaryContainerLightMediumContrast
 import com.example.proyectofinal.ui.theme.tertiaryCommon
+import com.example.proyectofinal.viewModel.MovieCommentViewModel
 import com.example.proyectofinal.viewModel.MovieDetailsViewModel
+import com.example.repository.MovieCommentRepository
 import com.example.repository.MovieDetailsRepository
 import com.example.repository.MovieRepository
 import dagger.hilt.android.scopes.ViewModelScoped
@@ -122,10 +125,10 @@ fun DetailContentScreen(eachMovie: Movie, onBackPressed: () -> Unit) {
             onDismissRequest = { isSheetOpen = false },
             sheetState = sheetState,
             modifier = Modifier
-                .background(onSecondaryContainerLight)
                 .fillMaxHeight(0.5f)
         ) {
             BottomSheetContent(
+                movieID = eachMovie.movieId,
                 onClose = { isSheetOpen = false }
             )
         }
@@ -315,13 +318,16 @@ fun RatingBar(
 }
 
 @Composable
-fun BottomSheetContent(onClose: () -> Unit) {
-    // Datos simulados para la lista de comentarios
-    val comments = listOf(
-        "Me encanta todo acerca de esta película, el instrumental, la historia, personajes, etc.",
-        "Casi 7 años desde su estreno. Y hace unos días la vi por primera vez. ¿Por qué? Creo que así tenía que ser.",
-        "Supe sobre esta película hace mucho tiempo, pero nunca le había dado una oportunidad. Todo lo que sabía era que..."
-    )
+fun BottomSheetContent(movieID: Int, onClose: () -> Unit) {
+    val repositoryComment = MovieCommentRepository(LocalContext.current)
+    val movieCommentViewModel = MovieCommentViewModel(repositoryComment)
+    val comments by movieCommentViewModel.comments.observeAsState(emptyList())
+
+    var newComment by remember { mutableStateOf("") }
+
+    LaunchedEffect(movieID) {
+        movieCommentViewModel.getCommentsForMovie(movieID) // Cargar los comentarios al inicio
+    }
 
     Column(
         modifier = Modifier
@@ -342,7 +348,7 @@ fun BottomSheetContent(onClose: () -> Unit) {
             modifier = Modifier.weight(1f) // Ocupa todo el espacio disponible
         ) {
             items(comments.size) {
-                CommentItem(comment = comments[it])
+                CommentItem(comment = comments[it].comment)
             }
         }
 
@@ -355,21 +361,27 @@ fun BottomSheetContent(onClose: () -> Unit) {
                 .padding(8.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            BasicTextField(
-                value = "",
-                onValueChange = {},
+            TextField(
+                value = newComment,
+                onValueChange = { newComment = it },
                 modifier = Modifier
                     .weight(1f)
                     .padding(8.dp)
                     .border(1.dp, Color.Gray)
                     .padding(8.dp),
                 textStyle = TextStyle(color = Color.White, fontSize = 14.sp),
-                decorationBox = { innerTextField ->
-                    Text("Escribe un comentario", color = Color.Gray)
-                    innerTextField()
-                }
+                placeholder = { Text(text = stringResource(id = R.string.placeholder_comment))}
+//                decorationBox = { innerTextField ->
+//                    Text("Escribe un comentario", color = Color.Gray)
+//                    innerTextField()
+//                }
             )
-            IconButton(onClick = { /* Acción de enviar comentario */ }) {
+            IconButton(onClick = {
+                if (newComment.isNotEmpty()) {
+                    movieCommentViewModel.addComment(movieID, newComment)
+                    newComment = ""
+                }
+            }) {
                 Icon(
                     imageVector = Icons.Default.Send,
                     contentDescription = "Enviar",
