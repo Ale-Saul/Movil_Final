@@ -196,7 +196,10 @@ fun DetailContentScreen(eachMovie: Movie, onBackPressed: () -> Unit) {
                         style = MaterialTheme.typography.bodyLarge,
                         fontSize = 24.sp,
                         fontWeight = FontWeight.SemiBold,
-                        color = onPrimaryLight
+                        color = onPrimaryLight,
+                        modifier = Modifier
+                            .weight(1f)
+                            .padding(end = 8.dp)
                     )
                     IconButton(
                         onClick = {

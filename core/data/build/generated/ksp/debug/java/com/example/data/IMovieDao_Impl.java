@@ -51,6 +51,8 @@ public final class IMovieDao_Impl implements IMovieDao {
 
   private final EntityInsertionAdapter<MovieGenreCrossRef> __insertionAdapterOfMovieGenreCrossRef;
 
+  private final SharedSQLiteStatement __preparedStmtOfUpdateFavorite;
+
   private final SharedSQLiteStatement __preparedStmtOfSetNewVote;
 
   private final SharedSQLiteStatement __preparedStmtOfSetVoteStars;
@@ -103,6 +105,14 @@ public final class IMovieDao_Impl implements IMovieDao {
           @NonNull final MovieGenreCrossRef entity) {
         statement.bindLong(1, entity.getMovieId());
         statement.bindLong(2, entity.getGenreId());
+      }
+    };
+    this.__preparedStmtOfUpdateFavorite = new SharedSQLiteStatement(__db) {
+      @Override
+      @NonNull
+      public String createQuery() {
+        final String _query = "UPDATE movie_details_table SET isFavorite=NOT isFavorite  WHERE movieId = ?";
+        return _query;
       }
     };
     this.__preparedStmtOfSetNewVote = new SharedSQLiteStatement(__db) {
@@ -205,6 +215,25 @@ public final class IMovieDao_Impl implements IMovieDao {
   }
 
   @Override
+  public void updateFavorite(final int movieID) {
+    __db.assertNotSuspendingTransaction();
+    final SupportSQLiteStatement _stmt = __preparedStmtOfUpdateFavorite.acquire();
+    int _argIndex = 1;
+    _stmt.bindLong(_argIndex, movieID);
+    try {
+      __db.beginTransaction();
+      try {
+        _stmt.executeUpdateDelete();
+        __db.setTransactionSuccessful();
+      } finally {
+        __db.endTransaction();
+      }
+    } finally {
+      __preparedStmtOfUpdateFavorite.release(_stmt);
+    }
+  }
+
+  @Override
   public void setNewVote(final double newRating, final int movieID) {
     __db.assertNotSuspendingTransaction();
     final SupportSQLiteStatement _stmt = __preparedStmtOfSetNewVote.acquire();
@@ -251,6 +280,60 @@ public final class IMovieDao_Impl implements IMovieDao {
     final String _sql = "SELECT * FROM movie_table";
     final RoomSQLiteQuery _statement = RoomSQLiteQuery.acquire(_sql, 0);
     return __db.getInvalidationTracker().createLiveData(new String[] {"movie_table"}, false, new Callable<List<Movie>>() {
+      @Override
+      @Nullable
+      public List<Movie> call() throws Exception {
+        final Cursor _cursor = DBUtil.query(__db, _statement, false, null);
+        try {
+          final int _cursorIndexOfMovieId = CursorUtil.getColumnIndexOrThrow(_cursor, "movieId");
+          final int _cursorIndexOfTitle = CursorUtil.getColumnIndexOrThrow(_cursor, "title");
+          final int _cursorIndexOfDescription = CursorUtil.getColumnIndexOrThrow(_cursor, "description");
+          final int _cursorIndexOfPosterPath = CursorUtil.getColumnIndexOrThrow(_cursor, "posterPath");
+          final int _cursorIndexOfVoteAverage = CursorUtil.getColumnIndexOrThrow(_cursor, "voteAverage");
+          final int _cursorIndexOfReleaseDate = CursorUtil.getColumnIndexOrThrow(_cursor, "releaseDate");
+          final int _cursorIndexOfVoteSelf = CursorUtil.getColumnIndexOrThrow(_cursor, "voteSelf");
+          final int _cursorIndexOfNewVote = CursorUtil.getColumnIndexOrThrow(_cursor, "newVote");
+          final List<Movie> _result = new ArrayList<Movie>(_cursor.getCount());
+          while (_cursor.moveToNext()) {
+            final Movie _item;
+            final int _tmpMovieId;
+            _tmpMovieId = _cursor.getInt(_cursorIndexOfMovieId);
+            final String _tmpTitle;
+            _tmpTitle = _cursor.getString(_cursorIndexOfTitle);
+            final String _tmpDescription;
+            _tmpDescription = _cursor.getString(_cursorIndexOfDescription);
+            final String _tmpPosterPath;
+            _tmpPosterPath = _cursor.getString(_cursorIndexOfPosterPath);
+            final double _tmpVoteAverage;
+            _tmpVoteAverage = _cursor.getDouble(_cursorIndexOfVoteAverage);
+            final String _tmpReleaseDate;
+            _tmpReleaseDate = _cursor.getString(_cursorIndexOfReleaseDate);
+            final int _tmpVoteSelf;
+            _tmpVoteSelf = _cursor.getInt(_cursorIndexOfVoteSelf);
+            final double _tmpNewVote;
+            _tmpNewVote = _cursor.getDouble(_cursorIndexOfNewVote);
+            _item = new Movie(_tmpMovieId,_tmpTitle,_tmpDescription,_tmpPosterPath,_tmpVoteAverage,_tmpReleaseDate,_tmpVoteSelf,_tmpNewVote);
+            _result.add(_item);
+          }
+          return _result;
+        } finally {
+          _cursor.close();
+        }
+      }
+
+      @Override
+      protected void finalize() {
+        _statement.release();
+      }
+    });
+  }
+
+  @Override
+  public LiveData<List<Movie>> getFavoriteMovies() {
+    final String _sql = "SELECT * FROM movie_table LEFT JOIN movie_details_table ON movie_table.movieId = movie_details_table.movieId WHERE movie_details_table.isFavorite = true";
+    final RoomSQLiteQuery _statement = RoomSQLiteQuery.acquire(_sql, 0);
+    return __db.getInvalidationTracker().createLiveData(new String[] {"movie_table",
+        "movie_details_table"}, false, new Callable<List<Movie>>() {
       @Override
       @Nullable
       public List<Movie> call() throws Exception {

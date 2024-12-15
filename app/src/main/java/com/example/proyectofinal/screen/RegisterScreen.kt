@@ -53,6 +53,9 @@ import com.example.proyectofinal.FormState
 import com.example.proyectofinal.GenreChip
 import com.example.proyectofinal.R
 import com.example.proyectofinal.isFormValid
+import com.example.proyectofinal.ui.theme.errorContainerDarkMediumContrast
+import com.example.proyectofinal.ui.theme.errorContainerLight
+import com.example.proyectofinal.ui.theme.errorLight
 import com.example.proyectofinal.viewModel.UserViewModel
 import com.example.proyectofinal.ui.theme.onPrimaryContainerLight
 import com.example.proyectofinal.ui.theme.onPrimaryLight
@@ -139,7 +142,7 @@ fun RegisterContentScreen(modifier: Modifier, onClick: () -> Unit) {
                 if (errors.usernameError != null) {
                     Text(
                         text = errors.usernameError.toString(),
-                        color = Color.Red
+                        color = errorContainerDarkMediumContrast
                     )
                 }},
             label = { Text(text = stringResource(id = R.string.label_name), color = onPrimaryLight) },
@@ -165,7 +168,7 @@ fun RegisterContentScreen(modifier: Modifier, onClick: () -> Unit) {
                 if (errors.birthDateError != null){
                     Text(
                         text = errors.birthDateError.toString(),
-                        color = Color.Red)
+                        color = errorContainerDarkMediumContrast)
                 }
             },
             label = { Text(stringResource(id = R.string.label_date), color = onPrimaryLight) },
@@ -190,7 +193,7 @@ fun RegisterContentScreen(modifier: Modifier, onClick: () -> Unit) {
                 if (errors.emailError != null) {
                     Text(
                         text = errors.emailError.toString(),
-                        color = Color.Red
+                        color = errorContainerDarkMediumContrast
                     )
                 }
             },
@@ -216,7 +219,7 @@ fun RegisterContentScreen(modifier: Modifier, onClick: () -> Unit) {
                 if (errors.passwordError != null) {
                     Text(
                         text = errors.passwordError.toString(),
-                        color = Color.Red
+                        color = errorContainerDarkMediumContrast
                     )
                 }
             },
@@ -251,7 +254,7 @@ fun RegisterContentScreen(modifier: Modifier, onClick: () -> Unit) {
                 if (errors.confirmPasswordError != null) {
                     Text(
                         text = errors.confirmPasswordError.toString(),
-                        color = Color.Red
+                        color = errorContainerDarkMediumContrast
                     )
                 }
             },
@@ -317,7 +320,7 @@ fun RegisterContentScreen(modifier: Modifier, onClick: () -> Unit) {
             enabled = isFormValid(errors),
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(vertical = 20.dp)
+                .padding(top = 20.dp, bottom = 40.dp)
                 .height(48.dp),
             colors = ButtonDefaults.buttonColors(tertiaryCommon),
             border = BorderStroke(1.dp, onPrimaryLight),
