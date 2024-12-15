@@ -60,6 +60,11 @@ class MovieRepository(val context: Context)  {
         return movieDao.getAllMovies()
     }
 
+    fun getFavoriteMovies(): LiveData<List<Movie>>{
+        Log.d("favorite", "${movieDao.getFavoriteMovies().value}")
+        return movieDao.getFavoriteMovies()
+    }
+
     suspend fun isMovieListEmpty(): Boolean {
         return movieDao.getMovieCount() == 0
     }
@@ -97,6 +102,15 @@ class MovieRepository(val context: Context)  {
                 }
             }
 
+        }
+    }
+
+    fun updateFavorite(movieId: Int) {
+        CoroutineScope(Dispatchers.IO).launch {
+            val movie = movieDao.getMovieById2(movieId)
+                withContext(Dispatchers.IO) {
+                    movieDao.updateFavorite(movieId)
+                }
         }
     }
 

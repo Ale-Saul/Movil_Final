@@ -26,4 +26,5 @@
     <string name="client_id">587351348537-nmequv441aevq57gt8cceabuqqe33juj.apps.googleusercontent.com</string>
     <string name="btn_sign_in">Iniciar sesión</string>
     <string name="placeholder_comment">Escribe un comentario</string>
+    <string name="label_favoritos">Favoritos</string>
 </resources>

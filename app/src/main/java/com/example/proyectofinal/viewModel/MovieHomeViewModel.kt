@@ -18,6 +18,7 @@ class MovieHomeViewModel(
 
     val isDataLoaded: Boolean = true
     val movies: LiveData<List<Movie>> = repository.getAllMovies()
+    val favoriteMovies: LiveData<List<Movie>> = repository.getFavoriteMovies()
     val movie: LiveData<Movie>
         get() = _movie
     private val _movie = MutableLiveData<Movie>()
@@ -77,7 +78,11 @@ class MovieHomeViewModel(
         viewModelScope.launch {
             repository.getAllMovies()
         }
-
+    }
+    fun getFavoriteMovies() {
+        viewModelScope.launch {
+            repository.getFavoriteMovies()
+        }
     }
 
 

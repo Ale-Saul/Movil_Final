@@ -108,7 +108,17 @@ fun AppNavigation() {
                     }
                 )
             }
-            composable("favorites") { FavoritesScreen() }
+            composable("favorites") {
+                FavoritesScreen(
+                    onClick = { movieId ->
+                        Log.e("Navigation", "Navigating to MovieDetailScreen with movieId: $movieId")
+                        navController.navigate("movie_detail_screen/$movieId")
+                    },
+                    onNavigateToCinemas = { // Nuevo callback para navegar a la pantalla de Cines
+                        navController.navigate(Screens.Cines.route)
+                    }
+                )
+            }
             composable("profile") { ProfileScreen() }
 
 

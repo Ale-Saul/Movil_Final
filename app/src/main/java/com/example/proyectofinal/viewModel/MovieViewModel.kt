@@ -27,7 +27,5 @@ class MovieViewModel(
         }
     }
 
-    fun add_favorite(iconSelected: Boolean){
-        _icon_favorite.value = !iconSelected
-    }
+
 }

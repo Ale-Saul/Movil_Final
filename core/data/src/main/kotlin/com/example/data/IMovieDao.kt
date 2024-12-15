@@ -21,6 +21,9 @@ interface IMovieDao {
     @Query("SELECT * FROM movie_table")
     fun getAllMovies(): LiveData<List<Movie>>
 
+    @Query("SELECT * FROM movie_table LEFT JOIN movie_details_table ON movie_table.movieId = movie_details_table.movieId WHERE movie_details_table.isFavorite = true")
+    fun getFavoriteMovies(): LiveData<List<Movie>>
+
     @Query("SELECT * FROM  genre_table")
     fun getAllGenres(): List<Genre>
 
@@ -55,6 +58,9 @@ interface IMovieDao {
         setVoteStars(voteStars, movieId)
         setNewVote(newVote, movieId)
     }
+
+    @Query("UPDATE movie_details_table SET isFavorite=NOT isFavorite  WHERE movieId = :movieID")
+    fun updateFavorite(movieID: Int)
 
     @Query("UPDATE movie_table SET newVote = :newRating WHERE movieId = :movieID")
     fun setNewVote(newRating: Double, movieID: Int)
