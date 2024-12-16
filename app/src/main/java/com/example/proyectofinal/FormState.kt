@@ -18,12 +18,12 @@ fun validateForm(state: FormState): FormErrorState {
         },
         birthDateError = when{
             state.birthDate.isBlank()-> "La fecha de nacimiento no puede estar vacia"
-            !state.birthDate.contains(Regex("[0-3][0-9]-[0-1]\\d-\\d{2}")) -> "La fecha de nacimiento debe estar en el formato dd-mm-yyyy"
+            !state.birthDate.matches(Regex("[0-3][0-9]-[0-1]\\d-\\d{4}")) -> "La fecha de nacimiento debe estar en el formato dd-mm-yyyy"
             else -> null
         },
         emailError = when{
             state.email.isBlank() -> "El email no puede estar vacio"
-            !state.email.contains("@") -> "El email debe contener un @"
+            !state.email.contains(Regex("\\w+([.-]?\\w+)*@\\w+([\\.-]?\\w+)*(\\.\\w{2,3})+")) -> "El email debe tener formato correcto de email"
             else -> null
         },
         passwordError = when {

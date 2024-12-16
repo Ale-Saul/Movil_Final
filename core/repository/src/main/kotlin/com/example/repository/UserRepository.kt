@@ -50,5 +50,9 @@ class UserRepository(val context: Context) {
     suspend fun getIdByUsername(name: String): Int {
         return userDao.getIdByUsername(name)
     }
+
+    fun getInfoUser(): User {
+        return stateDao.getInfoUser()
+    }
 }
 

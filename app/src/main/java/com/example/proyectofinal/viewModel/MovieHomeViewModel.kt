@@ -19,6 +19,7 @@ class MovieHomeViewModel(
     val isDataLoaded: Boolean = true
     val movies: LiveData<List<Movie>> = repository.getAllMovies()
     val favoriteMovies: LiveData<List<Movie>> = repository.getFavoriteMovies()
+    val ratedMovies: LiveData<List<Movie>> = repository.getRatedMovies()
     val movie: LiveData<Movie>
         get() = _movie
     private val _movie = MutableLiveData<Movie>()
@@ -85,24 +86,9 @@ class MovieHomeViewModel(
         }
     }
 
-
-//    sealed class MovieHomeState {
-//        class Loaded(val listMovies: LiveData<List<Movie>>) : MovieHomeState()
-//    }
-//
-//    val state : LiveData<MovieHomeState>
-//        get() = _state
-//
-//    private val _state = MutableLiveData<MovieHomeState>()
-//
-//    fun loadMovies() {
-//        CoroutineScope(Dispatchers.IO).launch {
-//            val listMovies = repository.getAllMovies()
-//            withContext(Dispatchers.Main) {
-//                _state.value = MovieHomeState.Loaded(listMovies)
-//            }
-//
-//        }
-//    }
-
+    fun getRatedMovies() {
+        viewModelScope.launch {
+            repository.getRatedMovies()
+        }
+    }
 }

@@ -9,8 +9,10 @@ import androidx.room.EntityInsertionAdapter;
 import androidx.room.RoomDatabase;
 import androidx.room.RoomSQLiteQuery;
 import androidx.room.SharedSQLiteStatement;
+import androidx.room.util.CursorUtil;
 import androidx.room.util.DBUtil;
 import androidx.sqlite.db.SupportSQLiteStatement;
+import com.example.model.User;
 import com.example.model.UserState;
 import java.lang.Boolean;
 import java.lang.Class;
@@ -161,6 +163,41 @@ public final class UserStateDao_Impl implements UserStateDao {
         }
       }
     }, $completion);
+  }
+
+  @Override
+  public User getInfoUser() {
+    final String _sql = "SELECT user_table.* FROM user_state JOIN user_table ON user_state.id = user_table.userId";
+    final RoomSQLiteQuery _statement = RoomSQLiteQuery.acquire(_sql, 0);
+    __db.assertNotSuspendingTransaction();
+    final Cursor _cursor = DBUtil.query(__db, _statement, false, null);
+    try {
+      final int _cursorIndexOfUserId = CursorUtil.getColumnIndexOrThrow(_cursor, "userId");
+      final int _cursorIndexOfUsername = CursorUtil.getColumnIndexOrThrow(_cursor, "username");
+      final int _cursorIndexOfBirthDate = CursorUtil.getColumnIndexOrThrow(_cursor, "birthDate");
+      final int _cursorIndexOfEmail = CursorUtil.getColumnIndexOrThrow(_cursor, "email");
+      final int _cursorIndexOfPassword = CursorUtil.getColumnIndexOrThrow(_cursor, "password");
+      final User _result;
+      if (_cursor.moveToFirst()) {
+        final int _tmpUserId;
+        _tmpUserId = _cursor.getInt(_cursorIndexOfUserId);
+        final String _tmpUsername;
+        _tmpUsername = _cursor.getString(_cursorIndexOfUsername);
+        final String _tmpBirthDate;
+        _tmpBirthDate = _cursor.getString(_cursorIndexOfBirthDate);
+        final String _tmpEmail;
+        _tmpEmail = _cursor.getString(_cursorIndexOfEmail);
+        final String _tmpPassword;
+        _tmpPassword = _cursor.getString(_cursorIndexOfPassword);
+        _result = new User(_tmpUserId,_tmpUsername,_tmpBirthDate,_tmpEmail,_tmpPassword);
+      } else {
+        _result = null;
+      }
+      return _result;
+    } finally {
+      _cursor.close();
+      _statement.release();
+    }
   }
 
   @NonNull

@@ -42,7 +42,6 @@ class UserViewModel (
                 }
             }
         }
-
     }
 
     private var _state = MutableStateFlow<LoginState>(LoginState.LoggedOut)

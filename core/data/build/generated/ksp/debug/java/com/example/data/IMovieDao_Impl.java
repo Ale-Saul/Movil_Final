@@ -383,6 +383,60 @@ public final class IMovieDao_Impl implements IMovieDao {
   }
 
   @Override
+  public LiveData<List<Movie>> getRatedMovies() {
+    final String _sql = "SELECT * FROM movie_table LEFT JOIN movie_details_table ON movie_table.movieId = movie_details_table.movieId WHERE movie_details_table.vote <> 0";
+    final RoomSQLiteQuery _statement = RoomSQLiteQuery.acquire(_sql, 0);
+    return __db.getInvalidationTracker().createLiveData(new String[] {"movie_table",
+        "movie_details_table"}, false, new Callable<List<Movie>>() {
+      @Override
+      @Nullable
+      public List<Movie> call() throws Exception {
+        final Cursor _cursor = DBUtil.query(__db, _statement, false, null);
+        try {
+          final int _cursorIndexOfMovieId = CursorUtil.getColumnIndexOrThrow(_cursor, "movieId");
+          final int _cursorIndexOfTitle = CursorUtil.getColumnIndexOrThrow(_cursor, "title");
+          final int _cursorIndexOfDescription = CursorUtil.getColumnIndexOrThrow(_cursor, "description");
+          final int _cursorIndexOfPosterPath = CursorUtil.getColumnIndexOrThrow(_cursor, "posterPath");
+          final int _cursorIndexOfVoteAverage = CursorUtil.getColumnIndexOrThrow(_cursor, "voteAverage");
+          final int _cursorIndexOfReleaseDate = CursorUtil.getColumnIndexOrThrow(_cursor, "releaseDate");
+          final int _cursorIndexOfVoteSelf = CursorUtil.getColumnIndexOrThrow(_cursor, "voteSelf");
+          final int _cursorIndexOfNewVote = CursorUtil.getColumnIndexOrThrow(_cursor, "newVote");
+          final List<Movie> _result = new ArrayList<Movie>(_cursor.getCount());
+          while (_cursor.moveToNext()) {
+            final Movie _item;
+            final int _tmpMovieId;
+            _tmpMovieId = _cursor.getInt(_cursorIndexOfMovieId);
+            final String _tmpTitle;
+            _tmpTitle = _cursor.getString(_cursorIndexOfTitle);
+            final String _tmpDescription;
+            _tmpDescription = _cursor.getString(_cursorIndexOfDescription);
+            final String _tmpPosterPath;
+            _tmpPosterPath = _cursor.getString(_cursorIndexOfPosterPath);
+            final double _tmpVoteAverage;
+            _tmpVoteAverage = _cursor.getDouble(_cursorIndexOfVoteAverage);
+            final String _tmpReleaseDate;
+            _tmpReleaseDate = _cursor.getString(_cursorIndexOfReleaseDate);
+            final int _tmpVoteSelf;
+            _tmpVoteSelf = _cursor.getInt(_cursorIndexOfVoteSelf);
+            final double _tmpNewVote;
+            _tmpNewVote = _cursor.getDouble(_cursorIndexOfNewVote);
+            _item = new Movie(_tmpMovieId,_tmpTitle,_tmpDescription,_tmpPosterPath,_tmpVoteAverage,_tmpReleaseDate,_tmpVoteSelf,_tmpNewVote);
+            _result.add(_item);
+          }
+          return _result;
+        } finally {
+          _cursor.close();
+        }
+      }
+
+      @Override
+      protected void finalize() {
+        _statement.release();
+      }
+    });
+  }
+
+  @Override
   public List<Genre> getAllGenres() {
     final String _sql = "SELECT * FROM  genre_table";
     final RoomSQLiteQuery _statement = RoomSQLiteQuery.acquire(_sql, 0);

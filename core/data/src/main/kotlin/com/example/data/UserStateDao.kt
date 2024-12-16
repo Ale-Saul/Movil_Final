@@ -4,6 +4,7 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import com.example.model.User
 import com.example.model.UserState
 
 @Dao
@@ -19,5 +20,8 @@ interface UserStateDao {
 
     @Query("SELECT user_state.id FROM user_state")
     suspend fun getUserState(): Int
+
+    @Query("SELECT user_table.* FROM user_state JOIN user_table ON user_state.id = user_table.userId")
+    fun getInfoUser(): User
 
 }
