@@ -1,0 +1,16 @@
+-- Merging decision tree log ---
+manifest
+ADDED from D:\Documents\Semestre 8\Programacion de dispositivos moviles\Recuperando\Movil_Final\core\repository\build\intermediates\tmp\ProcessLibraryManifest\release\tempAndroidManifest3539545017077050895.xml:2:13-83
+INJECTED from D:\Documents\Semestre 8\Programacion de dispositivos moviles\Recuperando\Movil_Final\core\repository\build\intermediates\tmp\ProcessLibraryManifest\release\tempAndroidManifest3539545017077050895.xml:2:13-83
+	package
+		INJECTED from D:\Documents\Semestre 8\Programacion de dispositivos moviles\Recuperando\Movil_Final\core\repository\build\intermediates\tmp\ProcessLibraryManifest\release\tempAndroidManifest3539545017077050895.xml
+	xmlns:android
+		ADDED from D:\Documents\Semestre 8\Programacion de dispositivos moviles\Recuperando\Movil_Final\core\repository\build\intermediates\tmp\ProcessLibraryManifest\release\tempAndroidManifest3539545017077050895.xml:2:23-81
+uses-sdk
+INJECTED from D:\Documents\Semestre 8\Programacion de dispositivos moviles\Recuperando\Movil_Final\core\repository\build\intermediates\tmp\ProcessLibraryManifest\release\tempAndroidManifest3539545017077050895.xml reason: use-sdk injection requested
+INJECTED from D:\Documents\Semestre 8\Programacion de dispositivos moviles\Recuperando\Movil_Final\core\repository\build\intermediates\tmp\ProcessLibraryManifest\release\tempAndroidManifest3539545017077050895.xml
+INJECTED from D:\Documents\Semestre 8\Programacion de dispositivos moviles\Recuperando\Movil_Final\core\repository\build\intermediates\tmp\ProcessLibraryManifest\release\tempAndroidManifest3539545017077050895.xml
+	android:targetSdkVersion
+		INJECTED from D:\Documents\Semestre 8\Programacion de dispositivos moviles\Recuperando\Movil_Final\core\repository\build\intermediates\tmp\ProcessLibraryManifest\release\tempAndroidManifest3539545017077050895.xml
+	android:minSdkVersion
+		INJECTED from D:\Documents\Semestre 8\Programacion de dispositivos moviles\Recuperando\Movil_Final\core\repository\build\intermediates\tmp\ProcessLibraryManifest\release\tempAndroidManifest3539545017077050895.xml
