@@ -13,7 +13,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
@@ -29,7 +28,6 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -46,7 +44,6 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.compose.LocalLifecycleOwner
 import com.example.model.User
 import com.example.proyectofinal.FormErrorState
 import com.example.proyectofinal.FormState
@@ -54,18 +51,14 @@ import com.example.proyectofinal.GenreChip
 import com.example.proyectofinal.R
 import com.example.proyectofinal.isFormValid
 import com.example.proyectofinal.ui.theme.errorContainerDarkMediumContrast
-import com.example.proyectofinal.ui.theme.errorContainerLight
-import com.example.proyectofinal.ui.theme.errorLight
-import com.example.proyectofinal.viewModel.UserViewModel
 import com.example.proyectofinal.ui.theme.onPrimaryContainerLight
 import com.example.proyectofinal.ui.theme.onPrimaryLight
 import com.example.proyectofinal.ui.theme.onWhiteContainerDarkMediumContrast
 import com.example.proyectofinal.ui.theme.outlineLight
 import com.example.proyectofinal.ui.theme.tertiaryCommon
 import com.example.proyectofinal.validateForm
-import com.example.repository.MovieRepository
+import com.example.proyectofinal.viewModel.UserViewModel
 import com.example.repository.UserRepository
-import kotlinx.coroutines.launch
 
 @Composable
 fun RegisterScreen(onClick: () -> Unit) {

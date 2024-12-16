@@ -7,7 +7,6 @@ import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Transaction
 import com.example.model.Genre
-import com.example.model.GenreWithMovies
 import com.example.model.Movie
 import com.example.model.MovieGenreCrossRef
 import com.example.model.MovieWithGenres
@@ -23,6 +22,9 @@ interface IMovieDao {
 
     @Query("SELECT * FROM movie_table LEFT JOIN movie_details_table ON movie_table.movieId = movie_details_table.movieId WHERE movie_details_table.isFavorite = true")
     fun getFavoriteMovies(): LiveData<List<Movie>>
+
+    @Query("SELECT * FROM movie_table LEFT JOIN movie_details_table ON movie_table.movieId = movie_details_table.movieId WHERE movie_details_table.vote <> 0")
+    fun getRatedMovies(): LiveData<List<Movie>>
 
     @Query("SELECT * FROM  genre_table")
     fun getAllGenres(): List<Genre>

@@ -65,6 +65,9 @@ class MovieRepository(val context: Context)  {
         return movieDao.getFavoriteMovies()
     }
 
+    fun getRatedMovies(): LiveData<List<Movie>> {
+        return movieDao.getRatedMovies()
+    }
     suspend fun isMovieListEmpty(): Boolean {
         return movieDao.getMovieCount() == 0
     }
