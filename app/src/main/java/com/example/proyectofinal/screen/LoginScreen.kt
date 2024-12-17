@@ -85,6 +85,12 @@ fun LoginContentScreen(modifier: Modifier, onClick: () -> Unit) {
         }
         is UserViewModel.LoginState.DoLogin -> {
             isEnabled = true
+            // Enviar notificación de bienvenida
+            sendWelcomeNotification(
+                context = context,
+                username = username
+            )
+
             onClick()
         }
         is UserViewModel.LoginState.Error -> {
