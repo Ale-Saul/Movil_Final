@@ -30,6 +30,7 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -54,6 +55,7 @@ import androidx.compose.ui.zIndex
 import androidx.lifecycle.Observer
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.room.util.query
 import coil.compose.AsyncImage
 import com.example.model.Movie
 import com.example.network.MovieRemoteDataSource
@@ -68,7 +70,9 @@ import com.example.proyectofinal.viewModel.MovieInterestViewModel
 import com.example.repository.MovieRepository
 
 @Composable
-fun HomeScreen(onClick: (Int) -> Unit, onNavigateToCinemas: () -> Unit) {
+fun HomeScreen(
+    onClick: (Int) -> Unit,
+    onNavigateToCinemas: () -> Unit) {
     Scaffold(
         content = {paddingValues ->
             MovieScreen(
@@ -183,7 +187,11 @@ fun CinemasButton(onNavigateToCinemas: () -> Unit) { // Recibe el callback como 
     }
 }
 @Composable
-fun MovieScreen(modifier: Modifier, onClickMovie: (Int) -> Unit, onNavigateToCinemas: () -> Unit) {
+fun MovieScreen(
+    modifier: Modifier,
+    onClickMovie: (Int) -> Unit,
+    onNavigateToCinemas: () -> Unit) {
+
     val dataSource: MovieRemoteDataSource = MovieRemoteDataSource(RetrofitBuilder)
     val context = LocalContext.current
     val repository = MovieRepository(context)
@@ -216,6 +224,18 @@ fun MovieScreen(modifier: Modifier, onClickMovie: (Int) -> Unit, onNavigateToCin
         LocalLifecycleOwner.current,
         Observer(::updateUI)
     )
+
+    var filteredMovies by remember { mutableStateOf(listMovies) }
+
+    // Función de búsqueda
+    fun onSearch(query: String) {
+        filteredMovies = if (query.isEmpty()) {
+            listMovies
+        } else {
+            listMovies.filter { it.title.contains(query, ignoreCase = true) }
+        }
+    }
+
     Box(
         modifier= Modifier
             .fillMaxSize()
@@ -233,6 +253,10 @@ fun MovieScreen(modifier: Modifier, onClickMovie: (Int) -> Unit, onNavigateToCin
                     modifier = Modifier
                         .fillMaxWidth()
                 ) {
+                    MovieSearchBar(
+                        onSearch = { query -> onSearch(query) }
+                    )
+
                     MovieSection(
                         title = stringResource(id = R.string.label_interes),
                         movies = listMovies,
@@ -264,4 +288,19 @@ fun MovieScreen(modifier: Modifier, onClickMovie: (Int) -> Unit, onNavigateToCin
         }
     }
 
+}
+
+@Composable
+fun MovieSearchBar(onSearch: (String) -> Unit) {
+    var query by remember { mutableStateOf("") }
+
+    OutlinedTextField(
+        value = query,
+        onValueChange = { query = it; onSearch(query) },
+        label = { Text("Buscar película...") },
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(16.dp),
+        singleLine = true
+    )
 }

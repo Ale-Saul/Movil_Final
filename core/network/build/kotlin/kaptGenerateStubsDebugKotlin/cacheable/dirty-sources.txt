@@ -1,0 +1,5 @@
+C:\Users\Grover Gonzalez\StudioProjects\Movil_Final\core\network\src\main\kotlin\com\example\network\MovieResponseDto.kt
+C:\Users\Grover Gonzalez\StudioProjects\Movil_Final\core\network\src\main\kotlin\com\example\network\IApiListService.kt
+C:\Users\Grover Gonzalez\StudioProjects\Movil_Final\core\network\src\main\kotlin\com\example\network\MoviesResponseDto.kt
+C:\Users\Grover Gonzalez\StudioProjects\Movil_Final\core\network\src\main\kotlin\com\example\network\MovieRemoteDataSource.kt
+C:\Users\Grover Gonzalez\StudioProjects\Movil_Final\core\network\src\main\kotlin\com\example\network\RetrofitBuilder.kt

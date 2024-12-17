@@ -137,7 +137,7 @@ fun AppNavigation() {
                         CinemaDetailScreen(
                             cinema = it,
                             onBackPressed = {
-                                navController.popBackStack() // Regresa a la pantalla anterior
+                                 navController.popBackStack() // Regresa a la pantalla anterior
                             }
                         )
                     }
