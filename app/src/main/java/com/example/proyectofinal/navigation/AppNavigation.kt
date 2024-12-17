@@ -21,6 +21,7 @@ import com.example.proyectofinal.screen.LoginScreen
 import com.example.proyectofinal.screen.MovieDetailScreen
 import com.example.proyectofinal.screen.ProfileScreen
 import com.example.proyectofinal.screen.RegisterScreen
+import com.example.proyectofinal.screen.SearchScreen
 import com.example.proyectofinal.screen.WelcomeScreen
 import com.example.proyectofinal.viewModel.CinemaViewModel
 
@@ -31,7 +32,7 @@ fun AppNavigation() {
     val currentBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = currentBackStackEntry?.destination?.route
     val showBottomBar = currentRoute in listOf(Screens.HomeScreen.route,
-        "home", "favorites", "profile")
+        "home", "search","favorites", "profile")
 
     Scaffold(
         bottomBar = {
@@ -159,6 +160,12 @@ fun AppNavigation() {
                     Log.e("CinemaDetail", "Invalid cinemaId")
                     navController.popBackStack() // Regresa a la pantalla anterior si no hay un ID válido
                 }
+            }
+            composable("search") {
+                SearchScreen(onMovieClick = { movieId ->
+                    Log.e("Navigation", "Navigating to MovieSearchScreen")
+                    navController.navigate("movie_detail_screen/$movieId")
+                });
             }
         }
     }
